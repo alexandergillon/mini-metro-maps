@@ -1,24 +1,14 @@
+# Script to read in data about the network.
 from classes import Station, Line
 from naptan import NaptanReader
 from typing import Optional
+import util
 
+# Lines of input file that represent constraints, with their network line and input line number (processed later)
+constraint_text_lines: list[tuple[str, str, int]] = list()  # todo: create type
 lines = dict()                                # line name -> Line object mapping
 naptan_reader: Optional[NaptanReader] = None  # Reader for getting naptans
-constraint_text_lines: list[str] = list()     # Lines of input file that represent constraints (processed later)
 input_line_number: int = 0                    # Current line of the input being processed, for error messages
-
-
-def consume_double_quoted(s: str) -> tuple[str, str]:
-    """
-    E.g. consume_double_quoted(' "Hello world!" rest of string') -> ('Hello world!', 'rest of string')
-    :param s: A string
-    :return: The first double-quoted string in that block (without the quotes), and the rest of the string.
-    Raises ValueException if the string does not contain a double-quoted string.
-    """
-    first_quote_index = s.index('"')
-    second_quote_index = s.index('"', first_quote_index + 1)
-
-    return s[first_quote_index + 1:second_quote_index], s[second_quote_index + 1:]
 
 
 def sanitize_line(line: str) -> str:
@@ -75,7 +65,7 @@ def create_new_station(input_file_line: str, current_line: str) -> None:
     input_file_line.lstrip()
 
     try:
-        station_name, rest = consume_double_quoted(input_file_line)
+        station_name, rest = util.consume_double_quoted(input_file_line)
         station_name.strip()
         rest.strip()
     except ValueError:
@@ -109,7 +99,7 @@ def add_edges(input_file_line: str, current_line: str) -> None:
     input_file_line.lstrip()
 
     try:
-        stations_string, __ = consume_double_quoted(input_file_line)
+        stations_string, __ = util.consume_double_quoted(input_file_line)
         stations_string.strip()
     except ValueError:
         raise ValueError(f"line {input_line_number} '{old_input_file_line}' does not have double-quoted stations.")
@@ -165,7 +155,7 @@ def add_curve(input_file_line: str, current_line: str) -> None:
     input_file_line.lstrip()
 
     try:
-        stations_string, rest = consume_double_quoted(input_file_line)
+        stations_string, rest = util.consume_double_quoted(input_file_line)
         stations_string.strip()
         rest.strip()
     except ValueError:
@@ -208,14 +198,16 @@ def read_data(path) -> None:
         elif input_file_line.startswith("curve"):
             add_curve(input_file_line, current_line)
         elif input_file_line.startswith("multi-line"):
-            current_line = None
+            current_line = "_MULTI"
         elif input_file_line.startswith(tuple(["vertical", "horizontal", "up-right",
                                                "up-left", "down-right", "down-left"])):
-            input_file_line.replace("up-left", "down-right")
-            input_file_line.replace("down-left", "up-right")
-            constraint_text_lines.append(input_file_line)
+            input_file_line = input_file_line.replace("up-left", "down-right")
+            input_file_line = input_file_line.replace("down-left", "up-right")
+            constraint_text_lines.append((input_file_line, current_line, input_line_number))
         elif input_file_line.startswith("same-station") or input_file_line.startswith("equal"):
-            constraint_text_lines.append(input_file_line)
+            constraint_text_lines.append((input_file_line, current_line, input_line_number))
+        else:
+            raise ValueError(f"line {input_line_number} '{input_file_line}' has unrecognized form.")
 
 
 def check_no_orphans() -> None:
@@ -226,7 +218,14 @@ def check_no_orphans() -> None:
             raise ValueError(f"line {line.name} has orphan station {orphan}.")
 
 
-if __name__ == "__main__":
+def parse_data() -> tuple[dict, list[tuple[str, str, int]]]:
+    global naptan_reader
     naptan_reader = NaptanReader("input/naptan.json")
     read_data("input/tube_data.txt")
     check_no_orphans()
+    return lines, constraint_text_lines
+
+
+if __name__ == "__main__":
+    print("This file is not mean to be run. Run generate_map.py instead.")
+    exit(1)
