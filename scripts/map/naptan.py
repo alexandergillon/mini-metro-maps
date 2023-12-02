@@ -32,16 +32,16 @@ class NaptanReader:
         """
         if name == "Euston (Charing Cross branch)":
             naptan = self.name_to_naptan["Euston"]
-            naptan += "-CC"
+            naptan += "_CC"
         elif name == "Euston (Bank branch)":
             naptan = self.name_to_naptan["Euston"]
-            naptan += "-B"
+            naptan += "_B"
         elif name == "Edgware Road (Circle Line) w/ H&C":
             naptan = self.name_to_naptan["Edgware Road (Circle Line)"]
-            naptan += "-HC"
+            naptan += "_HC"
         elif name == "Edgware Road (Circle Line) w/ District":
             naptan = self.name_to_naptan["Edgware Road (Circle Line)"]
-            naptan += "-D"
+            naptan += "_D"
         else:
             try:
                 naptan = self.name_to_naptan[name]

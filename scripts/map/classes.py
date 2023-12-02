@@ -8,20 +8,17 @@ class Station:
     def __init__(self, line: str, name: str, naptan: str, x: int, y: int):
         self.line = line
         self.name = name
-        self.naptan = naptan
+        self.unique_id = f"{line}_{naptan}"
 
         self.original_x = x
         self.original_y = y
         self.solved_x: Optional[int] = None
         self.solved_y: Optional[int] = None
 
-        self.x_variable_identifier = f"{line}_{naptan}_X"
-        self.y_variable_identifier = f"{line}_{naptan}_Y"
-
         # self.neighbors = []
 
     def __repr__(self):
-        return f"{self.line} station {self.name} ({self.naptan})"
+        return f"{self.line} station {self.name} ({self.unique_id})"
 
 
 class Line:
@@ -29,12 +26,23 @@ class Line:
 
     def __init__(self, name):
         self.name = name
-        self.stations = dict()
+        self.stations = dict()  # station name -> station
         self.edges: set[tuple[Station, Station]] = set()
         self.curves: list[tuple[Station, Station, str]] = list()
 
     def add_station(self, station: Station):
         self.stations[station.name] = station
+
+    def get_station(self, station_name: str, input_line_number: int):
+        """
+        Gets a station in this line, printing an error message if the station does not exist.
+        :param station_name: The name of the station to find.
+        :param input_line_number: The line number in the input which used this station name.
+        :return: The station in this line, corresponding to that name.
+        """
+        if station_name not in self.stations:
+            raise ValueError(f"(line {input_line_number}) station {station_name} does not exist for line {self.name}.")
+        return self.stations[station_name]
 
     def add_edge(self, station_name_1: str, station_name_2: str, input_line_number: int) -> None:
         """
