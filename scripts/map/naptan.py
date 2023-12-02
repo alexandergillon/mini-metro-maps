@@ -52,5 +52,5 @@ class NaptanReader:
 
 
 if __name__ == "__main__":
-    print("This file is not mean to be run. Run parse_data.py instead.")
+    print("This file is not mean to be run. Run generate_map.py instead.")
     exit(1)
