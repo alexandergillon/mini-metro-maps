@@ -662,7 +662,7 @@ multi-line:
 
   vertical "piccadilly: Acton Town, district: Acton Town"
   vertical "piccadilly: Turnham Green, district: Turnham Green"
-  vertical "piccadilly: Hammersmith, district: Hammersmith"
+  vertical "piccadilly: Hammersmith (Dist&Picc Line), district: Hammersmith (Dist&Picc Line)"
 
   # This constraint ensures that H&C / circle Hammersmith are aligned above district/piccadilly
   equal "hammersmith-city: Hammersmith.x + circle: Hammersmith.x" "piccadilly: Hammersmith.x + piccadilly: Hammersmith.x"
@@ -709,14 +709,14 @@ multi-line:
   equal "district: Embankment.y + circle: Embankment.y" "northern: Embankment.y + bakerloo: Embankment.y"
   equal "district: Embankment.x + circle: Embankment.x" "northern: Embankment.x + bakerloo: Embankment.x"
 
-  down-right "central: Bank, northern: Bank, circle: Bank"
+  down-right "central: Bank, northern: Bank, circle: Monument"
 
   horizontal "central: Notting Hill Gate, district: Notting Hill Gate"
   equal "district: Notting Hill Gate.x + circle: Notting Hill Gate.x" "central: Notting Hill Gate.x + central: Notting Hill Gate.x"
 
   down-right "bakerloo: Paddington, hammersmith-city: Paddington (H&C Line)-Underground, district: Paddington"
 
-  vertical "district: Edgeware Road, hammersmith-city: Edgeware Road"
+  vertical "district: Edgware Road (Circle Line), hammersmith-city: Edgware Road (Circle Line)"
 
   vertical "district: Mile End, central: Mile End"
 

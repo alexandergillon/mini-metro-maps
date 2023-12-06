@@ -112,6 +112,26 @@ public class AmplDriver {
     }
 
     /**
+     * Extracts the metro line name and station name from a string of the form "line: name".
+     * E.g. extractMetroLine("lineName: stationName") --> ("lineName", "stationName")
+     * @param stationNameWithMetroLine Station name with metro line prepended, seperated by a colon.
+     * @param textLineNumber Line number of the input which declared this station.
+     * @return The metro line name, and station name, as a pair.
+     */
+    private Pair<String, String> extractMetroLine(String stationNameWithMetroLine, int textLineNumber) {
+        String[] tokens = stationNameWithMetroLine.split(":");
+        if (tokens.length != 2) {
+            throw new IllegalArgumentException(String.format("(line %d) Invalid station name (\"lineName: stationName\" expected).", textLineNumber));
+        }
+
+        String metroLineName = tokens[0];
+        String stationName = tokens[1];
+        metroLineName = metroLineName.strip();
+        stationName = stationName.strip();
+        return Pair.of(metroLineName, stationName);
+    }
+
+    /**
      * Writes a cardinal direction constraint between two stations (a vertical, horizontal, or rising/falling diagonal constraint).
      * @param station1Name Name of the first station.
      * @param station2Name Name of the second station.
@@ -123,12 +143,17 @@ public class AmplDriver {
     private void writeCardinalDirectionConstraint(String station1Name, String station2Name, String constraintType,
                                                   MetroLine metroLine, Map<String, MetroLine> metroLines,
                                                   int textLineNumber) throws IOException {
+        String station1Id;
+        String station2Id;
         if (metroLine == null) {
-            return; // TODO: read from station names
+            Pair<String, String> lineAndName1 = extractMetroLine(station1Name, textLineNumber);
+            Pair<String, String> lineAndName2 = extractMetroLine(station2Name, textLineNumber);
+            station1Id = metroLines.get(lineAndName1.getLeft()).getStation(lineAndName1.getRight(), textLineNumber).getAmplUniqueId();
+            station2Id = metroLines.get(lineAndName2.getLeft()).getStation(lineAndName2.getRight(), textLineNumber).getAmplUniqueId();
+        } else {
+            station1Id = metroLine.getStation(station1Name, textLineNumber).getAmplUniqueId();
+            station2Id = metroLine.getStation(station2Name, textLineNumber).getAmplUniqueId();
         }
-
-        String station1Id = metroLine.getStation(station1Name, textLineNumber).getAmplUniqueId();
-        String station2Id = metroLine.getStation(station2Name, textLineNumber).getAmplUniqueId();
 
         switch (constraintType) {
             case "vertical" -> writeVerticalConstraint(station1Id, station2Id);
