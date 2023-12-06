@@ -2,6 +2,10 @@ package com.github.alexandergillon.mini_metro_maps.models;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /** Class for various utility methods. */
 public class Util {
 
@@ -24,7 +28,7 @@ public class Util {
     }
 
     /**
-     * E.g. consume_double_quoted(" \"Hello world!\" rest of string\") -> ("Hello world!", "rest of string")
+     * E.g. consumeDoubleQuoted(" \"Hello world!\" rest of string\") -> ("Hello world!", "rest of string")
      * @param s A string.
      * @param textLineNumber Line number of the input which that string comes from.
      * @return The first double-quoted string within that string (without the quotes), and the rest of the string.
@@ -52,5 +56,37 @@ public class Util {
             }
         }
         return false;
+    }
+
+    /**
+     * Gets all consecutive station pairs in a string of comma-delimited stations.
+     * E.g. allConsecutiveStationPairs("station1, station2, station3, station4") -> [(station1, station2), (station2, station3), (station3, station4)]
+     * This is inefficient as it (essentially) doubles each string. However efficiency is not the objective of this program.
+     * @param stationsString A string of comma-delimited stations.
+     * @param textLineNumber Line number of the input which that string comes from.
+     * @return All consecutive pairs of stations in that string.
+     */
+    public static List<Pair<String, String>> allConsecutiveStationPairs(String stationsString, int textLineNumber) {
+        stationsString = stationsString.strip();
+
+        String[] stations = stationsString.split(",");
+        stations = Arrays.stream(stations).map(String::strip).toArray(String[]::new); // some day, mapping a collection in Java won't be ugly
+        if (stations.length < 2) {
+            throw new IllegalArgumentException(String.format("(line %d) Line has fewer than two stations when >= 2 were expected.", textLineNumber));
+        }
+
+        ArrayList<Pair<String, String>> pairs = new ArrayList<>();
+
+        String currentStation = stations[0];
+        String nextStation;
+        int index = 1;
+        while (index < stations.length) {
+            nextStation = stations[index];
+            pairs.add(Pair.of(currentStation, nextStation));
+            currentStation = nextStation;
+            index++;
+        }
+
+        return pairs;
     }
 }

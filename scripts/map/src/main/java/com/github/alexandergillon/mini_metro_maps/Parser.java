@@ -137,20 +137,9 @@ public class Parser {
         String stationsString = doubleQuotedResult.getLeft();
         stationsString = stationsString.strip();
 
-        String[] stations = stationsString.split(",");
-        stations = Arrays.stream(stations).map(String::strip).toArray(String[]::new); // some day, mapping a collection in Java won't be ugly
-        if (stations.length < 2) {
-            throw new IllegalArgumentException(String.format("(line %d) Edges declaration has fewer than two stations.", textLineNumber));
-        }
-
-        String currentStation = stations[0];
-        String nextStation;
-        int index = 1;
-        while (index < stations.length) {
-            nextStation = stations[index];
-            currentMetroLine.addEdge(currentStation, nextStation, textLineNumber);
-            currentStation = nextStation;
-            index++;
+        List<Pair<String, String>> stationPairs = Util.allConsecutiveStationPairs(stationsString, textLineNumber);
+        for (Pair<String, String> stationPair : stationPairs) {
+            currentMetroLine.addEdge(stationPair.getLeft(), stationPair.getRight(), textLineNumber);
         }
     }
 
