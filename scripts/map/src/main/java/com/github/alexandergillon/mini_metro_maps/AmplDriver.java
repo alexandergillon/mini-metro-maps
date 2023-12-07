@@ -126,7 +126,7 @@ public class AmplDriver {
      * @param textLineNumber Line number of the input which declared this station.
      * @return The metro line name, and station name, as a pair.
      */
-    private Pair<String, String> extractMetroLine(String stationNameWithMetroLine, int textLineNumber) {
+    private static Pair<String, String> extractMetroLine(String stationNameWithMetroLine, int textLineNumber) {
         String[] tokens = stationNameWithMetroLine.split(":");
         if (tokens.length != 2) {
             throw new IllegalArgumentException(String.format("(line %d) Invalid station name (\"lineName: stationName\" expected).", textLineNumber));
@@ -336,6 +336,59 @@ public class AmplDriver {
     }
 
     /**
+     * Processes a summand from how it appears in the input file to how it should appear in the AMPL file.
+     * E.g. processSummand("district: Embankment.x") --> "SOLVED_X_COORDS[AMPL ID]" for the appropriate AMPL ID.
+     * @param summand The summand to process.
+     * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
+     * @param textLineNumber Line number of the input which declared this constraint.
+     * @return The processed summand.
+     */
+    private static String processSummand(String summand, Map<String, MetroLine> metroLines, int textLineNumber) {
+        Pair<String, String> lineAndName = extractMetroLine(summand, textLineNumber);
+        String metroLineName = lineAndName.getLeft().strip();
+        String stationNameWithXOrY = lineAndName.getRight().strip();
+
+        String[] stationNameTokens = stationNameWithXOrY.split("\\."); // splits on the symbol .
+        if (stationNameTokens.length != 2) {
+            throw new IllegalArgumentException(String.format("(line %d) Malformed station \"%s\" in equal expression.",
+                    textLineNumber, stationNameWithXOrY));
+        }
+
+        String stationId = metroLines.get(metroLineName).getStation(stationNameTokens[0].strip(), textLineNumber).getAmplUniqueId();
+        String xOrY = stationNameTokens[1].strip();
+
+        return switch (xOrY) {
+            case "x" -> String.format("SOLVED_X_COORDS[%s]", stationId);
+            case "y" -> String.format("SOLVED_Y_COORDS[%s]", stationId);
+            default -> throw new IllegalArgumentException(String.format("(line %d) Unrecognized station part \"%s\".",
+                    textLineNumber, xOrY));
+        };
+    }
+
+    /**
+     * Process an 'equal' constraint. This is a type of constraint where two sums of X/Y coordinates are required to be equal.
+     * @param inputText The input text which declares the constraint, with "equal" removed.
+     * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
+     * @param textLineNumber Line number of the input which declared this constraint.
+     */
+    private void processEqualConstraint(String inputText, Map<String, MetroLine> metroLines, int textLineNumber) throws IOException {
+        Pair<String, String> lhsResult = Util.consumeDoubleQuoted(inputText, textLineNumber);
+        Pair<String, String> rhsResult = Util.consumeDoubleQuoted(lhsResult.getRight(), textLineNumber);
+
+        String lhs = lhsResult.getLeft();
+        String rhs = rhsResult.getLeft();
+        String[] lhsSummands = lhs.split("\\+"); // splits on the symbol +
+        String[] rhsSummands = rhs.split("\\+");
+
+        lhsSummands = Arrays.stream(lhsSummands).map(String::strip).map(s -> processSummand(s, metroLines, textLineNumber)).toArray(String[]::new);
+        rhsSummands = Arrays.stream(rhsSummands).map(String::strip).map(s -> processSummand(s, metroLines, textLineNumber)).toArray(String[]::new);
+
+        amplModFile.write(String.format("subject to equal_%d: %s = %s;", textLineNumber,
+                String.join(" + ", lhsSummands), String.join(" + ", rhsSummands)));
+        amplModFile.newLine();
+    }
+
+    /**
      * Processes a line of text which represents an alignment constraint between some number of stations.
      * @param textLine The line of input that declares the constraint.
      * @param metroLine The metro line in the network of any stations referred to in the constraint. If null, to be read from each station.
@@ -352,7 +405,7 @@ public class AmplDriver {
             case "vertical", "horizontal", "up-right", "down-right" ->
                     processCardinalDirectionConstraint(textLineRest, constraintType, metroLine, metroLines, textLineNumber);
             case "same-station" -> processSameStationConstraint(textLineRest, metroLines, textLineNumber);
-            case "equal" -> { } // TODO
+            case "equal" -> processEqualConstraint(textLineRest, metroLines, textLineNumber);
             default -> throw new IllegalArgumentException(String.format("Constraint (line %d) is invalid. Earlier code should have already validated this.", textLineNumber));
         }
     }
