@@ -665,7 +665,7 @@ multi-line:
   vertical "piccadilly: Hammersmith (Dist&Picc Line), district: Hammersmith (Dist&Picc Line)"
 
   # This constraint ensures that H&C / circle Hammersmith are aligned above district/piccadilly
-  equal "hammersmith-city: Hammersmith.x + circle: Hammersmith.x" "piccadilly: Hammersmith.x + piccadilly: Hammersmith.x"
+  equal "hammersmith-city: Hammersmith (H&C Line).x + circle: Hammersmith (H&C Line).x" "piccadilly: Hammersmith (Dist&Picc Line).x + piccadilly: Hammersmith (Dist&Picc Line).x"
 
   vertical "piccadilly: Barons Court, district: Barons Court"
   vertical "piccadilly: Earl's Court, district: Earl's Court"
