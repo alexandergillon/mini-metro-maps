@@ -35,7 +35,7 @@ public class Station {
     public Station(String metroLineName, String name, String naptan, int x, int y) {
         this.metroLineName = metroLineName;
         this.name = name;
-        this.amplUniqueId = metroLineName + "_" + naptan;
+        this.amplUniqueId = metroLineName.replace('-', '_') + "_" + naptan;
 
         this.originalX = x;
         this.originalY = y;
