@@ -693,7 +693,7 @@ multi-line:
 
   same-station district left circle "High Street Kensington, Notting Hill Gate, Bayswater"
   same-station district above-left circle "Paddington"
-  same-station "district: Edgeware Road" above "circle: Edgware Road (Circle Line) w/ District"
+  same-station "district: Edgware Road (Circle Line)" above "circle: Edgware Road (Circle Line) w/ District"
 
   # ensures that vic line victoria is in the middle of circ/dist
   vertical "district: Victoria, victoria: Victoria"
@@ -733,7 +733,7 @@ multi-line:
   # metropolitan
   same-station metropolitan below-left jubilee "Wembley Park, Willesden Green, Finchley Road"
   same-station metropolitan exact circle "Baker Street"
-  same-station metropolitan below circle "Great Portland Street, Euston Square, Russell Square"
+  same-station metropolitan below circle "Great Portland Street, Euston Square, King's Cross St. Pancras"
   same-station metropolitan below-left circle "Farringdon, Barbican"
   same-station metropolitan below circle "Moorgate, Liverpool Street"
   same-station metropolitan left circle "Aldgate"
@@ -742,9 +742,10 @@ multi-line:
 
   # H&C line
 
-  same-station hammersmith-city left circle "Hammersmith, Goldhawk Road, Shepherd's Bush Market, Wood Lane, Latimer Road, Ladbroke Grove, Westbourne Park"
+  same-station hammersmith-city left circle "Hammersmith (H&C Line), Goldhawk Road, Shepherd's Bush Market, Wood Lane, Latimer Road, Ladbroke Grove, Westbourne Park"
   same-station hammersmith-city above-left circle "Royal Oak"
-  same-station hammersmith-city above circle "Paddington, Edgeware Road, Baker Street, Great Portland Street, Euston Square, Russell Square"
+  same-station hammersmith-city above circle "Paddington (H&C Line)-Underground, Baker Street, Great Portland Street, Euston Square, King's Cross St. Pancras"
+  same-station "hammersmith-city: Edgware Road (Circle Line)" above "circle: Edgware Road (Circle Line) w/ H&C"
   same-station hammersmith-city above-right circle "Farringdon, Barbican"
   same-station hammersmith-city above circle "Moorgate, Liverpool Street"
 

@@ -28,12 +28,34 @@ public class Util {
     }
 
     /**
+     * E.g. consumeToken("token    rest of string") -> ("token", "rest of string")
+     * @param s A string.
+     * @param textLineNumber Line number of the input which that string comes from.
+     * @return The first token in that string (delimited by whitespace), and the rest of the string.
+     */
+    public static Pair<String, String> consumeToken(String s, int textLineNumber) {
+        s = s.stripLeading();
+        int whitespaceIndex = firstWhitespaceIndex(s);
+        if (whitespaceIndex == -1) {
+            throw new IllegalArgumentException(String.format("(line %d) Token expected.", textLineNumber));
+        }
+
+        String token = s.substring(0, whitespaceIndex);
+        String rest = s.substring(whitespaceIndex+1);
+
+        token = token.strip();
+        rest = rest.stripLeading();
+        return Pair.of(token, rest);
+    }
+
+    /**
      * E.g. consumeDoubleQuoted(" \"Hello world!\" rest of string\") -> ("Hello world!", "rest of string")
      * @param s A string.
      * @param textLineNumber Line number of the input which that string comes from.
      * @return The first double-quoted string within that string (without the quotes), and the rest of the string.
      */
     public static Pair<String, String> consumeDoubleQuoted(String s, int textLineNumber) {
+        s = s.stripLeading();
         int firstQuoteIndex = s.indexOf('"');
         int secondQuoteIndex = s.indexOf('"', firstQuoteIndex+1);
 
@@ -88,5 +110,19 @@ public class Util {
         }
 
         return pairs;
+    }
+
+    /**
+     * Finds the index of the first whitespace character in a string.
+     * @param s A string.
+     * @return The index of the first whitespace character in that string, or -1 if no such character is present.
+     */
+    private static int firstWhitespaceIndex(String s) {
+        for (int i = 0; i < s.length(); i++) {
+            if (Character.isWhitespace(s.charAt(i))) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
