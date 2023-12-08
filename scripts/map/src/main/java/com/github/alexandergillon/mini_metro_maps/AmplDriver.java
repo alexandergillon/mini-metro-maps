@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /** Class to interact with AMPL. */
 public class AmplDriver {
@@ -422,6 +423,39 @@ public class AmplDriver {
     }
 
     /**
+     * Writes the AMPL .dat file.
+     * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
+     */
+    private void writeData(Map<String, MetroLine> metroLines) throws IOException {
+        amplDatFile.write(String.format("param LINE_WIDTH := %d;", metroLineWidth));
+        amplDatFile.newLine();
+        amplDatFile.newLine();
+
+        Stream<Station> stations = metroLines.values().stream().flatMap(metroLine -> metroLine.getStations().values().stream());
+        ArrayList<String> xCoordTokens = new ArrayList<>();
+        ArrayList<String> yCoordTokens = new ArrayList<>();
+        stations.forEach(station -> {
+            xCoordTokens.add(station.getAmplUniqueId());
+            xCoordTokens.add(Integer.toString(station.getOriginalX()));
+
+            yCoordTokens.add(station.getAmplUniqueId());
+            yCoordTokens.add(Integer.toString(station.getOriginalY()));
+        });
+
+        amplDatFile.write("param ORIGINAL_X_COORDS := ");
+        amplDatFile.write(String.join(" ", xCoordTokens));
+        amplDatFile.write(";");
+        amplDatFile.newLine();
+        amplDatFile.newLine();
+
+        amplDatFile.write("param ORIGINAL_Y_COORDS := ");
+        amplDatFile.write(String.join(" ", yCoordTokens));
+        amplDatFile.write(";");
+        amplDatFile.newLine();
+        amplDatFile.newLine();
+    }
+
+    /**
      * Writes the AMPL .mod and .dat files based on the constraints and parameters of the network.
      * @param amplModPath Path to write the AMPL .mod file to.
      * @param amplDatPath Path to write the AMPL .dat file to.
@@ -436,6 +470,7 @@ public class AmplDriver {
 
             writeInitialModel(metroLines);
             processConstraints(constraints, metroLines);
+            writeData(metroLines);
         }
     }
 }

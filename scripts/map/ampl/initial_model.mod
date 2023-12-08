@@ -1,9 +1,10 @@
 set STATIONS = {%};
 
+param LINE_WIDTH;
+# scale factor?
+
 param ORIGINAL_X_COORDS {STATIONS};
 param ORIGINAL_Y_COORDS {STATIONS};
-
-param LINE_WIDTH;
 
 var SOLVED_X_COORDS {STATIONS} integer;
 var SOLVED_Y_COORDS {STATIONS} integer;
