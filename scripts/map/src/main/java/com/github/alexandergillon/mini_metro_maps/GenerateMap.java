@@ -12,12 +12,13 @@ public class GenerateMap {
      * args[0] = input file path
      * args[1] = naptan.json path
      * args[2] = AMPL directory path
-     * \initial_model.mod ampl\temp\model.mod ampl\temp\data.dat
+     * args[3] = output path
      */
     public static void main(String[] args) throws IOException {
         String inputPath = args[0];
         String naptanPath = args[1];
         Path amplDir = Path.of(args[2]);
+        String outputPath = args[3];
 
         String amplInitialModelPath = amplDir.resolve("initial_model.mod").toString();
         String amplModPath = amplDir.resolve("temp").resolve("model.mod").toString();
@@ -25,9 +26,11 @@ public class GenerateMap {
 
         Parser parser = new Parser(inputPath, naptanPath);
         var data = parser.parseData();
+        var metroLines = data.getLeft();
+
         AmplDriver amplDriver = new AmplDriver(amplInitialModelPath, metroLineWidth);
-        amplDriver.writeAmplFiles(amplModPath, amplDatPath, data.getRight(), data.getLeft());
-        System.out.println("Debugging.");
+        amplDriver.writeAmplFiles(amplModPath, amplDatPath, data.getRight(), metroLines);
+        amplDriver.solveAmpl(amplModPath, amplDatPath, outputPath, metroLines);
         System.out.println("Done!");
     }
 }
