@@ -28,5 +28,6 @@ public class GenerateMap {
         AmplDriver amplDriver = new AmplDriver(amplInitialModelPath, metroLineWidth);
         amplDriver.writeAmplFiles(amplModPath, amplDatPath, data.getRight(), data.getLeft());
         System.out.println("Debugging.");
+        System.out.println("Done!");
     }
 }
