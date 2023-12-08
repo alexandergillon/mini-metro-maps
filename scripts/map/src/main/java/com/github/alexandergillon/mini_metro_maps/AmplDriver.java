@@ -463,6 +463,7 @@ public class AmplDriver {
      * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
      */
     public void writeAmplFiles(String amplModPath, String amplDatPath, List<Constraint> constraints, Map<String, MetroLine> metroLines) throws IOException {
+        System.out.println("Writing AMPL files.");
         try (BufferedWriter modFile = new BufferedWriter(new FileWriter(amplModPath));
              BufferedWriter datFile = new BufferedWriter(new FileWriter(amplDatPath))) {
             amplModFile = modFile;

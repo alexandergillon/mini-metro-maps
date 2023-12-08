@@ -251,6 +251,7 @@ public class Parser {
      *   - A list of constraints.
      */
     public Pair<Map<String, MetroLine>, List<Constraint>> parseData() throws IOException {
+        System.out.println("Parsing input data.");
         readData();
         checkNoOrphans();
         return Pair.of(metroLines, constraints);
