@@ -482,6 +482,13 @@ public class AmplDriver {
         }
     }
 
+    /**
+     * Solves the AMPL model and writes the results to the output file.
+     * @param amplModPath Path to the AMPL .mod path.
+     * @param amplDatPath Path to the AMPL .dat path.
+     * @param outputPath Output path, to save results to.
+     * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
+     */
     public void solveAmpl(String amplModPath, String amplDatPath, String outputPath, Map<String, MetroLine> metroLines) throws IOException {
         System.out.println("Solving AMPL model.");
         try (AMPL ampl = new AMPL()) {
