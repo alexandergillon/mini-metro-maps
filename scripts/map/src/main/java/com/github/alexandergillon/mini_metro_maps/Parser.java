@@ -3,7 +3,6 @@ package com.github.alexandergillon.mini_metro_maps;
 import com.github.alexandergillon.mini_metro_maps.models.Constraint;
 import com.github.alexandergillon.mini_metro_maps.models.MetroLine;
 import com.github.alexandergillon.mini_metro_maps.models.Station;
-import com.github.alexandergillon.mini_metro_maps.models.Util;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 

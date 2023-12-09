@@ -5,8 +5,11 @@ import java.nio.file.Path;
 
 public class GenerateMap {
 
+    /** Scale factor for the map. If adjusted, line width should be adjusted too. */
+    private static final int SCALE_FACTOR = 5;
+
     /** Line width of a metro line on the map, in pixels. */
-    private static final int metroLineWidth = 10;
+    private static final int METRO_LINE_WIDTH = 10 * SCALE_FACTOR;
 
     /**
      * args[0] = input file path
@@ -28,7 +31,7 @@ public class GenerateMap {
         var data = parser.parseData();
         var metroLines = data.getLeft();
 
-        AmplDriver amplDriver = new AmplDriver(amplInitialModelPath, metroLineWidth);
+        AmplDriver amplDriver = new AmplDriver(amplInitialModelPath, SCALE_FACTOR, METRO_LINE_WIDTH);
         amplDriver.writeAmplFiles(amplModPath, amplDatPath, data.getRight(), metroLines);
         amplDriver.solveAmpl(amplModPath, amplDatPath, outputPath, metroLines);
         System.out.println("Done!");
