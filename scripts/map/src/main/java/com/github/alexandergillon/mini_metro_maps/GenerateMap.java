@@ -1,7 +1,12 @@
 package com.github.alexandergillon.mini_metro_maps;
 
+import com.github.alexandergillon.mini_metro_maps.models.MetroLine;
+
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class GenerateMap {
 
@@ -10,6 +15,28 @@ public class GenerateMap {
 
     /** Line width of a metro line on the map, in pixels. */
     private static final int METRO_LINE_WIDTH = 10 * SCALE_FACTOR;
+
+    /**
+     * How long of a prefix you need to take from each metro line's name to ensure that all prefixes are unique.
+     * Used to try and compress station AMPL identifiers. A value of -1 means use the entire length of metro line name.
+     */
+    public static final int METRO_LINE_PREFIX_LENGTH = 2;
+
+    /**
+     * Ensures that metroLinePrefixLength is set high enough so that all prefixes of metro line names are unique.
+     * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
+     */
+    private static void checkPrefixLength(Map<String, MetroLine> metroLines) {
+        if (METRO_LINE_PREFIX_LENGTH == -1) {
+            return;
+        }
+
+        Set<String> prefixes = new HashSet<>(metroLines.values().stream().map(line -> line.getName().substring(0, METRO_LINE_PREFIX_LENGTH)).toList());
+        if (prefixes.size() != metroLines.values().size()) {
+            // Prefixes are not unique.
+            throw new IllegalStateException(String.format("Metro line prefixes are not unique with prefix length %d.", METRO_LINE_PREFIX_LENGTH));
+        }
+    }
 
     /**
      * args[0] = input file path
@@ -30,6 +57,8 @@ public class GenerateMap {
         Parser parser = new Parser(inputPath, naptanPath);
         var data = parser.parseData();
         var metroLines = data.getLeft();
+
+        checkPrefixLength(metroLines);
 
         AmplDriver amplDriver = new AmplDriver(amplInitialModelPath, SCALE_FACTOR, METRO_LINE_WIDTH);
         amplDriver.writeAmplFiles(amplModPath, amplDatPath, data.getRight(), metroLines);
