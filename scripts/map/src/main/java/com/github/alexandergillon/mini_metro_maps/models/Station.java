@@ -1,5 +1,6 @@
 package com.github.alexandergillon.mini_metro_maps.models;
 
+import com.github.alexandergillon.mini_metro_maps.GenerateMap;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,22 +27,24 @@ public class Station {
 
     /** X coordinate of this station, as solved by AMPL. -1 until solved. */
     @Setter
-    private int solvedX;
+    private int solvedX = -1;
 
     /** Y coordinate of this station, as solved by AMPL. -1 until solved. */
     @Setter
-    private int solvedY;
+    private int solvedY = -1;
 
     public Station(String metroLineName, String name, String naptan, int x, int y) {
         this.metroLineName = metroLineName;
         this.name = name;
-        this.amplUniqueId = metroLineName.replace('-', '_') + "_" + naptan;
+
+        if (GenerateMap.METRO_LINE_PREFIX_LENGTH == -1) {
+            this.amplUniqueId = metroLineName.replace("-", "") + "_" + naptan;
+        } else {
+            this.amplUniqueId = metroLineName.substring(0, GenerateMap.METRO_LINE_PREFIX_LENGTH).replace("-", "") + "_" + naptan;
+        }
 
         this.originalX = x;
         this.originalY = y;
-
-        this.solvedX = -1;
-        this.solvedY = -1;
     }
 
     @Override
