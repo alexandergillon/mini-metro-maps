@@ -33,6 +33,9 @@ public class AmplDriver {
     /** AMPL data file. */
     private BufferedWriter amplDatFile;
 
+    /** Scale factor for the map. */
+    private final int scaleFactor;
+
     /** Line width of a metro line on the map, in pixels. */
     private final int metroLineWidth;
 
@@ -45,8 +48,9 @@ public class AmplDriver {
     /**
      * @param initialModelPath Path to the initial AMPL model file.
      */
-    public AmplDriver(String initialModelPath, int metroLineWidth) {
+    public AmplDriver(String initialModelPath, int scaleFactor, int metroLineWidth) {
         this.initialModelPath = initialModelPath;
+        this.scaleFactor = scaleFactor;
         this.metroLineWidth = metroLineWidth;
         this.diagonalOffset = (int)Math.floor(((double)metroLineWidth) / Math.sqrt(2));
     }
@@ -434,6 +438,8 @@ public class AmplDriver {
      * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
      */
     private void writeData(Map<String, MetroLine> metroLines) throws IOException {
+        amplDatFile.write(String.format("param SCALE_FACTOR := %d;", scaleFactor));
+        amplDatFile.newLine();
         amplDatFile.write(String.format("param LINE_WIDTH := %d;", metroLineWidth));
         amplDatFile.newLine();
         amplDatFile.newLine();
