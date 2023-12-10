@@ -1,4 +1,4 @@
 # Include docs folder in language statistics, as this is where website is hosted from. But still exclude libraries.
-mini-metro-maps/docs/** -linguist-documentation
-mini-metro-maps/docs/js/paper.js linguist-vendored
-mini-metro-maps/docs/js/paper.min.js linguist-vendored
+docs/** -linguist-documentation
+docs/js/paper.js linguist-vendored
+docs/js/paper.min.js linguist-vendored
