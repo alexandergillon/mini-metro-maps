@@ -1,4 +1,4 @@
-package com.github.alexandergillon.mini_metro_maps.models;
+package com.github.alexandergillon.mini_metro_maps.models.output;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,14 +12,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class OutputStation {
 
-    /** Name of the station's metro line. */
-    private String metroLine;
+    /** Unique identifier for the station. */
+    private String id;
 
     /** Name of the station. */
     private String name;
-
-    /** Unique identifier for the station. */
-    private String id;
 
     /** X coordinate of the station. */
     private int x;
