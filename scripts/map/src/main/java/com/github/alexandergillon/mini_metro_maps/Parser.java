@@ -37,7 +37,7 @@ public class Parser {
      * @param inputPath Path to the input data file.
      * @param naptanFilepath Path to naptan.json.
      */
-    public Parser(String inputPath, String naptanFilepath) {
+    public Parser(String inputPath, String naptanFilepath) throws IOException {
         this.inputPath = inputPath;
         naptanReader = new NaptanReader(naptanFilepath);
     }

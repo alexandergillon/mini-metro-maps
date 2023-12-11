@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.alexandergillon.mini_metro_maps.models.NaptanEntry;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 
@@ -19,7 +20,7 @@ public class NaptanReader {
     /** Jackson ObjectMapper for JSON parsing. */
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public NaptanReader(String path) {
+    public NaptanReader(String path) throws IOException {
         buildNameToNaptan(path);
     }
 
@@ -48,15 +49,10 @@ public class NaptanReader {
      * Builds the nameToNaptan mapping from the naptan.json file.
      * @param path Path to the naptan.json file.
      */
-    private void buildNameToNaptan(String path) {
-        try {
-            NaptanEntry[] naptanEntries = objectMapper.readValue(new File(path), NaptanEntry[].class);
-            for (NaptanEntry naptanEntry : naptanEntries) {
-                nameToNaptan.put(naptanEntry.getName(), naptanEntry.getNaptanId());
-            }
-        } catch (Exception e) {
-            // We want to fail immediately - failure is unrecoverable.
-            throw new RuntimeException(e);
+    private void buildNameToNaptan(String path) throws IOException {
+        NaptanEntry[] naptanEntries = objectMapper.readValue(new File(path), NaptanEntry[].class);
+        for (NaptanEntry naptanEntry : naptanEntries) {
+            nameToNaptan.put(naptanEntry.getName(), naptanEntry.getNaptanId());
         }
     }
 }
