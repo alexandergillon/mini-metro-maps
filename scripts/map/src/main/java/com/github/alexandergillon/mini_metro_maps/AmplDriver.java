@@ -1,15 +1,12 @@
 package com.github.alexandergillon.mini_metro_maps;
 
 import com.ampl.AMPL;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.alexandergillon.mini_metro_maps.models.Constraint;
 import com.github.alexandergillon.mini_metro_maps.models.MetroLine;
-import com.github.alexandergillon.mini_metro_maps.models.OutputStation;
 import com.github.alexandergillon.mini_metro_maps.models.Station;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -40,9 +37,6 @@ public class AmplDriver {
 
     /** X/Y offset of two stations that are diagonally adjacent. */
     private final int diagonalOffset;
-
-    /** Jackson ObjectMapper for JSON parsing. */
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * @param initialModelPath Path to the initial AMPL model file.
@@ -488,13 +482,12 @@ public class AmplDriver {
     }
 
     /**
-     * Solves the AMPL model and writes the results to the output file.
+     * Solves the AMPL model and stores the solved coordinates for each station.
      * @param amplModPath Path to the AMPL .mod path.
      * @param amplDatPath Path to the AMPL .dat path.
-     * @param outputPath Output path, to save results to.
      * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
      */
-    public void solveAmpl(String amplModPath, String amplDatPath, String outputPath, Map<String, MetroLine> metroLines) throws IOException {
+    public void solveAmpl(String amplModPath, String amplDatPath, Map<String, MetroLine> metroLines) throws IOException {
         System.out.println("Solving AMPL model.");
         try (AMPL ampl = new AMPL()) {
             ampl.read(amplModPath);
@@ -503,19 +496,12 @@ public class AmplDriver {
 
             ampl.solve();
 
-            ArrayList<OutputStation> outputStations = new ArrayList<>();
             for (MetroLine metroLine : metroLines.values()) {
                 for (Station station : metroLine.getStations().values()) {
                     station.setSolvedX((int)(double)ampl.getValue(String.format("SOLVED_X_COORDS[\"%s\"]", station.getAmplUniqueId())));
                     station.setSolvedY((int)(double)ampl.getValue(String.format("SOLVED_Y_COORDS[\"%s\"]", station.getAmplUniqueId())));
-
-                    outputStations.add(new OutputStation(metroLine.getName(), station.getName(),
-                            station.getAmplUniqueId(), station.getSolvedX(), station.getSolvedY()));
                 }
             }
-
-            Files.createDirectories(Path.of(outputPath).getParent());
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(outputPath), outputStations);
         }
     }
 }

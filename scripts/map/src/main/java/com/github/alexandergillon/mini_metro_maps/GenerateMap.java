@@ -62,7 +62,7 @@ public class GenerateMap {
 
         AmplDriver amplDriver = new AmplDriver(amplInitialModelPath, SCALE_FACTOR, METRO_LINE_WIDTH);
         amplDriver.writeAmplFiles(amplModPath, amplDatPath, data.getRight(), metroLines);
-        amplDriver.solveAmpl(amplModPath, amplDatPath, outputPath, metroLines);
+        amplDriver.solveAmpl(amplModPath, amplDatPath, metroLines);
         System.out.println("Done!");
     }
 }
