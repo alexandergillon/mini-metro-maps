@@ -507,6 +507,7 @@ line northern:
   edges "Kennington, Oval, Stockwell, Clapham North, Clapham Common, Clapham South, Balham, Tooting Bec, Tooting Broadway, Colliers Wood, South Wimbledon, Morden"
 
   curve "Mill Hill East, Finchley Central" down-right,down
+  curve "Tufnell Park, Kentish Town" down,down-left
   curve "Kentish Town, Camden Town" down-left,down
   curve "Chalk Farm, Camden Town" down-right,down
   curve "Camden Town, Mornington Crescent" special
@@ -522,7 +523,7 @@ line northern:
 
   horizontal "Battersea Power Station, Nine Elms"
   up-right "Morden, South Wimbledon, Colliers Wood, Tooting Broadway, Tooting Bec, Balham, Clapham South, Clapham Common, Clapham Common, Clapham North, Stockwell, Oval, Kennington, Elephant & Castle, Borough"
-  vertical "Waterloo, Embankment, Charing Cross, Leicester Square, Tottenham Court Road, Warren Street"
+  vertical "Waterloo, Embankment, Charing Cross, Leicester Square, Tottenham Court Road, Goodge Street, Warren Street"
   vertical "London Bridge, Bank, Moorgate"
   vertical "Euston (Charing Cross branch), Mornington Crescent"
   vertical "Tufnell Park, Archway, Highgate, East Finchley, Finchley Central, West Finchley, Woodside Park, Totteridge & Whetstone, High Barnet"
@@ -593,6 +594,7 @@ line piccadilly:
   curve "Heathrow Terminal 5, Heathrow Terminals 2 & 3" up,up-right
   curve "Heathrow Terminal 4, Heathrow Terminals 2 & 3" special
   curve "Hatton Cross, Heathrow Terminal 4" special
+  curve "Northfields, South Ealing" up-right,right
   curve "South Kensington, Knightsbridge" right,up-right
   curve "Hyde Park Corner, Green Park" up-right,right
   curve "Piccadilly Circus, Leicester Square" right,up-right
@@ -602,7 +604,7 @@ line piccadilly:
   
   horizontal "Uxbridge, Hillingdon, Ickenham, Ruislip"
   down-right "Ruislip Manor, Eastcote, Rayners Lane"
-  vertical "South Harrow, Sudbury Hill, Sudbury Town, Alperton, Park Royal, Ealing Common"
+  vertical "South Harrow, Sudbury Hill, Sudbury Town, Alperton, Park Royal, North Ealing, Ealing Common"
   up-right "Heathrow Terminals 2 & 3, Hatton Cross, Hounslow West, Hounslow Central, Hounslow East, Osterley, Boston Manor, Northfields"
   horizontal "South Ealing, Acton Town, Turnham Green, Hammersmith (Dist&Picc Line), Barons Court, Earl's Court, Gloucester Road, South Kensington"
   up-right "Knightsbridge, Hyde Park Corner"
@@ -640,7 +642,7 @@ line victoria:
   curve "Finsbury Park, Seven Sisters" up-right,right
 
   up-left "Brixton, Stockwell, Vauxhall"
-  vertical "Pimlico, Victoria"
+  vertical "Pimlico, Victoria, Green Park"
   up-right "Oxford Circus, Warren Street"
   horizontal "Euston, King's Cross St. Pancras"
   horizontal "Seven Sisters, Tottenham Hale, Blackhorse Road, Walthamstow Central"

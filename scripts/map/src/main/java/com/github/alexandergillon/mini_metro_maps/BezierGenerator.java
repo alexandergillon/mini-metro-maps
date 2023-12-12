@@ -182,7 +182,7 @@ public class BezierGenerator {
         assert station1.getX() < station2.getX(); // station 2 is to the right of station 1
         assert station1.getY() < station2.getY(); // station 2 is below station 1
 
-        Point intersectionPoint = new Point(station1.getY(), station2.getX());
+        Point intersectionPoint = new Point(station2.getX(), station1.getY());
 
         Point bezierP0 = intersectionPoint.add(modelSharpCurve.getP0Offset());
         Point bezierP1 = intersectionPoint.add(modelSharpCurve.getP1Offset());
@@ -203,7 +203,7 @@ public class BezierGenerator {
 
         segments.add(OutputLineSegment.fromBezierCurve(new BezierCurve(bezierP0, bezierP1, bezierP2, bezierP3)));
 
-        if (bezierP3.getY() > station2.getY()) {
+        if (bezierP3.getY() < station2.getY()) {
             segments.add(OutputLineSegment.fromStraightLine(new StraightLine(bezierP3, station2)));
         }
 
@@ -214,43 +214,53 @@ public class BezierGenerator {
      * Joins two stations with a sharp curve. Curves are obtained by transforming the curves to a common curve type with
      * reflections, obtain the curve, and transforming the curve back. It's easiest to see how each case works by
      * drawing them out with a pen and paper.
-     * @param curve A sharp curve between two stations.
-     * @return Line segments for a sharp curve that draws the input curve.
+     * @param station1 Coordinates of the first station.
+     * @param station2 Coordinates of the second station.
+     * @param curveType Type of the sharp curve between the two stations.
+     * @return Line segments for a sharp curve with that curve type between those two stations.
      */
-    private List<OutputLineSegment> toSharpCurve(Curve curve) {
-        Point station1 = Point.fromSolvedStationCoordinates(curve.from());
-        Point station2 = Point.fromSolvedStationCoordinates(curve.to());
-
-        switch (curve.type()) {
+    private List<OutputLineSegment> toSharpCurve(Point station1, Point station2, String curveType) {
+        switch (curveType) {
             case "right,down" -> {
                 return toSharpCurveRightDown(station1, station2);
             }
             case "right,up" -> {
                 Point reflectedStation2 = MathUtil.reflectY(station2, station1.getY());
                 var rightDownCurve = toSharpCurveRightDown(station1, reflectedStation2);
-                return MathUtil.reflectY(rightDownCurve, station2.getY());
+                return MathUtil.reflectY(rightDownCurve, station1.getY());
             }
             case "down,right" -> {
-                var rightDownCurve = toSharpCurveRightDown(station1, station2);
-                return MathUtil.reflect(rightDownCurve, station1, station2);
+                Point reflectedStation2 = MathUtil.reflect(station2, station1, station1.add(1, 1));
+                var rightDownCurve = toSharpCurveRightDown(station1, reflectedStation2);
+                return MathUtil.reflect(rightDownCurve, station1, station1.add(1, 1));
             }
             case "up,right" -> {
                 Point reflectedStation2 = MathUtil.reflectY(station2, station1.getY());
-                var rightDownCurve = toSharpCurveRightDown(station1, reflectedStation2);
-                var rightUpCurve = MathUtil.reflectY(rightDownCurve, station2.getY());
-                return MathUtil.reflect(rightUpCurve, station1, station2);
+                var downRightCurve = toSharpCurve(station1, reflectedStation2, "down,right");
+                return MathUtil.reflectY(downRightCurve, station1.getY());
             }
-            default -> throw new IllegalArgumentException(String.format("Invalid curve type %s in toSharpCurve.", curve.type()));
+            default -> throw new IllegalArgumentException(String.format("Invalid curve type %s in toSharpCurve.", curveType));
         }
+    }
+
+    /**
+     * Joins two stations with a sharp curve.
+     * @param curve A sharp curve between two stations.
+     * @return Line segments for a sharp curve that draws the input curve.
+     */
+    private List<OutputLineSegment> toSharpCurve(Curve curve) {
+        Point station1 = Point.fromSolvedStationCoordinates(curve.from());
+        Point station2 = Point.fromSolvedStationCoordinates(curve.to());
+        return toSharpCurve(station1, station2, curve.type());
     }
 
     /**
      * Joins two stations with a wide curve, which leaves the first station going right and enters the second
      * station going down-right. Diagram is very zoomed in, due to limitations of ASCII art:
      *
-     * station1 -------------------\       o <-- intersection point
-     *                              \
-     *                               \
+     * station1 -------------\      o <-- intersection point
+     *                        --\
+     *                           --- _
      *                                \
      *                                 \
      *                                  \
@@ -258,7 +268,6 @@ public class BezierGenerator {
      *                                    \
      *                                     \
      *                                  station2
-     *
      *
      * See ModelBezierCurve.java for more information on the intersection point.
      *
@@ -270,7 +279,7 @@ public class BezierGenerator {
         assert station1.getX() < station2.getX(); // station 2 is to the right of station 1
         assert station1.getY() < station2.getY(); // station 2 is below station 1
 
-        Point intersectionPoint = new Point(station1.getY(), station2.getX());
+        Point intersectionPoint = MathUtil.intersectionWithY(station2, station2.subtract(1, 1), station1.getY());
 
         Point bezierP0 = intersectionPoint.add(modelWideCurve.getP0Offset());
         Point bezierP1 = intersectionPoint.add(modelWideCurve.getP1Offset());

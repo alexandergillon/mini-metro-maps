@@ -41,7 +41,7 @@ public class Point {
 
     /** Returns the point obtained by adding another point's x and y to this point's x and y. */
     public Point add(Point p) {
-        return new Point(x + p.getX(), y + p.getY());
+        return new Point(x + p.x, y + p.y);
     }
 
     /** Returns the point obtained by subtracting dx and dy from this point's x and y. */
@@ -52,6 +52,13 @@ public class Point {
     /** Returns the point obtained by scaling this point from the origin with a factor of c. */
     public Point scale(int c) {
         return new Point(x * c, y * c);
+    }
+
+    /** Returns the distance between this point and another point. */
+    public double distanceFrom(Point p) {
+        int dx = x - p.x;
+        int dy = y - p.y;
+        return Math.sqrt(dx * dx + dy * dy);
     }
 
     /** Converts this Point to an Apache Commons Math matrix. */
