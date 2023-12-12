@@ -120,6 +120,13 @@ public class BezierGenerator {
      * @return Line segments for that curve.
      */
     public List<OutputLineSegment> toLineSegments(Curve curve) {
+        if (curve.type().equals("special")) {
+            // todo: handle properly
+            Point station1 = Point.fromSolvedStationCoordinates(curve.from());
+            Point station2 = Point.fromSolvedStationCoordinates(curve.to());
+            return List.of(OutputLineSegment.fromStraightLine(new StraightLine(station1, station2)));
+        }
+
         Curve canonicalCurve = toCanonical(curve);
         if (ArrayUtils.contains(CANONICAL_SHARP_CURVE_TYPES, canonicalCurve.type())) {
             return toSharpCurve(canonicalCurve);
