@@ -15,6 +15,14 @@ public class MathUtil {
     }
 
     /**
+     * Approximate double equality.
+     * This doesn't generalize to very large doubles, but with maps we are not working with numbers that are that large.
+     */
+    public static boolean approxEqual(double d1, double d2) {
+        return Math.abs(d1 - d2) < 0.0000001;
+    }
+
+    /**
      * Normalizes a 2D vector.
      * @param v A 2D vector.
      * @return v, normalized.

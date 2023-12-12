@@ -27,6 +27,21 @@ public class Point {
         return new Point(x + dx, y + dy);
     }
 
+    /** Returns the point obtained by adding another point's x and y to this point's x and y. */
+    public Point add(Point p) {
+        return new Point(x + p.getX(), y + p.getY());
+    }
+
+    /** Returns the point obtained by subtracting dx and dy from this point's x and y. */
+    public Point subtract(double dx, double dy) {
+        return new Point(x - dx, y - dy);
+    }
+
+    /** Returns the point obtained by scaling this point from the origin with a factor of c. */
+    public Point scale(double c) {
+        return new Point(x * c, y * c);
+    }
+
     /** Converts this Point to an Apache Commons Math matrix. */
     public RealMatrix toRealMatrix() {
         return MatrixUtils.createRealMatrix(new double[][]{{x}, {y}});

@@ -23,4 +23,9 @@ public class BezierCurve {
     public String toString() {
         return String.format("BezierCurve(%s, %s, %s, %s)", p0.toString(), p1.toString(), p2.toString(), p3.toString());
     }
+
+    /** Returns the Bezier curve obtained by scaling this point from the origin with a factor of c. */
+    public BezierCurve scale(double c) {
+        return new BezierCurve(p0.scale(c), p1.scale(c), p2.scale(c), p3.scale(c));
+    }
 }
