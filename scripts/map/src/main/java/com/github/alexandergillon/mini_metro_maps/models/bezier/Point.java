@@ -1,5 +1,6 @@
 package com.github.alexandergillon.mini_metro_maps.models.bezier;
 
+import com.github.alexandergillon.mini_metro_maps.models.Station;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,11 @@ public class Point {
         return String.format("(%.2f, %.2f)", x, y);
     }
 
+    /** Returns the point obtained by adding dx and dy to this point's x and y. */
+    public Point add(double dx, double dy) {
+        return new Point(x + dx, y + dy);
+    }
+
     /** Converts this Point to an Apache Commons Math matrix. */
     public RealMatrix toRealMatrix() {
         return MatrixUtils.createRealMatrix(new double[][]{{x}, {y}});
@@ -29,5 +35,10 @@ public class Point {
     /** Converts an Apache Commons Math matrix to a Point. */
     public static Point fromRealMatrix(RealMatrix m) {
         return new Point(m.getEntry(0, 0), m.getEntry(1, 0));
+    }
+
+    /** Converts the solved coordinates in a Station to a Point. */
+    public static Point fromSolvedStationCoordinates(Station station) {
+        return new Point(station.getSolvedX(), station.getSolvedY());
     }
 }
