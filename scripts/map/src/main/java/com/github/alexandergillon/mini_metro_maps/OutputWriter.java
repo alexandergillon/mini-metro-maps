@@ -100,7 +100,7 @@ public class OutputWriter {
 
         for (Edge edge : metroLine.getEdges()) {
             // Other edges must be straight lines - give them a straight line segment.
-            if (!seenEdges.contains(edge)) {
+            if (!seenEdges.contains(edge) && !seenEdges.contains(new Edge(edge.to(), edge.from()))) {
                 Station station1 = edge.from();
                 Station station2 = edge.to();
 
@@ -119,6 +119,7 @@ public class OutputWriter {
 
     /** Validates that two stations lie on a cardinal direction/diagonal. */
     private void validateStraightEdge(Station station1, Station station2) {
+        // todo: potentially move this to parsing stage
         Point station1Coords = Point.fromSolvedStationCoordinates(station1);
         Point station2Coords = Point.fromSolvedStationCoordinates(station2);
         if (!(
