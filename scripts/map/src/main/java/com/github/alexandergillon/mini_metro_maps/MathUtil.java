@@ -2,6 +2,8 @@ package com.github.alexandergillon.mini_metro_maps;
 
 import com.github.alexandergillon.mini_metro_maps.models.bezier.Point;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputLineSegment;
+import org.apache.commons.math3.geometry.euclidean.twod.Line;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
@@ -14,12 +16,15 @@ public class MathUtil {
         throw new IllegalStateException("Utility classes should not be instantiated.");
     }
 
+    /** Epsilon for when doubles are considered equal. Probably only good for not huge doubles, which is OK. */
+    private static final double DOUBLE_TOLERANCE = 0.0000001;
+
     /**
      * Approximate double equality.
      * This doesn't generalize to very large doubles, but with maps we are not working with numbers that are that large.
      */
     public static boolean approxEqual(double d1, double d2) {
-        return Math.abs(d1 - d2) < 0.0000001;
+        return Math.abs(d1 - d2) < DOUBLE_TOLERANCE;
     }
 
     /** Returns whether a double is approximately an integer. */
@@ -172,5 +177,20 @@ public class MathUtil {
     /** Reflects a list of line segments in the lines x = c, y = d. */
     public static List<OutputLineSegment> reflectXY(List<OutputLineSegment> lineSegments, double c, double d) {
         return lineSegments.stream().map(lineSegment -> reflectXY(lineSegment, c, d)).toList();
+    }
+
+    /** Returns the intersection point between the line passing through p0, p1 and the line y = c. */
+    public static Point intersectionWithY(Point p0, Point p1, int c) {
+        Vector2D p0Vector = new Vector2D(p0.getX(), p0.getY());
+        Vector2D p1Vector = new Vector2D(p1.getX(), p1.getY());
+
+        Vector2D yPoint = new Vector2D(0, c);
+
+        Line p0P1Line = new Line(p0Vector, p1Vector, DOUBLE_TOLERANCE);
+        Line yEqualsCLine = new Line(yPoint, 0, DOUBLE_TOLERANCE);
+
+        Vector2D intersection = p0P1Line.intersection(yEqualsCLine);
+
+        return new Point(intersection.getX(), intersection.getY());
     }
 }

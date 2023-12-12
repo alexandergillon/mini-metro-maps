@@ -28,9 +28,9 @@ import lombok.Setter;
  *
  * Or, for a wide curve:
  *
- * station1 -------------------\       o <-- intersection point
- *                              \
- *                               \
+ * station1 -------------\      o <-- intersection point
+ *                        --\
+ *                           --- _
  *                                \
  *                                 \
  *                                  \
@@ -39,7 +39,7 @@ import lombok.Setter;
  *                                     \
  *                                  station2
  *
- * These don't look very different due to the limitations of ASCII art. However, note that the sharp curve goes
+ * It's hard to make these look great due to the limitations of ASCII art. However, note that the sharp curve goes
  * from a horizontal to a vertical, whereas the wide curve goes from a horizontal to a diagonal.
  *
  * This class is separate from BezierCurve to ensure that the semantic difference between a ModelBezierCurve and a
