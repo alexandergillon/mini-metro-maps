@@ -28,12 +28,12 @@ public class OutputLineSegment {
     private Point p3;
 
     /** Converts a StraightLine into an OutputLineSegment. */
-    public OutputLineSegment fromStraightLine(StraightLine straightLine) {
+    public static OutputLineSegment fromStraightLine(StraightLine straightLine) {
         return new OutputLineSegment(true, straightLine.getP0(), straightLine.getP1(), null, null);
     }
 
     /** Converts a BezierCurve into an OutputLineSegment. */
-    public OutputLineSegment fromBezierCurve(BezierCurve bezierCurve) {
+    public static OutputLineSegment fromBezierCurve(BezierCurve bezierCurve) {
         return new OutputLineSegment(false, bezierCurve.getP0(), bezierCurve.getP1(), bezierCurve.getP2(), bezierCurve.getP3());
     }
 
