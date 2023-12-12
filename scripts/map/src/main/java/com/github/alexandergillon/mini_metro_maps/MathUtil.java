@@ -22,6 +22,20 @@ public class MathUtil {
         return Math.abs(d1 - d2) < 0.0000001;
     }
 
+    /** Returns whether a double is approximately an integer. */
+    public static boolean approxInt(double d) {
+        return approxEqual(Math.round(d), d);
+    }
+
+    /** Rounds a double, symmetrically. E.g. symmetricRound(1.5) = 2, symmetricRound(-1.5) = -2. */
+    public static double symmetricRound(double d) {
+        if (d >= 0) {
+            return Math.floor(d + 0.5d);
+        } else {
+            return Math.ceil(d - 0.5d);
+        }
+    }
+
     /**
      * Normalizes a 2D vector.
      * @param v A 2D vector.

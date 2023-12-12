@@ -1,5 +1,6 @@
 package com.github.alexandergillon.mini_metro_maps.models.bezier;
 
+import com.github.alexandergillon.mini_metro_maps.MathUtil;
 import com.github.alexandergillon.mini_metro_maps.models.Station;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,16 +15,27 @@ import org.apache.commons.math3.linear.RealMatrix;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Point {
-    private double x;
-    private double y;
+    private int x;
+    private int y;
+
+    /** Constructor for converting from double coordinate values. Input x, y must approximately be integers. */
+    public Point(double x, double y) {
+        assert MathUtil.approxInt(x);
+        assert MathUtil.approxInt(y);
+        assert x > Integer.MIN_VALUE && x < Integer.MAX_VALUE;
+        assert y > Integer.MIN_VALUE && y < Integer.MAX_VALUE;
+
+        this.x = (int)x;
+        this.y = (int)y;
+    }
 
     @Override
     public String toString() {
-        return String.format("(%.2f, %.2f)", x, y);
+        return String.format("(%d, %d)", x, y);
     }
 
     /** Returns the point obtained by adding dx and dy to this point's x and y. */
-    public Point add(double dx, double dy) {
+    public Point add(int dx, int dy) {
         return new Point(x + dx, y + dy);
     }
 
@@ -33,12 +45,12 @@ public class Point {
     }
 
     /** Returns the point obtained by subtracting dx and dy from this point's x and y. */
-    public Point subtract(double dx, double dy) {
+    public Point subtract(int dx, int dy) {
         return new Point(x - dx, y - dy);
     }
 
     /** Returns the point obtained by scaling this point from the origin with a factor of c. */
-    public Point scale(double c) {
+    public Point scale(int c) {
         return new Point(x * c, y * c);
     }
 

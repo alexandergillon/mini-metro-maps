@@ -1,5 +1,6 @@
 package com.github.alexandergillon.mini_metro_maps.models.bezier;
 
+import com.github.alexandergillon.mini_metro_maps.MathUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -59,8 +60,29 @@ public class ModelBezierCurve {
         return String.format("BezierCurve(%s, %s, %s, %s)", p0Offset.toString(), p1Offset.toString(), p2Offset.toString(), p3Offset.toString());
     }
 
-    /** Returns the Bezier curve obtained by scaling this point from the origin with a factor of c. */
+    /**
+     * Returns the Bezier curve obtained by scaling this point from the origin with a factor of c.
+     * As everything runs on integer coordinates, this method is unlikely to produce good results if the resulting
+     * coordinate values will be very small, due to rounding errors.
+     * */
     public ModelBezierCurve scale(double c) {
-        return new ModelBezierCurve(p0Offset.scale(c), p1Offset.scale(c), p2Offset.scale(c), p3Offset.scale(c));
+        Point newP0Offset = new Point(
+                MathUtil.symmetricRound(p0Offset.getX() * c),
+                MathUtil.symmetricRound(p0Offset.getY() * c)
+        );
+        Point newP1Offset = new Point(
+                MathUtil.symmetricRound(p1Offset.getX() * c),
+                MathUtil.symmetricRound(p1Offset.getY() * c)
+        );
+        Point newP2Offset = new Point(
+                MathUtil.symmetricRound(p2Offset.getX() * c),
+                MathUtil.symmetricRound(p2Offset.getY() * c)
+        );
+        Point newP3Offset = new Point(
+                MathUtil.symmetricRound(p3Offset.getX() * c),
+                MathUtil.symmetricRound(p3Offset.getY() * c)
+        );
+
+        return new ModelBezierCurve(newP0Offset, newP1Offset, newP2Offset, newP3Offset);
     }
 }
