@@ -96,7 +96,7 @@ public class BezierGenerator {
 
     /**
      * Constructor. Reads in the model curves from bezier.json.
-     * @param bezierPath Path to bezier.json.
+     * @param bezierPath Path to bezier.json, for model Bezier curves.
      */
     public BezierGenerator(String bezierPath) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
