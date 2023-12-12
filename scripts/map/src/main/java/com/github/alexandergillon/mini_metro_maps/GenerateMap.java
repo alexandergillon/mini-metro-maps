@@ -11,7 +11,7 @@ import java.util.Set;
 public class GenerateMap {
 
     /** Scale factor for the map. If adjusted, line width should be adjusted too. */
-    private static final int SCALE_FACTOR = 5;
+    public static final int SCALE_FACTOR = 5;
 
     /** Line width of a metro line on the map, in pixels. */
     private static final int METRO_LINE_WIDTH = 10 * SCALE_FACTOR;
@@ -42,13 +42,17 @@ public class GenerateMap {
      * args[0] = input file path
      * args[1] = naptan.json path
      * args[2] = AMPL directory path
-     * args[3] = output path
+     * args[3] = bezier.json path
+     * args[4] = colors.json path
+     * args[5] = output path
      */
     public static void main(String[] args) throws IOException {
         String inputPath = args[0];
         String naptanPath = args[1];
         Path amplDir = Path.of(args[2]);
-        String outputPath = args[3];
+        String bezierPath = args[3];
+        String colorsPath = args[4];
+        String outputPath = args[5];
 
         String amplInitialModelPath = amplDir.resolve("initial_model.mod").toString();
         String amplModPath = amplDir.resolve("temp").resolve("model.mod").toString();
@@ -63,6 +67,10 @@ public class GenerateMap {
         AmplDriver amplDriver = new AmplDriver(amplInitialModelPath, SCALE_FACTOR, METRO_LINE_WIDTH);
         amplDriver.writeAmplFiles(amplModPath, amplDatPath, data.getRight(), metroLines);
         amplDriver.solveAmpl(amplModPath, amplDatPath, metroLines);
+
+        OutputWriter outputWriter = new OutputWriter(outputPath, bezierPath, colorsPath);
+        outputWriter.writeJson(metroLines);
+
         System.out.println("Done!");
     }
 }
