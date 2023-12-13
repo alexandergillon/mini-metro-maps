@@ -1,7 +1,7 @@
 package com.github.alexandergillon.mini_metro_maps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.alexandergillon.mini_metro_maps.models.NaptanEntry;
+import com.github.alexandergillon.mini_metro_maps.models.parsing.NaptanEntry;
 
 import java.io.File;
 import java.io.IOException;

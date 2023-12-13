@@ -2,7 +2,7 @@ package com.github.alexandergillon.mini_metro_maps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.alexandergillon.mini_metro_maps.models.Curve;
+import com.github.alexandergillon.mini_metro_maps.models.core.Curve;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.BezierCurve;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.ModelBezierCurve;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.Point;
@@ -24,14 +24,14 @@ public class BezierGenerator {
      * The model curve was likely measured with a different scale than the map, so this factor scales it accordingly.
      * The value of this parameter was found by trial and error.
      */
-    private final double SHARP_CURVE_BEZIER_SCALE_FACTOR = 1;
+    private final double SHARP_CURVE_BEZIER_SCALE_FACTOR = 0.4;
 
     /**
      * Scaling parameter for wide Bezier curves, relative to the model curve read from bezier.json.
      * The model curve was likely measured with a different scale than the map, so this factor scales it accordingly.
      * The value of this parameter was found by trial and error.
      */
-    private final double WIDE_CURVE_BEZIER_SCALE_FACTOR = 1;
+    private final double WIDE_CURVE_BEZIER_SCALE_FACTOR = 5;
 
     /**
      * Overall scale factor that needs to be applied to generated sharp Bezier curves: incorporates the map's scale
@@ -193,7 +193,7 @@ public class BezierGenerator {
         assert bezierP3.getX() == station2.getX();
 
         assert bezierP0.getX() >= station1.getX() : "Bezier curve extends beyond station.";
-        assert bezierP3.getY() >= station2.getY() : "Bezier curve extends beyond station.";
+        assert bezierP3.getY() <= station2.getY() : "Bezier curve extends beyond station.";
 
         List<OutputLineSegment> segments = new ArrayList<>();
 
@@ -290,7 +290,7 @@ public class BezierGenerator {
         assert MathUtil.approxEqual(bezierP3.getX() - station2.getX(), bezierP3.getY() - station2.getY());
 
         assert bezierP0.getX() >= station1.getX() : "Bezier curve extends beyond station.";
-        assert bezierP3.getY() >= station2.getY() : "Bezier curve extends beyond station.";
+        assert bezierP3.getY() <= station2.getY() : "Bezier curve extends beyond station.";
 
         List<OutputLineSegment> segments = new ArrayList<>();
 
@@ -324,7 +324,7 @@ public class BezierGenerator {
             case "right,up-right" -> {
                 Point reflectedStation2 = MathUtil.reflectY(station2, station1.getY());
                 var rightDownRightCurve = toWideCurveRightDownRight(station1, reflectedStation2);
-                return MathUtil.reflectY(rightDownRightCurve, station2.getY());
+                return MathUtil.reflectY(rightDownRightCurve, station1.getY());
             }
             case "left,up-left" -> {
                 Point reflectedStation2 = MathUtil.reflectXY(station2, station1.getX(), station1.getY());

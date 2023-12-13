@@ -1,4 +1,4 @@
-package com.github.alexandergillon.mini_metro_maps.models;
+package com.github.alexandergillon.mini_metro_maps.models.core;
 
 import com.github.alexandergillon.mini_metro_maps.GenerateMap;
 import lombok.Getter;
