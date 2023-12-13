@@ -1,6 +1,7 @@
 package com.github.alexandergillon.mini_metro_maps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.alexandergillon.mini_metro_maps.models.output.OutputNetwork;
 import com.github.alexandergillon.mini_metro_maps.models.parsing.ColorEntry;
 import com.github.alexandergillon.mini_metro_maps.models.core.Curve;
 import com.github.alexandergillon.mini_metro_maps.models.core.Edge;
@@ -61,9 +62,11 @@ public class OutputWriter {
             outputMetroLines.add(toOutputMetroLine(metroLine));
         }
 
+        OutputNetwork outputNetwork = new OutputNetwork(GenerateMap.METRO_LINE_WIDTH, outputMetroLines);
+
         System.out.println("Writing output file.");
         Files.createDirectories(Path.of(outputPath).getParent());
-        objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(outputPath), outputMetroLines);
+        objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(outputPath), outputNetwork);
     }
 
     /**
