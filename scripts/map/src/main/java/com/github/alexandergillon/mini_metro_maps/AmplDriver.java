@@ -498,8 +498,16 @@ public class AmplDriver {
 
             for (MetroLine metroLine : metroLines.values()) {
                 for (Station station : metroLine.getStations().values()) {
-                    station.setSolvedX((int)(double)ampl.getValue(String.format("SOLVED_X_COORDS[\"%s\"]", station.getAmplUniqueId())));
-                    station.setSolvedY((int)(double)ampl.getValue(String.format("SOLVED_Y_COORDS[\"%s\"]", station.getAmplUniqueId())));
+                    double solvedX = (double) ampl.getValue(String.format("SOLVED_X_COORDS[\"%s\"]", station.getAmplUniqueId()));
+                    double solvedY = (double) ampl.getValue(String.format("SOLVED_Y_COORDS[\"%s\"]", station.getAmplUniqueId()));
+
+                    assert MathUtil.approxInt(solvedX);
+                    assert MathUtil.approxInt(solvedY);
+                    assert solvedX > Integer.MIN_VALUE && solvedX < Integer.MAX_VALUE;
+                    assert solvedY > Integer.MIN_VALUE && solvedY < Integer.MAX_VALUE;
+
+                    station.setSolvedX((int)Math.round(solvedX));
+                    station.setSolvedY((int)Math.round(solvedY));
                 }
             }
         }
