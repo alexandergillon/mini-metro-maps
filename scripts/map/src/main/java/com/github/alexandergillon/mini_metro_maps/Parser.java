@@ -3,7 +3,6 @@ package com.github.alexandergillon.mini_metro_maps;
 import com.github.alexandergillon.mini_metro_maps.models.Constraint;
 import com.github.alexandergillon.mini_metro_maps.models.MetroLine;
 import com.github.alexandergillon.mini_metro_maps.models.Station;
-import com.github.alexandergillon.mini_metro_maps.models.Util;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -38,7 +37,7 @@ public class Parser {
      * @param inputPath Path to the input data file.
      * @param naptanFilepath Path to naptan.json.
      */
-    public Parser(String inputPath, String naptanFilepath) {
+    public Parser(String inputPath, String naptanFilepath) throws IOException {
         this.inputPath = inputPath;
         naptanReader = new NaptanReader(naptanFilepath);
     }
