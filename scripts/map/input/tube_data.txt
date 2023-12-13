@@ -660,7 +660,7 @@ multi-line:
   same-station metropolitan above-right piccadilly "Ruislip Manor, Eastcote, Rayners Lane"
   same-station piccadilly right district "Ealing Common"
 
-  vertical "piccadilly: Acton Town, district: Acton Town"
+  same-station "piccadilly: Acton Town" above "district: Acton Town"
   vertical "piccadilly: Turnham Green, district: Turnham Green"
   vertical "piccadilly: Hammersmith (Dist&Picc Line), district: Hammersmith (Dist&Picc Line)"
 
