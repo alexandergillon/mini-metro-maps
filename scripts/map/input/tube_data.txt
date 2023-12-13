@@ -728,6 +728,8 @@ multi-line:
   same-station central exact northern "Tottenham Court Road"
   same-station central exact circle "Liverpool Street"
 
+  same-station central left jubilee "Stratford"
+
   #todo: move stratford right, align jubilee with west ham, move hainaut loop"
 
   # metropolitan
@@ -749,13 +751,15 @@ multi-line:
   same-station hammersmith-city above-right circle "Farringdon, Barbican"
   same-station hammersmith-city above circle "Moorgate, Liverpool Street"
 
+  vertical "hammersmith-city: West Ham, jubilee: West Ham"
+  equal "hammersmith-city: West Ham.y + district: West Ham.y" "jubilee: West Ham.y + jubilee: West Ham.y"
+
   # jubilee line
   same-station jubilee exact bakerloo "Baker Street"
   same-station jubilee left northern "Waterloo"
   same-station jubilee exact northern "London Bridge"
 
   # todo: west ham / stratford
-  up-left "jubilee: West Ham, hammersmith-city: West Ham"
   horizontal "jubilee: Stratford, central: Stratford"
 
   # northern line
