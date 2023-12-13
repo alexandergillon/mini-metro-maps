@@ -714,7 +714,7 @@ multi-line:
   horizontal "central: Notting Hill Gate, district: Notting Hill Gate"
   equal "district: Notting Hill Gate.x + circle: Notting Hill Gate.x" "central: Notting Hill Gate.x + central: Notting Hill Gate.x"
 
-  down-right "bakerloo: Paddington, hammersmith-city: Paddington (H&C Line)-Underground, district: Paddington"
+  down-right "hammersmith-city: Paddington (H&C Line)-Underground, district: Paddington"
 
   vertical "district: Edgware Road (Circle Line), hammersmith-city: Edgware Road (Circle Line)"
 
@@ -750,6 +750,8 @@ multi-line:
   same-station "hammersmith-city: Edgware Road (Circle Line)" above "circle: Edgware Road (Circle Line) w/ H&C"
   same-station hammersmith-city above-right circle "Farringdon, Barbican"
   same-station hammersmith-city above circle "Moorgate, Liverpool Street"
+  same-station "bakerloo: Edgware Road (Bakerloo)" above "hammersmith-city: Edgware Road (Circle Line)"
+  same-station "bakerloo: Paddington" above "hammersmith-city: Paddington (H&C Line)-Underground"
 
   vertical "hammersmith-city: West Ham, jubilee: West Ham"
   equal "hammersmith-city: West Ham.y + district: West Ham.y" "jubilee: West Ham.y + jubilee: West Ham.y"
