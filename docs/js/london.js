@@ -1,4 +1,4 @@
-import { drawLines } from "./drawing.js";
+import { drawMetroLines } from "./drawing.js";
 
 /**
  * Pans the canvas in response to a mouse drag event.
@@ -52,7 +52,7 @@ async function setupCanvas() {
     registerEventListeners(canvas);
 
     const metroNetwork = await fetchMetroNetwork();
-    drawLines(metroNetwork.metroLines);
+    drawMetroLines(metroNetwork.metroLines, metroNetwork.lineWidth);
     paper.view.draw();
 }
 
