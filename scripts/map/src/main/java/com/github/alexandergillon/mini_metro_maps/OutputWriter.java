@@ -1,6 +1,7 @@
 package com.github.alexandergillon.mini_metro_maps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.alexandergillon.mini_metro_maps.models.core.Endpoint;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputNetwork;
 import com.github.alexandergillon.mini_metro_maps.models.parsing.ColorEntry;
 import com.github.alexandergillon.mini_metro_maps.models.core.Curve;
@@ -86,8 +87,9 @@ public class OutputWriter {
                 .toList();
 
         List<OutputEdge> edges = buildOutputEdges(metroLine);
+        List<OutputLineSegment> endpointLineSegments = metroLine.getEndpoints().stream().map(Endpoint::toLineSegment).toList();
 
-        return new OutputMetroLine(name, color, stations, edges);
+        return new OutputMetroLine(name, color, stations, edges, endpointLineSegments);
     }
 
     /** Builds the output edges of a metro line. */

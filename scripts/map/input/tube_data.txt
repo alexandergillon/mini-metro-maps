@@ -42,6 +42,8 @@ line bakerloo:
   down-right "Piccadilly Circus, Charing Cross"
   vertical "Embankment, Waterloo, Lambeth North"
 
+  endpoint "Harrow & Wealdstone" horizontal
+
 line central:
   station "Barkingside" 3369 762
   station "Buckhurst Hill" 3221 542
@@ -125,6 +127,10 @@ line central:
   horizontal "Grange Hill, Chigwell, Roding Valley"
   up-right "Buckhurst Hill, Loughton, Debden, Theydon Bois, Epping"
 
+  endpoint "West Ruislip" horizontal
+  endpoint "Ealing Broadway" vertical:up
+  endpoint "Epping" down-right
+
 
 line circle:
   station "Aldgate" 2664 1471
@@ -187,6 +193,9 @@ line circle:
   down-left "Cannon Street, Mansion House, Blackfriars"
   horizontal "Temple, Embankment, Westminster, St. James's Park, Victoria, Sloane Square, South Kensington, Gloucester Road"
   vertical "High Street Kensington, Notting Hill Gate, Bayswater"
+
+  endpoint "Hammersmith (H&C Line)" horizontal:right
+  endpoint "Edgware Road (Circle Line) w/ District" vertical:down
 
 line district:
   station "Acton Town" 1069 1703
@@ -279,6 +288,11 @@ line district:
   up-right "Plaistow, Upton Park, East Ham, Barking, Upney, Becontree, Dagenham Heathway, Dagenham East, Elm Park, Hornchurch, Upminster Bridge, Upminster"
   vertical "Wimbledon, Wimbledon Park, Southfields, East Putney, Putney Bridge, Parsons Green, Fulham Broadway, West Brompton"
   vertical "High Street Kensington, Notting Hill Gate, Bayswater"
+
+  endpoint "Ealing Broadway" vertical:down
+  endpoint "Richmond" down-right
+  endpoint "Wimbledon" horizontal
+  endpoint "Upminster" down-right
   
 
 line hammersmith-city:
@@ -330,6 +344,10 @@ line hammersmith-city:
   horizontal "Stepney Green, Mile End, Bow Road, Bromley-by-Bow, West Ham"
   up-right "Plaistow, Upton Park, East Ham, Barking"
 
+  endpoint "Hammersmith (H&C Line)" horizontal:left
+  endpoint "Barking" up-left:up-left
+
+
 line jubilee:
   station "Bermondsey" 2593 1707
   station "Bond Street" 1860 1399
@@ -377,6 +395,9 @@ line jubilee:
   down-right "Green Park, Westminster"
   horizontal "London Bridge, Bermondsey, Canada Water, Canary Wharf"
   vertical "Canning Town, West Ham"
+
+  endpoint "Stanmore" horizontal
+  endpoint "Stratford" down-right:down-right
 
 line metropolitan:
   station "Aldgate" 2656 1471
@@ -442,6 +463,12 @@ line metropolitan:
   horizontal "Great Portland Street, Euston Square, King's Cross St. Pancras"
   down-right "Farringdon, Barbican"
   horizontal "Moorgate, Liverpool Street"
+
+  endpoint "Amersham" vertical
+  endpoint "Chesham" up-right
+  endpoint "Watford" horizontal
+  endpoint "Uxbridge" vertical:up
+  endpoint "Aldgate" horizontal:left
 
 line northern:
   station "Battersea Power Station" 1782 2082
@@ -526,6 +553,12 @@ line northern:
   vertical "Euston (Charing Cross branch), Mornington Crescent"
   vertical "Tufnell Park, Archway, Highgate, East Finchley, Finchley Central, West Finchley, Woodside Park, Totteridge & Whetstone, High Barnet"
   up-left "Chalk Farm, Belsize Park, Hampstead, Golders Green, Brent Cross, Hendon Central, Colindale, Burnt Oak, Edgware"
+
+  endpoint "Edgware" up-right
+  endpoint "High Barnet" horizontal
+  endpoint "Mill Hill East" up-right
+  endpoint "Battersea Power Station" vertical
+  endpoint "Morden" down-right
 
 line piccadilly:
   station "Acton Town" 1089 1683
@@ -612,6 +645,10 @@ line piccadilly:
   up-right "Caledonian Road, Holloway Road, Arsenal, Finsbury Park"
   vertical "Manor House, Turnpike Lane, Wood Green, Bounds Green, Arnos Grove, Southgate, Oakwood, Cockfosters"
 
+  endpoint "Uxbridge" vertical:down
+  endpoint "Heathrow Terminal 5" horizontal
+  endpoint "Cockfosters" horizontal
+
 line victoria:
   station "Blackhorse Road" 2863 829
   station "Brixton" 2119 2248
@@ -645,6 +682,9 @@ line victoria:
   horizontal "Euston, King's Cross St. Pancras"
   horizontal "Seven Sisters, Tottenham Hale, Blackhorse Road, Walthamstow Central"
 
+  endpoint "Walthamstow Central" vertical
+  endpoint "Brixton" up-right
+
 line waterloo-city:
   station "Bank" 2446 1471
   station "Waterloo" 2138 1794
@@ -652,6 +692,8 @@ line waterloo-city:
   edges "Bank, Waterloo"
 
   curve "Waterloo, Bank" special
+
+  endpoint "Bank" down-right:down-right
 
 multi-line:
   # piccadilly line

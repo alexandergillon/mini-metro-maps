@@ -15,19 +15,19 @@ public class MetroLine {
     private final String name;
 
     /** The stations in this metro line, as a station name -> station object mapping. */
-    private final HashMap<String, Station> stations;
+    private final HashMap<String, Station> stations = new HashMap<>();
 
     /** The edges between stations in this metro line. */
-    private final HashSet<Edge> edges;
+    private final HashSet<Edge> edges = new HashSet<>();
 
     /** The curves between stations in this metro line. */
-    private final ArrayList<Curve> curves;
+    private final ArrayList<Curve> curves = new ArrayList<>();
+
+    /** The 'endpoints' of the line (only for visual purposes). */
+    private final ArrayList<Endpoint> endpoints = new ArrayList<>();
 
     public MetroLine(String name) {
         this.name = name;
-        this.stations = new HashMap<>();
-        this.edges = new HashSet<>();
-        this.curves = new ArrayList<>();
     }
 
     /**
@@ -102,6 +102,22 @@ public class MetroLine {
         }
 
         curves.add(new Curve(station1, station2, curveType));
+    }
+
+    /**
+     * Adds an endpoint to this metro line.
+     * @param stationName Name of the station that the endpoint is at.
+     * @param type Type of the endpoint.
+     * @param textLineNumber Line number of the input which declared this endpoint.
+     */
+    public void addEndpoint(String stationName, String type, int textLineNumber) {
+        if (!stations.containsKey(stationName)) {
+            throw new NoSuchElementException(String.format("(line %d) Station %s does not exist for line %s.",
+                    textLineNumber, stationName, name));
+        }
+
+        Station station = stations.get(stationName);
+        endpoints.add(new Endpoint(station, type, textLineNumber));
     }
 
     /**

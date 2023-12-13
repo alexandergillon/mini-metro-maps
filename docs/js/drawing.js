@@ -46,20 +46,24 @@ function drawBezierLineSegment(lineSegment, lineWidth, color) {
     paperLineSegment.strokeWidth = lineWidth;
 }
 
+/** Draws a line segment. */
+function drawLineSegment(lineSegment, lineWidth, color) {
+    if (lineSegment.straightLine) {
+        drawStraightLineSegment(lineSegment, lineWidth, color);
+    } else {
+        drawBezierLineSegment(lineSegment, lineWidth, color);
+    }
+}
+
 /** Draws an edge between two stations. */
 function drawEdge(edge, lineWidth, color) {
-    edge.lineSegments.forEach(lineSegment => {
-        if (lineSegment.straightLine) {
-            drawStraightLineSegment(lineSegment, lineWidth, color);
-        } else {
-            drawBezierLineSegment(lineSegment, lineWidth, color);
-        }
-    });
+    edge.lineSegments.forEach(lineSegment => drawLineSegment(lineSegment, lineWidth, color));
 }
 
 /** Draws a line in the metro network. */
 function drawMetroLine(metroLine, lineWidth) {
     metroLine.edges.forEach(edge => drawEdge(edge, lineWidth, metroLine.color));
+    metroLine.endpointLineSegments.forEach(lineSegment => drawLineSegment(lineSegment, lineWidth, metroLine.color));
     metroLine.stations.forEach(station => drawStation(station, lineWidth, metroLine.color));
 }
 
