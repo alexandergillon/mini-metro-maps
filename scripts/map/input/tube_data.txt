@@ -180,7 +180,7 @@ line circle:
   curve "Paddington, Edgware Road (Circle Line) w/ District" up-right,right
 
   vertical "Hammersmith (H&C Line), Goldhawk Road, Shepherd's Bush Market, Wood Lane, Latimer Road, Ladbroke Grove, Westbourne Park"
-  horizontal "Paddington, Edgware Road (Circle Line) w/ H&C, Baker Street, Great Portland Street, Euston Square, King's Cross St. Pancras"
+  horizontal "Paddington (H&C Line)-Underground, Edgware Road (Circle Line) w/ H&C, Baker Street, Great Portland Street, Euston Square, King's Cross St. Pancras"
   down-right "Farringdon, Barbican"
   horizontal "Moorgate, Liverpool Street"
   horizontal "Tower Hill, Monument"
@@ -331,12 +331,12 @@ line hammersmith-city:
   up-right "Plaistow, Upton Park, East Ham, Barking"
 
 line jubilee:
-  station "Bermondsey" 2591 1745
+  station "Bermondsey" 2593 1707
   station "Bond Street" 1860 1399
   station "Baker Street" 1860 1278
   station "Canning Town" 3194 1546
   station "Canons Park" 1533 702
-  station "Canada Water" 2765 1757
+  station "Canada Water"  2763 1707
   station "Canary Wharf" 2982 1706
   station "Dollis Hill" 1603 887
   station "Finchley Road" 1779 1064
@@ -367,9 +367,6 @@ line jubilee:
   curve "Westminster, Waterloo" down-right,down
   curve "Waterloo, Southwark" down,right
   curve "Southwark, London Bridge" special
-  curve "London Bridge, Bermondsey" right,down-right
-  curve "Bermondsey, Canada Water" special
-  curve "Canada Water, Canary Wharf" up-right,right
   curve "Canary Wharf, North Greenwich" right,up-right
   curve "North Greenwich, Canning Town" up-right,up
   curve "West Ham, Stratford" up,up-right
@@ -378,6 +375,7 @@ line jubilee:
   down-right "Wembley Park, Neasden, Dollis Hill, Willesden Green, Kilburn, West Hampstead, Finchley Road"
   vertical "Swiss Cottage, St. John's Wood, Baker Street, Bond Street"
   down-right "Green Park, Westminster"
+  horizontal "London Bridge, Bermondsey, Canada Water, Canary Wharf"
   vertical "Canning Town, West Ham"
 
 line metropolitan:
