@@ -98,7 +98,7 @@ public class OutputWriter {
         for (Curve curve : metroLine.getCurves()) {
             // For curves, delegate line segments to bezierGenerator.
             seenEdges.add(new Edge(curve.from(), curve.to()));
-            outputEdges.add(new OutputEdge(curve.from().getName(), curve.to().getName(), bezierGenerator.toLineSegments(curve)));
+            outputEdges.add(new OutputEdge(curve.from().getAmplUniqueId(), curve.to().getAmplUniqueId(), bezierGenerator.toLineSegments(curve)));
         }
 
         for (Edge edge : metroLine.getEdges()) {
@@ -113,7 +113,7 @@ public class OutputWriter {
                 validateStraightEdge(station1, station2);
 
                 OutputLineSegment straightLineSegment = OutputLineSegment.fromStraightLine(new StraightLine(station1Position, station2Position));
-                outputEdges.add(new OutputEdge(station1.getName(), station2.getName(), List.of(straightLineSegment)));
+                outputEdges.add(new OutputEdge(station1.getAmplUniqueId(), station2.getAmplUniqueId(), List.of(straightLineSegment)));
             }
         }
 

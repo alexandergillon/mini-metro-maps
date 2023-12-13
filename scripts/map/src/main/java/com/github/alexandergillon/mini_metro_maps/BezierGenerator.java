@@ -300,7 +300,7 @@ public class BezierGenerator {
 
         segments.add(OutputLineSegment.fromBezierCurve(new BezierCurve(bezierP0, bezierP1, bezierP2, bezierP3)));
 
-        if (bezierP3.getY() > station2.getY()) {
+        if (bezierP3.getY() < station2.getY()) {
             segments.add(OutputLineSegment.fromStraightLine(new StraightLine(bezierP3, station2)));
         }
 
