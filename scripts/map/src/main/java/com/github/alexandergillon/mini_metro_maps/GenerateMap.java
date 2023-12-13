@@ -14,7 +14,7 @@ public class GenerateMap {
     public static final int SCALE_FACTOR = 5;
 
     /** Line width of a metro line on the map, in pixels. */
-    private static final int METRO_LINE_WIDTH = 10 * SCALE_FACTOR;
+    public static final int METRO_LINE_WIDTH = 10 * SCALE_FACTOR;
 
     /**
      * How long of a prefix you need to take from each metro line's name to ensure that all prefixes are unique.
@@ -73,6 +73,7 @@ public class GenerateMap {
 
         System.out.println("Done!");
 
+        Runtime.getRuntime().exec("python copy_json.py");
         Runtime.getRuntime().exec("python plot_output.py");
     }
 }
