@@ -25,8 +25,8 @@ public class Point {
         assert x > Integer.MIN_VALUE && x < Integer.MAX_VALUE;
         assert y > Integer.MIN_VALUE && y < Integer.MAX_VALUE;
 
-        this.x = (int)x;
-        this.y = (int)y;
+        this.x = (int)Math.round(x);
+        this.y = (int)Math.round(y);
     }
 
     @Override
