@@ -7,9 +7,9 @@ function drawLine(metroLine) {
     })
 }
 
-/** Draws the metro network. */
-function drawNetwork(metroNetwork) {
-    metroNetwork.forEach(drawLine);
+/** Draws all lines in the metro network. */
+function drawLines(metroLines) {
+    metroLines.forEach(drawLine);
 }
 
-export { drawNetwork };
+export { drawLines };
