@@ -26,4 +26,7 @@ public class OutputMetroLine {
     /** Edges in the metro line. */
     private List<OutputEdge> edges;
 
+    /** Line segments of endpoints on the line. */
+    private List<OutputLineSegment> endpointLineSegments;
+
 }

@@ -200,6 +200,28 @@ public class Parser {
     }
 
     /**
+     * Adds an endpoint to a metro line.
+     * @param textLine Line of input text which declares an endpoint.
+     * @param currentMetroLine The current metro line that is selected in the network.
+     */
+    private void addEndpoint(String textLine, MetroLine currentMetroLine) {
+        if (currentMetroLine == null) {
+            throw new IllegalArgumentException(String.format("(line %d) Endpoint declared before a current line was set.", textLineNumber));
+        }
+
+        textLine = Util.removePrefix(textLine, "endpoint");
+        textLine = textLine.strip();
+
+        Pair<String, String> doubleQuotedResult = Util.consumeDoubleQuoted(textLine, textLineNumber);
+        String stationString = doubleQuotedResult.getLeft();
+        String textRest = doubleQuotedResult.getRight();
+        stationString = stationString.strip();
+        textRest = textRest.strip();
+
+        currentMetroLine.addEndpoint(stationString, textRest, textLineNumber);
+    }
+
+    /**
      * Reads data about metro lines/stations from the input file. Puts information into the `metroLines` and
      * `constraints` member variables.
      */
@@ -229,8 +251,10 @@ public class Parser {
                     constraints.add(new Constraint(textLine, currentMetroLine, textLineNumber));
                 } else if (Util.startsWithAny(textLine, new String[]{"same-station", "equal"})) {
                     constraints.add(new Constraint(textLine, currentMetroLine, textLineNumber));
+                } else if (textLine.startsWith("endpoint")) {
+                    addEndpoint(textLine, currentMetroLine);
                 } else {
-                    throw new IllegalArgumentException(String.format("(line %d) Line with unrecognized form.", textLineNumber));
+                    System.out.printf("(line %d) Warning: line with unrecognized form. Ignoring.%n", textLineNumber);
                 }
             }
         }
