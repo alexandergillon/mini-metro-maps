@@ -72,5 +72,7 @@ public class GenerateMap {
         outputWriter.writeJson(metroLines);
 
         System.out.println("Done!");
+
+        Runtime.getRuntime().exec("python plot_output.py");
     }
 }

@@ -324,7 +324,7 @@ public class BezierGenerator {
             case "right,up-right" -> {
                 Point reflectedStation2 = MathUtil.reflectY(station2, station1.getY());
                 var rightDownRightCurve = toWideCurveRightDownRight(station1, reflectedStation2);
-                return MathUtil.reflectY(rightDownRightCurve, station2.getY());
+                return MathUtil.reflectY(rightDownRightCurve, station1.getY());
             }
             case "left,up-left" -> {
                 Point reflectedStation2 = MathUtil.reflectXY(station2, station1.getX(), station1.getY());
