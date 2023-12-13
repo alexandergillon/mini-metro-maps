@@ -1,4 +1,4 @@
-import { drawStations } from "./drawing.js";
+import { drawNetwork } from "./drawing.js";
 
 /**
  * Pans the canvas in response to a mouse drag event.
@@ -37,7 +37,7 @@ function registerEventListeners(canvas) {
  * @return {Promise<any>} The JSON file, parsed as a JS object.
  */
 async function fetchMetroNetwork() {
-    const json = await fetch("stations.json"); // todo: rename
+    const json = await fetch("london.json");
     return await json.json();
 }
 
@@ -52,7 +52,7 @@ async function setupCanvas() {
     registerEventListeners(canvas);
 
     const metroNetwork = await fetchMetroNetwork();
-    drawStations(metroNetwork);
+    drawNetwork(metroNetwork);
     paper.view.draw();
 }
 
