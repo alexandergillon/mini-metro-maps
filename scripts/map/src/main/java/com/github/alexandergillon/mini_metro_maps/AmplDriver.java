@@ -1,9 +1,9 @@
 package com.github.alexandergillon.mini_metro_maps;
 
 import com.ampl.AMPL;
-import com.github.alexandergillon.mini_metro_maps.models.Constraint;
-import com.github.alexandergillon.mini_metro_maps.models.MetroLine;
-import com.github.alexandergillon.mini_metro_maps.models.Station;
+import com.github.alexandergillon.mini_metro_maps.models.core.Constraint;
+import com.github.alexandergillon.mini_metro_maps.models.core.MetroLine;
+import com.github.alexandergillon.mini_metro_maps.models.core.Station;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.BufferedWriter;

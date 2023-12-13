@@ -1,11 +1,11 @@
 package com.github.alexandergillon.mini_metro_maps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.alexandergillon.mini_metro_maps.models.ColorEntry;
-import com.github.alexandergillon.mini_metro_maps.models.Curve;
-import com.github.alexandergillon.mini_metro_maps.models.Edge;
-import com.github.alexandergillon.mini_metro_maps.models.MetroLine;
-import com.github.alexandergillon.mini_metro_maps.models.Station;
+import com.github.alexandergillon.mini_metro_maps.models.parsing.ColorEntry;
+import com.github.alexandergillon.mini_metro_maps.models.core.Curve;
+import com.github.alexandergillon.mini_metro_maps.models.core.Edge;
+import com.github.alexandergillon.mini_metro_maps.models.core.MetroLine;
+import com.github.alexandergillon.mini_metro_maps.models.core.Station;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.Point;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.StraightLine;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputEdge;

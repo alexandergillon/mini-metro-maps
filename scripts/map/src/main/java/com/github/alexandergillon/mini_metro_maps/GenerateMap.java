@@ -1,6 +1,6 @@
 package com.github.alexandergillon.mini_metro_maps;
 
-import com.github.alexandergillon.mini_metro_maps.models.MetroLine;
+import com.github.alexandergillon.mini_metro_maps.models.core.MetroLine;
 
 import java.io.IOException;
 import java.nio.file.Path;

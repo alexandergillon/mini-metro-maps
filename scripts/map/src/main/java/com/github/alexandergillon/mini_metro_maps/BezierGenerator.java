@@ -2,7 +2,7 @@ package com.github.alexandergillon.mini_metro_maps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.alexandergillon.mini_metro_maps.models.Curve;
+import com.github.alexandergillon.mini_metro_maps.models.core.Curve;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.BezierCurve;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.ModelBezierCurve;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.Point;

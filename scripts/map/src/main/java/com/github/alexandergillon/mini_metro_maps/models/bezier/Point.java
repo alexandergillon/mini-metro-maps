@@ -1,7 +1,7 @@
 package com.github.alexandergillon.mini_metro_maps.models.bezier;
 
 import com.github.alexandergillon.mini_metro_maps.MathUtil;
-import com.github.alexandergillon.mini_metro_maps.models.Station;
+import com.github.alexandergillon.mini_metro_maps.models.core.Station;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
