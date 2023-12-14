@@ -105,7 +105,7 @@ public class OutputWriter {
 
         for (Edge edge : metroLine.getEdges()) {
             // Other edges must be straight lines - give them a straight line segment.
-            if (!seenEdges.contains(edge) && !seenEdges.contains(new Edge(edge.to(), edge.from()))) {
+            if (!seenEdges.contains(edge)) {
                 Station station1 = edge.from();
                 Station station2 = edge.to();
 
