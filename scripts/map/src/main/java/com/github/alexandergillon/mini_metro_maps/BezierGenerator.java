@@ -149,7 +149,7 @@ public class BezierGenerator {
             String[] curveTypeTokens = curve.type().split(",");
             String newCurveType = SWAP_DIRECTION.get(curveTypeTokens[1]) + "," + SWAP_DIRECTION.get(curveTypeTokens[0]);
             assert ArrayUtils.contains(CANONICAL_CURVE_TYPES, newCurveType);
-            return new Curve(curve.to(), curve.from(), newCurveType);
+            return new Curve(curve.to(), curve.from(), newCurveType, null);
         }
     }
 
