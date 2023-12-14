@@ -1,6 +1,7 @@
 package com.github.alexandergillon.mini_metro_maps.models.core;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +26,10 @@ public class MetroLine {
 
     /** The 'endpoints' of the line (only for visual purposes). */
     private final ArrayList<Endpoint> endpoints = new ArrayList<>();
+
+    /** z index of this line. Value is meaningless - only differences between z indices have meaning. -1 until solved by AMPL. */
+    @Setter
+    private int zIndex = -1;
 
     public MetroLine(String name) {
         this.name = name;

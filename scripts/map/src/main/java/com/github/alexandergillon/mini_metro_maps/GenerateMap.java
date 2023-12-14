@@ -56,18 +56,22 @@ public class GenerateMap {
         String outputPath = args[5];
 
         String amplInitialModelPath = amplDir.resolve("initial_model.mod").toString();
+        String zAmplInitialModelPath = amplDir.resolve("z_index_initial_model.mod").toString();
         String amplModPath = amplDir.resolve("temp").resolve("model.mod").toString();
         String amplDatPath = amplDir.resolve("temp").resolve("data.dat").toString();
+        String zAmplModPath = amplDir.resolve("temp").resolve("zModel.mod").toString();
 
         Parser parser = new Parser(inputPath, naptanPath);
         var data = parser.parseData();
         var metroLines = data.getLeft();
+        var alignmentConstraints = data.getMiddle();
+        var zIndexConstraints = data.getRight();
 
         checkPrefixLength(metroLines);
 
-        AmplDriver amplDriver = new AmplDriver(amplInitialModelPath, SCALE_FACTOR, METRO_LINE_WIDTH);
-        amplDriver.writeAmplFiles(amplModPath, amplDatPath, data.getRight(), metroLines);
-        amplDriver.solveAmpl(amplModPath, amplDatPath, metroLines);
+        AmplDriver amplDriver = new AmplDriver(amplInitialModelPath, SCALE_FACTOR, METRO_LINE_WIDTH, zAmplInitialModelPath);
+        amplDriver.writeAmplFiles(amplModPath, amplDatPath, zAmplModPath, alignmentConstraints, zIndexConstraints, metroLines);
+        amplDriver.solveAmpl(amplModPath, amplDatPath, zAmplModPath, metroLines);
 
         OutputWriter outputWriter = new OutputWriter(outputPath, bezierPath, colorsPath);
         outputWriter.writeJson(metroLines);

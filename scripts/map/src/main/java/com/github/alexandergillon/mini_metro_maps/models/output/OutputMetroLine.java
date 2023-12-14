@@ -20,6 +20,9 @@ public class OutputMetroLine {
     /** Color of this line, as a hex string. E.g. #E1251B. */
     private String color;
 
+    /** z index of this line. Value is meaningless - only differences between z indices have meaning. */
+    private int zIndex;
+
     /** Stations in the metro line. */
     private List<OutputStation> stations;
 

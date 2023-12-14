@@ -1,10 +1,13 @@
 package com.github.alexandergillon.mini_metro_maps;
 
 import com.github.alexandergillon.mini_metro_maps.models.core.Constraint;
+import com.github.alexandergillon.mini_metro_maps.models.core.Curve;
 import com.github.alexandergillon.mini_metro_maps.models.core.MetroLine;
 import com.github.alexandergillon.mini_metro_maps.models.core.Station;
+import com.github.alexandergillon.mini_metro_maps.models.core.ZIndexConstraint;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -12,8 +15,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /** Class to read in data about the metro network. */
 public class Parser {
@@ -35,6 +40,12 @@ public class Parser {
 
     /** Current line of the input being processed, for error messages. */
     private int textLineNumber = 0;
+
+    /** z-index constraints among lines. */
+    private final Set<ZIndexConstraint> zIndexConstraints = new HashSet<>();
+
+    /** List of curves which depend on other curves. */
+    private ArrayList<Curve> dependentCurves = new ArrayList<>();
 
     /**
      * @param inputPath Path to the input data file.
@@ -214,6 +225,29 @@ public class Parser {
     }
 
     /**
+     * Adds a z-index constraint between two lines.
+     * @param textLine Line of input text which declares a z-index constraint.
+     */
+    private void addZIndexConstraint(String textLine) {
+        textLine = Util.removePrefix(textLine, "zindex").strip();
+        String[] tokens = textLine.split("\\s+");
+
+        if (tokens.length != 3) {
+            throw new IllegalArgumentException(String.format("(line %d) z-index constraint declaration is invalid.", textLineNumber));
+        }
+
+        String metroLineName1 = tokens[0];
+        String constraintType = tokens[1];
+        String metroLineName2 = tokens[2];
+
+        switch (constraintType) {
+            case "above" -> zIndexConstraints.add(new ZIndexConstraint(metroLineName1, metroLineName2));
+            case "below" -> zIndexConstraints.add(new ZIndexConstraint(metroLineName2, metroLineName1));
+            default -> throw new IllegalArgumentException(String.format("(line %d) Bad z-index constraint type \"%s\".", textLineNumber, constraintType));
+        }
+    }
+
+    /**
      * Processes a sanitized line of input text.
      * @param textLine The line of input text to process.
      */
@@ -236,6 +270,8 @@ public class Parser {
             constraints.add(new Constraint(textLine, currentMetroLine, textLineNumber));
         } else if (textLine.startsWith("endpoint")) {
             addEndpoint(textLine, currentMetroLine);
+        } else if (textLine.startsWith("zindex")) {
+            addZIndexConstraint(textLine);
         } else {
             System.out.printf("(line %d) Warning: line with unrecognized form. Ignoring.%n", textLineNumber);
         }
@@ -268,14 +304,15 @@ public class Parser {
 
     /**
      * Parses data from the input file.
-     * @return A pair of the following:
+     * @return A triple of the following:
      *   - A mapping from metro line name -> MetroLine object.
-     *   - A list of constraints.
+     *   - A list of alignment constraints.
+     *   - A list of z-index constraints.
      */
-    public Pair<Map<String, MetroLine>, List<Constraint>> parseData() throws IOException {
+    public Triple<Map<String, MetroLine>, List<Constraint>, Set<ZIndexConstraint>> parseData() throws IOException {
         System.out.println("Parsing input data.");
         readData();
         checkNoOrphans();
-        return Pair.of(metroLines, constraints);
+        return Triple.of(metroLines, constraints, zIndexConstraints);
     }
 }

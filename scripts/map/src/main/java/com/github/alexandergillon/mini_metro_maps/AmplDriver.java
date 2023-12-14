@@ -4,6 +4,7 @@ import com.ampl.AMPL;
 import com.github.alexandergillon.mini_metro_maps.models.core.Constraint;
 import com.github.alexandergillon.mini_metro_maps.models.core.MetroLine;
 import com.github.alexandergillon.mini_metro_maps.models.core.Station;
+import com.github.alexandergillon.mini_metro_maps.models.core.ZIndexConstraint;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.BufferedWriter;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /** Class to interact with AMPL. */
@@ -38,14 +40,21 @@ public class AmplDriver {
     /** X/Y offset of two stations that are diagonally adjacent. */
     private final int diagonalOffset;
 
+    /** Path to the initial AMPL model file for z-index constraints. */
+    private final String initialZIndexModelPath;
+
     /**
      * @param initialModelPath Path to the initial AMPL model file.
+     * @param scaleFactor Scale factor for the map.
+     * @param metroLineWidth Line width of a metro line on the map, in pixels.
+     * @param initialZIndexModelPath Path to the initial z-index AMPL model file.
      */
-    public AmplDriver(String initialModelPath, int scaleFactor, int metroLineWidth) {
+    public AmplDriver(String initialModelPath, int scaleFactor, int metroLineWidth, String initialZIndexModelPath) {
         this.initialModelPath = initialModelPath;
         this.scaleFactor = scaleFactor;
         this.metroLineWidth = metroLineWidth;
         this.diagonalOffset = (int)Math.floor(((double)metroLineWidth) / Math.sqrt(2));
+        this.initialZIndexModelPath = initialZIndexModelPath;
     }
 
     /**
@@ -471,13 +480,55 @@ public class AmplDriver {
     }
 
     /**
+     * Writes the z-index model file.
+     * @param zAmplModPath Path to write the AMPL z-index .mod file to.
+     * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
+     * @param zConstraints z-index constraints between metro lines.
+     */
+    private void writeZIndexModel(String zAmplModPath, Map<String, MetroLine> metroLines,
+                                  Set<ZIndexConstraint> zConstraints) throws IOException {
+        try (BufferedWriter zIndexAmplModFile = new BufferedWriter(new FileWriter(zAmplModPath))) {
+            String initialModelText = Files.readString(Path.of(initialZIndexModelPath));
+            int firstPercentIndex = initialModelText.indexOf('%');
+            if (firstPercentIndex == -1) throw new IllegalArgumentException("Cannot find first % in initial z-index AMPL model file.");
+            int secondPercentIndex = initialModelText.indexOf('%', firstPercentIndex + 1);
+            if (secondPercentIndex == -1) throw new IllegalArgumentException("Cannot find first % in initial z-index AMPL model file.");
+
+            // Constraint names that use these values cannot handle '-'
+            String[] metroLineNames = metroLines.keySet().stream()
+                    .map(name -> '"' + name.replace("-", "_") + '"').toArray(String[]::new);
+
+            zIndexAmplModFile.write(initialModelText.substring(0, firstPercentIndex));
+            zIndexAmplModFile.write(String.join(", ", metroLineNames));
+            zIndexAmplModFile.write(initialModelText.substring(firstPercentIndex+1, secondPercentIndex));
+            zIndexAmplModFile.write(String.format("%d", metroLines.size()));
+            zIndexAmplModFile.write(initialModelText.substring(secondPercentIndex+1));
+            zIndexAmplModFile.newLine();
+
+            zConstraints.forEach(constraint -> {
+                try {
+                    String aboveName = constraint.above().replace("-", "_");
+                    String belowName = constraint.below().replace("-", "_");
+
+                    zIndexAmplModFile.write(String.format("subject to %s_above_%s: Z_INDEX[\"%s\"] >= 1 + Z_INDEX[\"%s\"];",
+                            aboveName, belowName, aboveName, belowName));
+                    zIndexAmplModFile.newLine();
+                } catch (IOException e) { throw new RuntimeException(e); } // ugly, but we can't declare lambdas to throw checked exceptions
+            });
+        }
+    }
+
+    /**
      * Writes the AMPL .mod and .dat files based on the constraints and parameters of the network.
      * @param amplModPath Path to write the AMPL .mod file to.
      * @param amplDatPath Path to write the AMPL .dat file to.
-     * @param constraints The constraints.
+     * @param zAmplModPath Path to write the AMPL z-index .mod file to.
+     * @param alignmentConstraints Alignment  constraints.
+     * @param zIndexConstraints z-index constraints between metro lines.
      * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
      */
-    public void writeAmplFiles(String amplModPath, String amplDatPath, List<Constraint> constraints, Map<String, MetroLine> metroLines) throws IOException {
+    public void writeAmplFiles(String amplModPath, String amplDatPath, String zAmplModPath, List<Constraint> alignmentConstraints,
+                               Set<ZIndexConstraint> zIndexConstraints, Map<String, MetroLine> metroLines) throws IOException {
         System.out.println("Writing AMPL files.");
         try (BufferedWriter modFile = new BufferedWriter(new FileWriter(amplModPath));
              BufferedWriter datFile = new BufferedWriter(new FileWriter(amplDatPath))) {
@@ -485,19 +536,20 @@ public class AmplDriver {
             amplDatFile = datFile;
 
             writeInitialModel(metroLines);
-            processConstraints(constraints, metroLines);
+            processConstraints(alignmentConstraints, metroLines);
             writeData(metroLines);
         }
+
+        writeZIndexModel(zAmplModPath, metroLines, zIndexConstraints);
     }
 
     /**
-     * Solves the AMPL model and stores the solved coordinates for each station.
+     * Solves the AMPL model that dictates station layout, and writes solved station coordinates to Station objects.
      * @param amplModPath Path to the AMPL .mod path.
      * @param amplDatPath Path to the AMPL .dat path.
      * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
      */
-    public void solveAmpl(String amplModPath, String amplDatPath, Map<String, MetroLine> metroLines) throws IOException {
-        System.out.println("Solving AMPL model.");
+    private static void solveStationModel(String amplModPath, String amplDatPath, Map<String, MetroLine> metroLines) throws IOException {
         try (AMPL ampl = new AMPL()) {
             ampl.read(amplModPath);
             ampl.readData(amplDatPath);
@@ -521,4 +573,42 @@ public class AmplDriver {
             }
         }
     }
+
+    /**
+     * Solves the AMPL model for z-index of metro lines, and writes the solved z-indices to MetroLine objects.
+     * @param zAmplModPath Path to the z-index AMPL .mod path.
+     * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
+     */
+    private void solveZIndexModel(String zAmplModPath, Map<String, MetroLine> metroLines) throws IOException {
+        try (AMPL ampl = new AMPL()) {
+            ampl.read(zAmplModPath);
+            ampl.setOption("solver", "scip"); // scip seems to work well - cbc is very slow
+
+            ampl.solve();
+
+            for (MetroLine metroLine : metroLines.values()) {
+                double zIndex = (double) ampl.getValue(String.format("Z_INDEX[\"%s\"]", metroLine.getName().replace("-", "_")));
+
+                assert MathUtil.approxInt(zIndex);
+                assert zIndex > 0 && zIndex < Integer.MAX_VALUE;
+
+                metroLine.setZIndex((int)Math.round(zIndex));
+            }
+        }
+    }
+
+    /**
+     * Solves the AMPL model and stores the solved coordinates for each station.
+     * @param amplModPath Path to the AMPL .mod path.
+     * @param amplDatPath Path to the AMPL .dat path.
+     * @param zAmplModPath Path to the AMPL z-index .mod path.
+     * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
+     */
+    public void solveAmpl(String amplModPath, String amplDatPath, String zAmplModPath,
+                          Map<String, MetroLine> metroLines) throws IOException {
+        System.out.println("Solving AMPL model.");
+        solveStationModel(amplModPath, amplDatPath, metroLines);
+        solveZIndexModel(zAmplModPath, metroLines);
+    }
+
 }
