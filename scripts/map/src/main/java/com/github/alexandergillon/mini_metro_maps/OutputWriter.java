@@ -1,6 +1,7 @@
 package com.github.alexandergillon.mini_metro_maps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.alexandergillon.mini_metro_maps.models.core.Endpoint;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputNetwork;
 import com.github.alexandergillon.mini_metro_maps.models.parsing.ColorEntry;
 import com.github.alexandergillon.mini_metro_maps.models.core.Curve;
