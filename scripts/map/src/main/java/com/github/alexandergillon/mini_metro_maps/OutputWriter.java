@@ -87,9 +87,9 @@ public class OutputWriter {
                 .toList();
 
         List<OutputEdge> edges = buildOutputEdges(metroLine);
-        List<OutputLineSegment> endpointLineSegments = metroLine.getEndpoints().stream().map(Endpoint::toLineSegment).toList();
+        List<OutputLineSegment> endpointSegments = metroLine.getEndpoints().stream().map(Endpoint::toLineSegment).toList();
 
-        return new OutputMetroLine(name, color, stations, edges, endpointLineSegments);
+        return new OutputMetroLine(name, color, stations, edges, endpointSegments);
     }
 
     /** Builds the output edges of a metro line. */

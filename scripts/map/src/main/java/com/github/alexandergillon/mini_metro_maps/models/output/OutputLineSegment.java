@@ -34,7 +34,8 @@ public class OutputLineSegment {
 
     /** Converts a BezierCurve into an OutputLineSegment. */
     public static OutputLineSegment fromBezierCurve(BezierCurve bezierCurve) {
-        return new OutputLineSegment(false, bezierCurve.getP0(), bezierCurve.getP1(), bezierCurve.getP2(), bezierCurve.getP3());
+        return new OutputLineSegment(false,
+                bezierCurve.getP0(), bezierCurve.getP1(), bezierCurve.getP2(), bezierCurve.getP3());
     }
 
 }

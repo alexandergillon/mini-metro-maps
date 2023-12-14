@@ -31,7 +31,8 @@ public class GenerateMap {
             return;
         }
 
-        Set<String> prefixes = new HashSet<>(metroLines.values().stream().map(line -> line.getName().substring(0, METRO_LINE_PREFIX_LENGTH)).toList());
+        Set<String> prefixes = new HashSet<>(metroLines.values().stream()
+                .map(line -> line.getName().substring(0, METRO_LINE_PREFIX_LENGTH)).toList());
         if (prefixes.size() != metroLines.values().size()) {
             // Prefixes are not unique.
             throw new IllegalStateException(String.format("Metro line prefixes are not unique with prefix length %d.", METRO_LINE_PREFIX_LENGTH));

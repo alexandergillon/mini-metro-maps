@@ -105,9 +105,9 @@ public class AmplDriver {
      * @param station2Id Identifier of the second station, in the STATIONS AMPL set.
      */
     private void writeRisingDiagonalConstraint(String station1Id, String station2Id) throws IOException {
-        amplModFile.write(String.format("subject to rising_diagonal_%s_%s: SOLVED_X_COORDS[\"%s\"] - SOLVED_X_COORDS[\"%s\"] " +
-                "= -(SOLVED_Y_COORDS[\"%s\"] - SOLVED_Y_COORDS[\"%s\"]);", station1Id, station2Id,
-                station1Id, station2Id, station1Id, station2Id));
+        amplModFile.write(String.format("subject to rising_diagonal_%s_%s: " +
+                "SOLVED_X_COORDS[\"%s\"] - SOLVED_X_COORDS[\"%s\"] = -(SOLVED_Y_COORDS[\"%s\"] - SOLVED_Y_COORDS[\"%s\"]);",
+                station1Id, station2Id, station1Id, station2Id, station1Id, station2Id));
         amplModFile.newLine();
     }
 
@@ -118,9 +118,9 @@ public class AmplDriver {
      * @param station2Id Identifier of the second station, in the STATIONS AMPL set.
      */
     private void writeFallingDiagonalConstraint(String station1Id, String station2Id) throws IOException {
-        amplModFile.write(String.format("subject to falling_diagonal_%s_%s: SOLVED_X_COORDS[\"%s\"] - SOLVED_X_COORDS[\"%s\"] " +
-                "= SOLVED_Y_COORDS[\"%s\"] - SOLVED_Y_COORDS[\"%s\"];", station1Id, station2Id,
-                station1Id, station2Id, station1Id, station2Id));
+        amplModFile.write(String.format("subject to falling_diagonal_%s_%s: " +
+                "SOLVED_X_COORDS[\"%s\"] - SOLVED_X_COORDS[\"%s\"] = SOLVED_Y_COORDS[\"%s\"] - SOLVED_Y_COORDS[\"%s\"];",
+                station1Id, station2Id, station1Id, station2Id, station1Id, station2Id));
         amplModFile.newLine();
     }
 
@@ -181,7 +181,8 @@ public class AmplDriver {
      * rising/falling diagonal constraint).
      * @param inputText The input text which declares the constraint, with the constraint type removed.
      * @param constraintType Type of the constraint (one of 'vertical', 'horizontal', 'up-right', 'down-right').
-     * @param metroLine The metro line in the network of any stations referred to in the constraint. If null, to be read from each station.
+     * @param metroLine The metro line in the network of any stations referred to in the constraint. If null, to be
+     *                  read from each station.
      * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
      * @param textLineNumber Line number of the input which declared this constraint.
      */
@@ -192,7 +193,8 @@ public class AmplDriver {
 
         List<Pair<String, String>> stationPairs = Util.allConsecutiveStationPairs(stationsString, textLineNumber);
         for (Pair<String, String> stationPair : stationPairs) {
-            writeCardinalDirectionConstraint(stationPair.getLeft(), stationPair.getRight(), constraintType, metroLine, metroLines, textLineNumber);
+            writeCardinalDirectionConstraint(stationPair.getLeft(), stationPair.getRight(), constraintType, metroLine,
+                    metroLines, textLineNumber);
         }
     }
 
@@ -203,7 +205,8 @@ public class AmplDriver {
      */
     private void writeSameStationAboveConstraint(String station1Id, String station2Id) throws IOException {
         writeVerticalConstraint(station1Id, station2Id);
-        amplModFile.write(String.format("subject to same_station_above_%s_%s: SOLVED_Y_COORDS[\"%s\"] + %d = SOLVED_Y_COORDS[\"%s\"];",
+        amplModFile.write(String.format("subject to same_station_above_%s_%s: " +
+                "SOLVED_Y_COORDS[\"%s\"] + %d = SOLVED_Y_COORDS[\"%s\"];",
                 station1Id, station2Id, station1Id, metroLineWidth, station2Id));
         amplModFile.newLine();
     }
@@ -215,7 +218,8 @@ public class AmplDriver {
      */
     private void writeSameStationLeftConstraint(String station1Id, String station2Id) throws IOException {
         writeHorizontalConstraint(station1Id, station2Id);
-        amplModFile.write(String.format("subject to same_station_left_%s_%s: SOLVED_X_COORDS[\"%s\"] + %d = SOLVED_X_COORDS[\"%s\"];",
+        amplModFile.write(String.format("subject to same_station_left_%s_%s: " +
+                "SOLVED_X_COORDS[\"%s\"] + %d = SOLVED_X_COORDS[\"%s\"];",
                 station1Id, station2Id, station1Id, metroLineWidth, station2Id));
         amplModFile.newLine();
     }
@@ -226,10 +230,12 @@ public class AmplDriver {
      * @param station2Id Identifier of the second station, in the STATIONS AMPL set.
      */
     private void writeSameStationAboveRightConstraint(String station1Id, String station2Id) throws IOException {
-        amplModFile.write(String.format("subject to same_station_above_right_above_%s_%s: SOLVED_Y_COORDS[\"%s\"] + %d = SOLVED_Y_COORDS[\"%s\"];",
+        amplModFile.write(String.format("subject to same_station_above_right_above_%s_%s: " +
+                "SOLVED_Y_COORDS[\"%s\"] + %d = SOLVED_Y_COORDS[\"%s\"];",
                 station1Id, station2Id, station1Id, diagonalOffset, station2Id));
         amplModFile.newLine();
-        amplModFile.write(String.format("subject to same_station_above_right_right_%s_%s: SOLVED_X_COORDS[\"%s\"] - %d = SOLVED_X_COORDS[\"%s\"];",
+        amplModFile.write(String.format("subject to same_station_above_right_right_%s_%s: " +
+                "SOLVED_X_COORDS[\"%s\"] - %d = SOLVED_X_COORDS[\"%s\"];",
                 station1Id, station2Id, station1Id, diagonalOffset, station2Id));
         amplModFile.newLine();
     }
@@ -240,10 +246,12 @@ public class AmplDriver {
      * @param station2Id Identifier of the second station, in the STATIONS AMPL set.
      */
     private void writeSameStationAboveLeftConstraint(String station1Id, String station2Id) throws IOException {
-        amplModFile.write(String.format("subject to same_station_above_left_above_%s_%s: SOLVED_Y_COORDS[\"%s\"] + %d = SOLVED_Y_COORDS[\"%s\"];",
+        amplModFile.write(String.format("subject to same_station_above_left_above_%s_%s: " +
+                "SOLVED_Y_COORDS[\"%s\"] + %d = SOLVED_Y_COORDS[\"%s\"];",
                 station1Id, station2Id, station1Id, diagonalOffset, station2Id));
         amplModFile.newLine();
-        amplModFile.write(String.format("subject to same_station_above_left_left_%s_%s: SOLVED_X_COORDS[\"%s\"] + %d = SOLVED_X_COORDS[\"%s\"];",
+        amplModFile.write(String.format("subject to same_station_above_left_left_%s_%s: " +
+                "SOLVED_X_COORDS[\"%s\"] + %d = SOLVED_X_COORDS[\"%s\"];",
                 station1Id, station2Id, station1Id, diagonalOffset, station2Id));
         amplModFile.newLine();
     }
@@ -254,10 +262,12 @@ public class AmplDriver {
      * @param station2Id Identifier of the second station, in the STATIONS AMPL set.
      */
     private void writeSameStationEqualConstraint(String station1Id, String station2Id) throws IOException {
-        amplModFile.write(String.format("subject to same_station_equal_x_%s_%s: SOLVED_X_COORDS[\"%s\"] = SOLVED_X_COORDS[\"%s\"];",
+        amplModFile.write(String.format("subject to same_station_equal_x_%s_%s: " +
+                "SOLVED_X_COORDS[\"%s\"] = SOLVED_X_COORDS[\"%s\"];",
                 station1Id, station2Id, station1Id, station2Id));
         amplModFile.newLine();
-        amplModFile.write(String.format("subject to same_station_equal_y_%s_%s: SOLVED_Y_COORDS[\"%s\"] = SOLVED_Y_COORDS[\"%s\"];",
+        amplModFile.write(String.format("subject to same_station_equal_y_%s_%s: " +
+                "SOLVED_Y_COORDS[\"%s\"] = SOLVED_Y_COORDS[\"%s\"];",
                 station1Id, station2Id, station1Id, station2Id));
         amplModFile.newLine();
     }
@@ -356,7 +366,8 @@ public class AmplDriver {
                     textLineNumber, stationNameWithXOrY));
         }
 
-        String stationId = metroLines.get(metroLineName).getStation(stationNameTokens[0].strip(), textLineNumber).getAmplUniqueId();
+        String stationId = metroLines.get(metroLineName).getStation(stationNameTokens[0].strip(), textLineNumber)
+                .getAmplUniqueId();
         String xOrY = stationNameTokens[1].strip();
 
         return switch (xOrY) {
@@ -382,8 +393,10 @@ public class AmplDriver {
         String[] lhsSummands = lhs.split("\\+"); // splits on the symbol +
         String[] rhsSummands = rhs.split("\\+");
 
-        lhsSummands = Arrays.stream(lhsSummands).map(String::strip).map(s -> processSummand(s, metroLines, textLineNumber)).toArray(String[]::new);
-        rhsSummands = Arrays.stream(rhsSummands).map(String::strip).map(s -> processSummand(s, metroLines, textLineNumber)).toArray(String[]::new);
+        lhsSummands = Arrays.stream(lhsSummands).map(String::strip)
+                .map(s -> processSummand(s, metroLines, textLineNumber)).toArray(String[]::new);
+        rhsSummands = Arrays.stream(rhsSummands).map(String::strip)
+                .map(s -> processSummand(s, metroLines, textLineNumber)).toArray(String[]::new);
 
         amplModFile.write(String.format("subject to equal_%d: %s = %s;", textLineNumber,
                 String.join(" + ", lhsSummands), String.join(" + ", rhsSummands)));

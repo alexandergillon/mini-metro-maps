@@ -110,8 +110,8 @@ public class Endpoint {
                 p1 = new Point(station.getSolvedX() + dxyDownRight, station.getSolvedY() + dxyDownRight);
 
             } default -> throw new IllegalStateException(String.format(
-                            "Invalid endpoint direction/modification \"%s\"/\"%s\", but this should have been validated earlier.",
-                            direction, modification));
+                "Invalid endpoint direction/modification \"%s\"/\"%s\", but this should have been validated earlier.",
+                direction, modification));
         }
 
         return OutputLineSegment.fromStraightLine(new StraightLine(p0, p1));
@@ -157,8 +157,7 @@ public class Endpoint {
                 case "down-right", "up-left" -> {
                     if (!ArrayUtils.contains(new String[]{"down-right", "up-left"}, modification)) throw badEndpoint;
                 }
-                default ->
-                    throw new IllegalArgumentException(String.format("(line %d) Invalid endpoint type \"%s\".", textLineNumber, textInput));
+                default -> throw badEndpoint;
             }
             return Pair.of(direction, modification);
         }
