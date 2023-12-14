@@ -69,6 +69,7 @@ function drawMetroLine(metroLine, lineWidth) {
 
 /** Draws all lines in the metro network. */
 function drawMetroLines(metroLines, lineWidth) {
+    metroLines.sort((line1, line2) => line1.zIndex - line2.zIndex);
     metroLines.forEach(line => drawMetroLine(line, lineWidth));
 }
 
