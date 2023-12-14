@@ -12,16 +12,23 @@ public record Edge(Station from, Station to) {
         return from.equals(station) || to.equals(station);
     }
 
+    /** Edges compare as equal regardless of ordering of stations. */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Edge edge = (Edge) o;
-        return Objects.equals(from, edge.from) && Objects.equals(to, edge.to);
+        return (Objects.equals(from, edge.from) && Objects.equals(to, edge.to))
+                || (Objects.equals(from, edge.to) && Objects.equals(to, edge.from));
     }
 
+    /** Hash function is symmetric in `from` and `to`, to align with equals(). */
     @Override
     public int hashCode() {
-        return Objects.hash(from, to);
+        if (from.getName().compareTo(to.getName()) < 0) {
+            return Objects.hash(from, to);
+        } else {
+            return Objects.hash(to, from);
+        }
     }
 }

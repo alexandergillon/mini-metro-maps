@@ -92,10 +92,8 @@ public class MetroLine {
 
         Station station1 = stations.get(station1Name);
         Station station2 = stations.get(station2Name);
-        Edge possibleEdge1 = new Edge(station1, station2);
-        Edge possibleEdge2 = new Edge(station2, station1);
 
-        if (!edges.contains(possibleEdge1) && !edges.contains(possibleEdge2)) {
+        if (!edges.contains(new Edge(station1, station2))) {
             throw new NoSuchElementException(String.format(
                     "(line %d) Curve between %s and %s specified, but they are not connected in line %s.",
                     textLineNumber, station1Name, station2Name, name));
