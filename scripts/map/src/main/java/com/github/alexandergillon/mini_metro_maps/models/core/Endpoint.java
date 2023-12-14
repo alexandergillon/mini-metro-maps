@@ -114,7 +114,7 @@ public class Endpoint {
                 direction, modification));
         }
 
-        return OutputLineSegment.fromStraightLine(new StraightLine(p0, p1));
+        return OutputLineSegment.fromStraightLine(p0, p1);
     }
 
     /**

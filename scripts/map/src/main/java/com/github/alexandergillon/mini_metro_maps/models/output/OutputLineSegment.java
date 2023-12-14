@@ -32,6 +32,11 @@ public class OutputLineSegment {
         return new OutputLineSegment(true, straightLine.getP0(), straightLine.getP1(), null, null);
     }
 
+    /** Converts two points on a straight line to an OutputLineSegment. */
+    public static OutputLineSegment fromStraightLine(Point p0, Point p1) {
+        return new OutputLineSegment(true, p0, p1, null, null);
+    }
+
     /** Converts a BezierCurve into an OutputLineSegment. */
     public static OutputLineSegment fromBezierCurve(BezierCurve bezierCurve) {
         return new OutputLineSegment(false,
