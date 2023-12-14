@@ -30,6 +30,9 @@ public class Parser {
     /** For getting NAPTANs of stations. */
     private final NaptanReader naptanReader;
 
+    /** Current metro line active in the input file. */
+    MetroLine currentMetroLine = null;
+
     /** Current line of the input being processed, for error messages. */
     private int textLineNumber = 0;
 
@@ -92,14 +95,11 @@ public class Parser {
             throw new IllegalArgumentException(String.format("(line %d) Station declared before a current line was set.", textLineNumber));
         }
 
-        textLine = Util.removePrefix(textLine, "station");
-        textLine = textLine.strip();
+        textLine = Util.removePrefix(textLine, "station").strip();
 
         Pair<String, String> doubleQuotedResult = Util.consumeDoubleQuoted(textLine, textLineNumber);
-        String stationName = doubleQuotedResult.getLeft();
-        String textRest = doubleQuotedResult.getRight();
-        stationName = stationName.strip();
-        textRest = textRest.strip();
+        String stationName = doubleQuotedResult.getLeft().strip();
+        String textRest = doubleQuotedResult.getRight().strip();
 
         String[] tokens = textRest.split("\\s+");
         if (tokens.length != 2) {
@@ -129,12 +129,10 @@ public class Parser {
             throw new IllegalArgumentException(String.format("(line %d) Edges declared before a current line was set.", textLineNumber));
         }
 
-        textLine = Util.removePrefix(textLine, "edges");
-        textLine = textLine.strip();
+        textLine = Util.removePrefix(textLine, "edges").strip();
 
         Pair<String, String> doubleQuotedResult = Util.consumeDoubleQuoted(textLine, textLineNumber);
-        String stationsString = doubleQuotedResult.getLeft();
-        stationsString = stationsString.strip();
+        String stationsString = doubleQuotedResult.getLeft().strip();
 
         List<Pair<String, String>> stationPairs = Util.allConsecutiveStationPairs(stationsString, textLineNumber);
         for (Pair<String, String> stationPair : stationPairs) {
@@ -179,14 +177,11 @@ public class Parser {
             throw new IllegalArgumentException(String.format("(line %d) Curve declared before a current line was set.", textLineNumber));
         }
 
-        textLine = Util.removePrefix(textLine, "curve");
-        textLine = textLine.strip();
+        textLine = Util.removePrefix(textLine, "curve").strip();
 
         Pair<String, String> doubleQuotedResult = Util.consumeDoubleQuoted(textLine, textLineNumber);
-        String stationsString = doubleQuotedResult.getLeft();
-        String textRest = doubleQuotedResult.getRight();
-        stationsString = stationsString.strip();
-        textRest = textRest.strip();
+        String stationsString = doubleQuotedResult.getLeft().strip();
+        String textRest = doubleQuotedResult.getRight().strip();
 
         String curveType = getCurveType(textRest);
         String[] stations = stationsString.split(",");
@@ -209,16 +204,41 @@ public class Parser {
             throw new IllegalArgumentException(String.format("(line %d) Endpoint declared before a current line was set.", textLineNumber));
         }
 
-        textLine = Util.removePrefix(textLine, "endpoint");
-        textLine = textLine.strip();
+        textLine = Util.removePrefix(textLine, "endpoint").strip();
 
         Pair<String, String> doubleQuotedResult = Util.consumeDoubleQuoted(textLine, textLineNumber);
-        String stationString = doubleQuotedResult.getLeft();
-        String textRest = doubleQuotedResult.getRight();
-        stationString = stationString.strip();
-        textRest = textRest.strip();
+        String stationString = doubleQuotedResult.getLeft().strip();
+        String textRest = doubleQuotedResult.getRight().strip();
 
         currentMetroLine.addEndpoint(stationString, textRest, textLineNumber);
+    }
+
+    /**
+     * Processes a sanitized line of input text.
+     * @param textLine The line of input text to process.
+     */
+    private void processInputLine(String textLine) {
+        if (textLine.startsWith("line")) {
+            currentMetroLine = createNewMetroLine(textLine);
+        } else if (textLine.startsWith("station")) {
+            createNewStation(textLine, currentMetroLine);
+        } else if (textLine.startsWith("edges")) {
+            addEdges(textLine, currentMetroLine);
+        } else if (textLine.startsWith("curve")) {
+            addCurve(textLine, currentMetroLine);
+        } else if (textLine.startsWith("multi-line")) {
+            currentMetroLine = null;
+        } else if (Util.startsWithAny(textLine, new String[]{"vertical", "horizontal", "up-right", "up-left", "down-right", "down-left"})) {
+            textLine = textLine.replace("up-left", "down-right");
+            textLine = textLine.replace("down-left", "up-right");
+            constraints.add(new Constraint(textLine, currentMetroLine, textLineNumber));
+        } else if (Util.startsWithAny(textLine, new String[]{"same-station", "equal"})) {
+            constraints.add(new Constraint(textLine, currentMetroLine, textLineNumber));
+        } else if (textLine.startsWith("endpoint")) {
+            addEndpoint(textLine, currentMetroLine);
+        } else {
+            System.out.printf("(line %d) Warning: line with unrecognized form. Ignoring.%n", textLineNumber);
+        }
     }
 
     /**
@@ -227,7 +247,6 @@ public class Parser {
      */
     private void readData() throws IOException {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(inputPath))) {
-            MetroLine currentMetroLine = null;
             String textLine;
             textLineNumber = 0;
             while ((textLine = bufferedReader.readLine()) != null) {
@@ -235,27 +254,7 @@ public class Parser {
                 textLine = sanitizeTextLine(textLine);
                 if (textLine.isEmpty()) continue;
 
-                if (textLine.startsWith("line")) {
-                    currentMetroLine = createNewMetroLine(textLine);
-                } else if (textLine.startsWith("station")) {
-                    createNewStation(textLine, currentMetroLine);
-                } else if (textLine.startsWith("edges")) {
-                    addEdges(textLine, currentMetroLine);
-                } else if (textLine.startsWith("curve")) {
-                    addCurve(textLine, currentMetroLine);
-                } else if (textLine.startsWith("multi-line")) {
-                    currentMetroLine = null;
-                } else if (Util.startsWithAny(textLine, new String[]{"vertical", "horizontal", "up-right", "up-left", "down-right", "down-left"})) {
-                    textLine = textLine.replace("up-left", "down-right");
-                    textLine = textLine.replace("down-left", "up-right");
-                    constraints.add(new Constraint(textLine, currentMetroLine, textLineNumber));
-                } else if (Util.startsWithAny(textLine, new String[]{"same-station", "equal"})) {
-                    constraints.add(new Constraint(textLine, currentMetroLine, textLineNumber));
-                } else if (textLine.startsWith("endpoint")) {
-                    addEndpoint(textLine, currentMetroLine);
-                } else {
-                    System.out.printf("(line %d) Warning: line with unrecognized form. Ignoring.%n", textLineNumber);
-                }
+                processInputLine(textLine);
             }
         }
     }

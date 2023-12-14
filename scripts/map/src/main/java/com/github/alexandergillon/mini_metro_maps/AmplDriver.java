@@ -137,10 +137,9 @@ public class AmplDriver {
             throw new IllegalArgumentException(String.format("(line %d) Invalid station name (\"lineName: stationName\" expected).", textLineNumber));
         }
 
-        String metroLineName = tokens[0];
-        String stationName = tokens[1];
-        metroLineName = metroLineName.strip();
-        stationName = stationName.strip();
+        String metroLineName = tokens[0].strip();
+        String stationName = tokens[1].strip();
+
         return Pair.of(metroLineName, stationName);
     }
 
@@ -189,8 +188,7 @@ public class AmplDriver {
     private void processCardinalDirectionConstraint(String inputText, String constraintType, MetroLine metroLine,
                                                     Map<String, MetroLine> metroLines, int textLineNumber) throws IOException {
         Pair<String, String> doubleQuotedResult = Util.consumeDoubleQuoted(inputText, textLineNumber);
-        String stationsString = doubleQuotedResult.getLeft();
-        stationsString = stationsString.strip();
+        String stationsString = doubleQuotedResult.getLeft().strip();
 
         List<Pair<String, String>> stationPairs = Util.allConsecutiveStationPairs(stationsString, textLineNumber);
         for (Pair<String, String> stationPair : stationPairs) {
@@ -327,8 +325,7 @@ public class AmplDriver {
             String line2Name = token3Result.getLeft();
 
             Pair<String, String> doubleQuotedResult = Util.consumeDoubleQuoted(token3Result.getRight(), textLineNumber);
-            String stationsString = doubleQuotedResult.getLeft();
-            stationsString = stationsString.strip();
+            String stationsString = doubleQuotedResult.getLeft().strip();
             String[] stations = stationsString.split(",");
             stations = Arrays.stream(stations).map(String::strip).toArray(String[]::new); // some day, mapping a collection in Java won't be ugly
 
@@ -403,8 +400,7 @@ public class AmplDriver {
     private void processConstraint(String textLine, MetroLine metroLine, Map<String, MetroLine> metroLines,
                                    int textLineNumber) throws IOException {
         String constraintType = textLine.split("\\s+")[0];
-        String textLineRest = Util.removePrefix(textLine, constraintType);
-        textLineRest = textLineRest.strip();
+        String textLineRest = Util.removePrefix(textLine, constraintType).strip();
 
         switch (constraintType) {
             case "vertical", "horizontal", "up-right", "down-right" ->
