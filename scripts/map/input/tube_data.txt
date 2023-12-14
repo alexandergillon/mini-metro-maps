@@ -850,7 +850,7 @@ multi-line:
   zindex northern below hammersmith-city
   zindex northern below circle
   zindex northern below metropolitan
-  zindex northern below circle
+  zindex northern below central
   zindex northern above jubilee
   zindex northern above victoria
   zindex northern above bakerloo
