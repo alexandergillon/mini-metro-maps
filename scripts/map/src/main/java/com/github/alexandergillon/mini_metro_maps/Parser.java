@@ -30,6 +30,9 @@ public class Parser {
     /** For getting NAPTANs of stations. */
     private final NaptanReader naptanReader;
 
+    /** Current metro line active in the input file. */
+    MetroLine currentMetroLine = null;
+
     /** Current line of the input being processed, for error messages. */
     private int textLineNumber = 0;
 
@@ -222,12 +225,39 @@ public class Parser {
     }
 
     /**
+     * Processes a sanitized line of input text.
+     * @param textLine The line of input text to process.
+     */
+    private void processInputLine(String textLine) {
+        if (textLine.startsWith("line")) {
+            currentMetroLine = createNewMetroLine(textLine);
+        } else if (textLine.startsWith("station")) {
+            createNewStation(textLine, currentMetroLine);
+        } else if (textLine.startsWith("edges")) {
+            addEdges(textLine, currentMetroLine);
+        } else if (textLine.startsWith("curve")) {
+            addCurve(textLine, currentMetroLine);
+        } else if (textLine.startsWith("multi-line")) {
+            currentMetroLine = null;
+        } else if (Util.startsWithAny(textLine, new String[]{"vertical", "horizontal", "up-right", "up-left", "down-right", "down-left"})) {
+            textLine = textLine.replace("up-left", "down-right");
+            textLine = textLine.replace("down-left", "up-right");
+            constraints.add(new Constraint(textLine, currentMetroLine, textLineNumber));
+        } else if (Util.startsWithAny(textLine, new String[]{"same-station", "equal"})) {
+            constraints.add(new Constraint(textLine, currentMetroLine, textLineNumber));
+        } else if (textLine.startsWith("endpoint")) {
+            addEndpoint(textLine, currentMetroLine);
+        } else {
+            System.out.printf("(line %d) Warning: line with unrecognized form. Ignoring.%n", textLineNumber);
+        }
+    }
+
+    /**
      * Reads data about metro lines/stations from the input file. Puts information into the `metroLines` and
      * `constraints` member variables.
      */
     private void readData() throws IOException {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(inputPath))) {
-            MetroLine currentMetroLine = null;
             String textLine;
             textLineNumber = 0;
             while ((textLine = bufferedReader.readLine()) != null) {
@@ -235,30 +265,12 @@ public class Parser {
                 textLine = sanitizeTextLine(textLine);
                 if (textLine.isEmpty()) continue;
 
-                if (textLine.startsWith("line")) {
-                    currentMetroLine = createNewMetroLine(textLine);
-                } else if (textLine.startsWith("station")) {
-                    createNewStation(textLine, currentMetroLine);
-                } else if (textLine.startsWith("edges")) {
-                    addEdges(textLine, currentMetroLine);
-                } else if (textLine.startsWith("curve")) {
-                    addCurve(textLine, currentMetroLine);
-                } else if (textLine.startsWith("multi-line")) {
-                    currentMetroLine = null;
-                } else if (Util.startsWithAny(textLine, new String[]{"vertical", "horizontal", "up-right", "up-left", "down-right", "down-left"})) {
-                    textLine = textLine.replace("up-left", "down-right");
-                    textLine = textLine.replace("down-left", "up-right");
-                    constraints.add(new Constraint(textLine, currentMetroLine, textLineNumber));
-                } else if (Util.startsWithAny(textLine, new String[]{"same-station", "equal"})) {
-                    constraints.add(new Constraint(textLine, currentMetroLine, textLineNumber));
-                } else if (textLine.startsWith("endpoint")) {
-                    addEndpoint(textLine, currentMetroLine);
-                } else {
-                    System.out.printf("(line %d) Warning: line with unrecognized form. Ignoring.%n", textLineNumber);
-                }
+                processInputLine(textLine);
             }
         }
     }
+
+
 
     /** Checks that all lines have no orphans. */
     private void checkNoOrphans() {
