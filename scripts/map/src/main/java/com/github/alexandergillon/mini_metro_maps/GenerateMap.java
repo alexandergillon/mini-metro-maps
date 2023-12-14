@@ -14,7 +14,7 @@ public class GenerateMap {
     public static final int SCALE_FACTOR = 5;
 
     /** Line width of a metro line on the map, in pixels. */
-    public static final int METRO_LINE_WIDTH = 10 * SCALE_FACTOR;
+    public static final int METRO_LINE_WIDTH = 10 * SCALE_FACTOR; // must be even or AMPL constraints with be violated
 
     /**
      * How long of a prefix you need to take from each metro line's name to ensure that all prefixes are unique.

@@ -1,7 +1,6 @@
 package com.github.alexandergillon.mini_metro_maps.models.core;
 
 import com.github.alexandergillon.mini_metro_maps.GenerateMap;
-import com.github.alexandergillon.mini_metro_maps.MathUtil;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.Point;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.StraightLine;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputLineSegment;
@@ -46,57 +45,69 @@ public class Endpoint {
             throw new IllegalStateException("Endpoint.toLineSegment() called before AMPL model has been solved.");
         }
 
-        Point p0 = new Point(station.getSolvedX(), station.getSolvedY());
-        Point p1 = new Point(station.getSolvedX(), station.getSolvedY());
+        Point p0;
+        Point p1;
 
         switch (direction) {
             case "horizontal" -> {
 
-                if (modification == null || modification.equals("left")) {
-                    int dx = (int)MathUtil.symmetricRound(GenerateMap.METRO_LINE_WIDTH * (ENDPOINT_SCALE_FACTOR/2));
-                    p0 = new Point(station.getSolvedX() - dx, station.getSolvedY());
-                }
+                int dxLeft = (modification == null || modification.equals("left")) ?
+                    (int)Math.round(GenerateMap.METRO_LINE_WIDTH * (ENDPOINT_SCALE_FACTOR/2))
+                  : (int)Math.round((double) GenerateMap.METRO_LINE_WIDTH / 2) - 1; // -1 to include center pixel, or
+                                                                            // half-end will overlap with adjacent line
 
-                if (modification == null || modification.equals("right")) {
-                    int dx = (int)MathUtil.symmetricRound(GenerateMap.METRO_LINE_WIDTH * (ENDPOINT_SCALE_FACTOR/2));
-                    p1 = new Point(station.getSolvedX() + dx, station.getSolvedY());
-                }
+                int dxRight = (modification == null || modification.equals("right")) ?
+                    (int)Math.round(GenerateMap.METRO_LINE_WIDTH * (ENDPOINT_SCALE_FACTOR/2))
+                  : (int)Math.round((double) GenerateMap.METRO_LINE_WIDTH / 2) - 1; // -1 to include center pixel, or
+                                                                            // half-end will overlap with adjacent line
+
+                p0 = new Point(station.getSolvedX() - dxLeft, station.getSolvedY());
+                p1 = new Point(station.getSolvedX() + dxRight, station.getSolvedY());
 
             } case "vertical" -> {
 
-                if (modification == null || modification.equals("up")) {
-                    int dy = (int)MathUtil.symmetricRound(GenerateMap.METRO_LINE_WIDTH * (ENDPOINT_SCALE_FACTOR/2));
-                    p0 = new Point(station.getSolvedX(), station.getSolvedY() - dy);
-                }
+                int dyUp = (modification == null || modification.equals("up")) ?
+                    (int)Math.round(GenerateMap.METRO_LINE_WIDTH * (ENDPOINT_SCALE_FACTOR/2))
+                  : (int)Math.round((double) GenerateMap.METRO_LINE_WIDTH / 2) - 1; // -1 to include center pixel, or
+                                                                            // half-end will overlap with adjacent line
 
-                if (modification == null || modification.equals("down")) {
-                    int dy = (int)MathUtil.symmetricRound(GenerateMap.METRO_LINE_WIDTH * (ENDPOINT_SCALE_FACTOR/2));
-                    p1 = new Point(station.getSolvedX(), station.getSolvedY() + dy);
-                }
+                int dyDown = (modification == null || modification.equals("down")) ?
+                    (int)Math.round(GenerateMap.METRO_LINE_WIDTH * (ENDPOINT_SCALE_FACTOR/2))
+                  : (int)Math.round((double) GenerateMap.METRO_LINE_WIDTH / 2) - 1; // -1 to include center pixel, or
+                                                                            // half-end will overlap with adjacent line
+
+                p0 = new Point(station.getSolvedX(), station.getSolvedY() - dyUp);
+                p1 = new Point(station.getSolvedX(), station.getSolvedY() + dyDown);
 
             } case "up-right", "down-left" -> {
 
-                int dxy = (int)MathUtil.symmetricRound(GenerateMap.METRO_LINE_WIDTH * (ENDPOINT_SCALE_FACTOR/2) / Math.sqrt(2));
+                int dxyDownLeft = (modification == null || modification.equals("down-left")) ?
+                    (int)Math.round(GenerateMap.METRO_LINE_WIDTH * (ENDPOINT_SCALE_FACTOR/2) / Math.sqrt(2))
+                  : (int)Math.round(GenerateMap.METRO_LINE_WIDTH / Math.sqrt(2)) - 1; // -1 to include center pixel, or
+                                                                            // half-end will overlap with adjacent line
 
-                if (modification == null || modification.equals("down-left")) {
-                    p0 = new Point(station.getSolvedX() - dxy, station.getSolvedY() + dxy);
-                }
+                int dxyUpRight = (modification == null || modification.equals("up-right")) ?
+                    (int)Math.round(GenerateMap.METRO_LINE_WIDTH * (ENDPOINT_SCALE_FACTOR/2) / Math.sqrt(2))
+                  : (int)Math.round(GenerateMap.METRO_LINE_WIDTH / Math.sqrt(2)) - 1; // -1 to include center pixel, or
+                                                                            // half-end will overlap with adjacent line
 
-                if (modification == null || modification.equals("up-right")) {
-                    p1 = new Point(station.getSolvedX() + dxy, station.getSolvedY() - dxy);
-                }
+                p0 = new Point(station.getSolvedX() - dxyDownLeft, station.getSolvedY() + dxyDownLeft);
+                p1 = new Point(station.getSolvedX() + dxyUpRight, station.getSolvedY() - dxyUpRight);
 
             } case "down-right", "up-left" -> {
 
-                int dxy = (int)MathUtil.symmetricRound(GenerateMap.METRO_LINE_WIDTH * (ENDPOINT_SCALE_FACTOR/2) / Math.sqrt(2));
+                int dxyUpLeft = (modification == null || modification.equals("up-left")) ?
+                    (int)Math.round(GenerateMap.METRO_LINE_WIDTH * (ENDPOINT_SCALE_FACTOR/2) / Math.sqrt(2))
+                  : (int)Math.round(GenerateMap.METRO_LINE_WIDTH / Math.sqrt(2)) - 1; // -1 to include center pixel, or
+                                                                            // half-end will overlap with adjacent line
 
-                if (modification == null || modification.equals("up-left")) {
-                    p0 = new Point(station.getSolvedX() - dxy, station.getSolvedY() - dxy);
-                }
+                int dxyDownRight = (modification == null || modification.equals("down-right")) ?
+                    (int)Math.round(GenerateMap.METRO_LINE_WIDTH * (ENDPOINT_SCALE_FACTOR/2) / Math.sqrt(2))
+                  : (int)Math.round(GenerateMap.METRO_LINE_WIDTH / Math.sqrt(2)) - 1; // -1 to include center pixel, or
+                                                                            // half-end will overlap with adjacent line
 
-                if (modification == null || modification.equals("down-right")) {
-                    p1 = new Point(station.getSolvedX() + dxy, station.getSolvedY() + dxy);
-                }
+                p0 = new Point(station.getSolvedX() - dxyUpLeft, station.getSolvedY() - dxyUpLeft);
+                p1 = new Point(station.getSolvedX() + dxyDownRight, station.getSolvedY() + dxyDownRight);
 
             } default -> throw new IllegalStateException(String.format(
                             "Invalid endpoint direction/modification \"%s\"/\"%s\", but this should have been validated earlier.",
