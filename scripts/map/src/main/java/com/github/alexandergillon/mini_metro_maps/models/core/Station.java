@@ -37,11 +37,11 @@ public class Station {
         this.metroLineName = metroLineName;
         this.name = name;
 
-        if (GenerateMap.METRO_LINE_PREFIX_LENGTH == -1) {
-            this.amplUniqueId = metroLineName.replace("-", "") + "_" + naptan;
-        } else {
-            this.amplUniqueId = metroLineName.substring(0, GenerateMap.METRO_LINE_PREFIX_LENGTH).replace("-", "") + "_" + naptan;
-        }
+        String metroLinePrefix = GenerateMap.METRO_LINE_PREFIX_LENGTH == -1 ? metroLineName
+                : metroLineName.substring(0, GenerateMap.METRO_LINE_PREFIX_LENGTH);
+        // AMPL cannot handle '-' in various identifiers that are built from amplUniqueId.
+        metroLinePrefix = metroLineName.replace("-", "");
+        this.amplUniqueId = String.format("%s_%s", metroLinePrefix, naptan);
 
         this.originalX = x;
         this.originalY = y;
@@ -57,11 +57,17 @@ public class Station {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Station station = (Station) o;
-        return originalX == station.originalX && originalY == station.originalY && Objects.equals(metroLineName, station.metroLineName) && Objects.equals(amplUniqueId, station.amplUniqueId);
+        return originalX == station.originalX
+                && originalY == station.originalY
+                && solvedX == station.solvedX
+                && solvedY == station.solvedY
+                && Objects.equals(metroLineName, station.metroLineName)
+                && Objects.equals(name, station.name)
+                && Objects.equals(amplUniqueId, station.amplUniqueId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(metroLineName, amplUniqueId, originalX, originalY);
+        return Objects.hash(metroLineName, name, amplUniqueId, originalX, originalY, solvedX, solvedY);
     }
 }

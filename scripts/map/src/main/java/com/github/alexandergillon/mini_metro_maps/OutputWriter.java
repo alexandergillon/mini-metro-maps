@@ -87,9 +87,9 @@ public class OutputWriter {
                 .toList();
 
         List<OutputEdge> edges = buildOutputEdges(metroLine);
-        List<OutputLineSegment> endpointLineSegments = metroLine.getEndpoints().stream().map(Endpoint::toLineSegment).toList();
+        List<OutputLineSegment> endpointSegments = metroLine.getEndpoints().stream().map(Endpoint::toLineSegment).toList();
 
-        return new OutputMetroLine(name, color, stations, edges, endpointLineSegments);
+        return new OutputMetroLine(name, color, stations, edges, endpointSegments);
     }
 
     /** Builds the output edges of a metro line. */
@@ -109,12 +109,12 @@ public class OutputWriter {
                 Station station1 = edge.from();
                 Station station2 = edge.to();
 
-                Point station1Position = Point.fromSolvedStationCoordinates(station1);
-                Point station2Position = Point.fromSolvedStationCoordinates(station2);
+                Point station1Pos = Point.fromSolvedStationCoordinates(station1);
+                Point station2Pos = Point.fromSolvedStationCoordinates(station2);
 
                 validateStraightEdge(station1, station2);
 
-                OutputLineSegment straightLineSegment = OutputLineSegment.fromStraightLine(new StraightLine(station1Position, station2Position));
+                OutputLineSegment straightLineSegment = OutputLineSegment.fromStraightLine(station1Pos, station2Pos);
                 outputEdges.add(new OutputEdge(station1.getAmplUniqueId(), station2.getAmplUniqueId(), List.of(straightLineSegment)));
             }
         }

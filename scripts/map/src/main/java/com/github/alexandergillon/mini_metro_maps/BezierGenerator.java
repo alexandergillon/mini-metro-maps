@@ -124,7 +124,7 @@ public class BezierGenerator {
             // todo: handle properly
             Point station1 = Point.fromSolvedStationCoordinates(curve.from());
             Point station2 = Point.fromSolvedStationCoordinates(curve.to());
-            return List.of(OutputLineSegment.fromStraightLine(new StraightLine(station1, station2)));
+            return List.of(OutputLineSegment.fromStraightLine(station1, station2));
         }
 
         Curve canonicalCurve = toCanonical(curve);
@@ -198,13 +198,13 @@ public class BezierGenerator {
         List<OutputLineSegment> segments = new ArrayList<>();
 
         if (bezierP0.getX() > station1.getX()) {
-            segments.add(OutputLineSegment.fromStraightLine(new StraightLine(station1, bezierP0)));
+            segments.add(OutputLineSegment.fromStraightLine(station1, bezierP0));
         }
 
         segments.add(OutputLineSegment.fromBezierCurve(new BezierCurve(bezierP0, bezierP1, bezierP2, bezierP3)));
 
         if (bezierP3.getY() < station2.getY()) {
-            segments.add(OutputLineSegment.fromStraightLine(new StraightLine(bezierP3, station2)));
+            segments.add(OutputLineSegment.fromStraightLine(bezierP3, station2));
         }
 
         return segments;
@@ -295,13 +295,13 @@ public class BezierGenerator {
         List<OutputLineSegment> segments = new ArrayList<>();
 
         if (bezierP0.getX() > station1.getX()) {
-            segments.add(OutputLineSegment.fromStraightLine(new StraightLine(station1, bezierP0)));
+            segments.add(OutputLineSegment.fromStraightLine(station1, bezierP0));
         }
 
         segments.add(OutputLineSegment.fromBezierCurve(new BezierCurve(bezierP0, bezierP1, bezierP2, bezierP3)));
 
         if (bezierP3.getY() < station2.getY()) {
-            segments.add(OutputLineSegment.fromStraightLine(new StraightLine(bezierP3, station2)));
+            segments.add(OutputLineSegment.fromStraightLine(bezierP3, station2));
         }
 
         return segments;

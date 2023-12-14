@@ -57,7 +57,8 @@ public class ModelBezierCurve {
 
     @Override
     public String toString() {
-        return String.format("BezierCurve(%s, %s, %s, %s)", p0Offset.toString(), p1Offset.toString(), p2Offset.toString(), p3Offset.toString());
+        return String.format("BezierCurve(%s, %s, %s, %s)",
+                p0Offset.toString(), p1Offset.toString(), p2Offset.toString(), p3Offset.toString());
     }
 
     /**
