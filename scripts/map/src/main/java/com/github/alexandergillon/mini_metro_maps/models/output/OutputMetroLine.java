@@ -1,5 +1,6 @@
 package com.github.alexandergillon.mini_metro_maps.models.output;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,10 @@ public class OutputMetroLine {
 
     /** Color of this line, as a hex string. E.g. #E1251B. */
     private String color;
+
+    /** z index of this line. Value is meaningless - only differences between z indices have meaning. */
+    @JsonProperty("zIndex") // Needed due to Jackson internals - getter is getZIndex, which Jackson interprets as 'zindex' (not 'zIndex')
+    private int zIndex;
 
     /** Stations in the metro line. */
     private List<OutputStation> stations;

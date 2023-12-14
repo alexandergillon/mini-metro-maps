@@ -9,7 +9,6 @@ import com.github.alexandergillon.mini_metro_maps.models.core.Edge;
 import com.github.alexandergillon.mini_metro_maps.models.core.MetroLine;
 import com.github.alexandergillon.mini_metro_maps.models.core.Station;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.Point;
-import com.github.alexandergillon.mini_metro_maps.models.bezier.StraightLine;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputEdge;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputLineSegment;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputMetroLine;
@@ -78,6 +77,7 @@ public class OutputWriter {
     private OutputMetroLine toOutputMetroLine(MetroLine metroLine) {
         String name = metroLine.getName();
         String color = nameToColor.get(name);
+        int zIndex = metroLine.getZIndex();
 
         List<OutputStation> stations = metroLine.getStations().values().stream()
                 .map(
@@ -89,7 +89,7 @@ public class OutputWriter {
         List<OutputEdge> edges = buildOutputEdges(metroLine);
         List<OutputLineSegment> endpointSegments = metroLine.getEndpoints().stream().map(Endpoint::toLineSegment).toList();
 
-        return new OutputMetroLine(name, color, stations, edges, endpointSegments);
+        return new OutputMetroLine(name, color, zIndex, stations, edges, endpointSegments);
     }
 
     /** Builds the output edges of a metro line. */

@@ -821,3 +821,36 @@ multi-line:
   # W&C line
   same-station waterloo-city exact northern "Waterloo"
   same-station waterloo-city below-right central "Bank"
+
+  # central constraints are conflicting - above metropolitan in the west, below in the east
+  #zindex central above metropolitan
+  #zindex central above piccadilly
+  zindex central below circle
+  zindex central below hammersmith-city
+  zindex central below district
+  zindex central above jubilee
+  
+  zindex piccadilly below district
+  zindex piccadilly below circle 
+  zindex piccadilly below hammersmith-city
+  zindex piccadilly below metropolitan
+
+  zindex metropolitan above circle
+  zindex metropolitan above hammersmith-city
+  zindex metropolitan above jubilee
+
+  zindex district above jubilee
+  zindex district above northern
+  zindex district above victoria
+  
+  zindex victoria below circle
+  zindex victoria below hammersmith-city
+  zindex victoria below metropolitan
+  
+  zindex northern below hammersmith-city
+  zindex northern below circle
+  zindex northern below metropolitan
+  zindex northern below central
+  zindex northern above jubilee
+  zindex northern above victoria
+  zindex northern above bakerloo
