@@ -1,6 +1,6 @@
 package com.github.alexandergillon.mini_metro_maps;
 
-import com.github.alexandergillon.mini_metro_maps.models.core.Constraint;
+import com.github.alexandergillon.mini_metro_maps.models.core.AlignmentConstraint;
 import com.github.alexandergillon.mini_metro_maps.models.core.Curve;
 import com.github.alexandergillon.mini_metro_maps.models.core.MetroLine;
 import com.github.alexandergillon.mini_metro_maps.models.core.Station;
@@ -27,7 +27,7 @@ public class Parser {
     private final HashMap<String, MetroLine> metroLines = new HashMap<>();
 
     /** Constraints declared in the input file. */
-    private final ArrayList<Constraint> constraints = new ArrayList<>();
+    private final ArrayList<AlignmentConstraint> alignmentConstraints = new ArrayList<>();
 
     /** Path to the input data file. */
     private final String inputPath;
@@ -265,9 +265,9 @@ public class Parser {
         } else if (Util.startsWithAny(textLine, new String[]{"vertical", "horizontal", "up-right", "up-left", "down-right", "down-left"})) {
             textLine = textLine.replace("up-left", "down-right");
             textLine = textLine.replace("down-left", "up-right");
-            constraints.add(new Constraint(textLine, currentMetroLine, textLineNumber));
+            alignmentConstraints.add(new AlignmentConstraint(textLine, currentMetroLine, textLineNumber));
         } else if (Util.startsWithAny(textLine, new String[]{"same-station", "equal"})) {
-            constraints.add(new Constraint(textLine, currentMetroLine, textLineNumber));
+            alignmentConstraints.add(new AlignmentConstraint(textLine, currentMetroLine, textLineNumber));
         } else if (textLine.startsWith("endpoint")) {
             addEndpoint(textLine, currentMetroLine);
         } else if (textLine.startsWith("zindex")) {
@@ -309,10 +309,10 @@ public class Parser {
      *   - A list of alignment constraints.
      *   - A list of z-index constraints.
      */
-    public Triple<Map<String, MetroLine>, List<Constraint>, Set<ZIndexConstraint>> parseData() throws IOException {
+    public Triple<Map<String, MetroLine>, List<AlignmentConstraint>, Set<ZIndexConstraint>> parseData() throws IOException {
         System.out.println("Parsing input data.");
         readData();
         checkNoOrphans();
-        return Triple.of(metroLines, constraints, zIndexConstraints);
+        return Triple.of(metroLines, alignmentConstraints, zIndexConstraints);
     }
 }

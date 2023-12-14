@@ -1,7 +1,7 @@
 package com.github.alexandergillon.mini_metro_maps;
 
 import com.ampl.AMPL;
-import com.github.alexandergillon.mini_metro_maps.models.core.Constraint;
+import com.github.alexandergillon.mini_metro_maps.models.core.AlignmentConstraint;
 import com.github.alexandergillon.mini_metro_maps.models.core.MetroLine;
 import com.github.alexandergillon.mini_metro_maps.models.core.Station;
 import com.github.alexandergillon.mini_metro_maps.models.core.ZIndexConstraint;
@@ -435,12 +435,12 @@ public class AmplDriver {
 
     /**
      * Processes all alignment constraints.
-     * @param constraints The constraints.
+     * @param alignmentConstraints The constraints.
      * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
      */
-    private void processConstraints(List<Constraint> constraints, Map<String, MetroLine> metroLines) throws IOException {
-        for (Constraint constraint : constraints) {
-            processConstraint(constraint.constraintText(), constraint.metroLine(), metroLines, constraint.textLineNumber());
+    private void processConstraints(List<AlignmentConstraint> alignmentConstraints, Map<String, MetroLine> metroLines) throws IOException {
+        for (AlignmentConstraint alignmentConstraint : alignmentConstraints) {
+            processConstraint(alignmentConstraint.constraintText(), alignmentConstraint.metroLine(), metroLines, alignmentConstraint.textLineNumber());
         }
     }
 
@@ -523,11 +523,11 @@ public class AmplDriver {
      * @param amplModPath Path to write the AMPL .mod file to.
      * @param amplDatPath Path to write the AMPL .dat file to.
      * @param zAmplModPath Path to write the AMPL z-index .mod file to.
-     * @param alignmentConstraints Alignment  constraints.
+     * @param alignmentConstraints Alignment constraints.
      * @param zIndexConstraints z-index constraints between metro lines.
      * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
      */
-    public void writeAmplFiles(String amplModPath, String amplDatPath, String zAmplModPath, List<Constraint> alignmentConstraints,
+    public void writeAmplFiles(String amplModPath, String amplDatPath, String zAmplModPath, List<AlignmentConstraint> alignmentConstraints,
                                Set<ZIndexConstraint> zIndexConstraints, Map<String, MetroLine> metroLines) throws IOException {
         System.out.println("Writing AMPL files.");
         try (BufferedWriter modFile = new BufferedWriter(new FileWriter(amplModPath));
