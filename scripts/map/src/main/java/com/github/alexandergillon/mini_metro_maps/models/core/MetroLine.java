@@ -104,7 +104,7 @@ public class MetroLine {
                     textLineNumber, station1Name, station2Name, name));
         }
 
-        curves.add(new Curve(station1, station2, curveType));
+        curves.add(new Curve(station1, station2, curveType, null));
     }
 
     /**

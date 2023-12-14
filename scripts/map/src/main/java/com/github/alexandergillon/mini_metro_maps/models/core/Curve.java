@@ -3,7 +3,9 @@ package com.github.alexandergillon.mini_metro_maps.models.core;
 import java.util.Objects;
 
 /** Represents a curve between two stations. */
-public record Curve(Station from, Station to, String type) {
+public record Curve(Station from, Station to, String type,
+                    Curve dependentOn // Initially null. If dependent, will be set after all curves are read in.
+) {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
