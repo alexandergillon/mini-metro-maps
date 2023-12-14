@@ -95,14 +95,11 @@ public class Parser {
             throw new IllegalArgumentException(String.format("(line %d) Station declared before a current line was set.", textLineNumber));
         }
 
-        textLine = Util.removePrefix(textLine, "station");
-        textLine = textLine.strip();
+        textLine = Util.removePrefix(textLine, "station").strip();
 
         Pair<String, String> doubleQuotedResult = Util.consumeDoubleQuoted(textLine, textLineNumber);
-        String stationName = doubleQuotedResult.getLeft();
-        String textRest = doubleQuotedResult.getRight();
-        stationName = stationName.strip();
-        textRest = textRest.strip();
+        String stationName = doubleQuotedResult.getLeft().strip();
+        String textRest = doubleQuotedResult.getRight().strip();
 
         String[] tokens = textRest.split("\\s+");
         if (tokens.length != 2) {
@@ -132,12 +129,10 @@ public class Parser {
             throw new IllegalArgumentException(String.format("(line %d) Edges declared before a current line was set.", textLineNumber));
         }
 
-        textLine = Util.removePrefix(textLine, "edges");
-        textLine = textLine.strip();
+        textLine = Util.removePrefix(textLine, "edges").strip();
 
         Pair<String, String> doubleQuotedResult = Util.consumeDoubleQuoted(textLine, textLineNumber);
-        String stationsString = doubleQuotedResult.getLeft();
-        stationsString = stationsString.strip();
+        String stationsString = doubleQuotedResult.getLeft().strip();
 
         List<Pair<String, String>> stationPairs = Util.allConsecutiveStationPairs(stationsString, textLineNumber);
         for (Pair<String, String> stationPair : stationPairs) {
@@ -182,14 +177,11 @@ public class Parser {
             throw new IllegalArgumentException(String.format("(line %d) Curve declared before a current line was set.", textLineNumber));
         }
 
-        textLine = Util.removePrefix(textLine, "curve");
-        textLine = textLine.strip();
+        textLine = Util.removePrefix(textLine, "curve").strip();
 
         Pair<String, String> doubleQuotedResult = Util.consumeDoubleQuoted(textLine, textLineNumber);
-        String stationsString = doubleQuotedResult.getLeft();
-        String textRest = doubleQuotedResult.getRight();
-        stationsString = stationsString.strip();
-        textRest = textRest.strip();
+        String stationsString = doubleQuotedResult.getLeft().strip();
+        String textRest = doubleQuotedResult.getRight().strip();
 
         String curveType = getCurveType(textRest);
         String[] stations = stationsString.split(",");
@@ -212,14 +204,11 @@ public class Parser {
             throw new IllegalArgumentException(String.format("(line %d) Endpoint declared before a current line was set.", textLineNumber));
         }
 
-        textLine = Util.removePrefix(textLine, "endpoint");
-        textLine = textLine.strip();
+        textLine = Util.removePrefix(textLine, "endpoint").strip();
 
         Pair<String, String> doubleQuotedResult = Util.consumeDoubleQuoted(textLine, textLineNumber);
-        String stationString = doubleQuotedResult.getLeft();
-        String textRest = doubleQuotedResult.getRight();
-        stationString = stationString.strip();
-        textRest = textRest.strip();
+        String stationString = doubleQuotedResult.getLeft().strip();
+        String textRest = doubleQuotedResult.getRight().strip();
 
         currentMetroLine.addEndpoint(stationString, textRest, textLineNumber);
     }
@@ -269,8 +258,6 @@ public class Parser {
             }
         }
     }
-
-
 
     /** Checks that all lines have no orphans. */
     private void checkNoOrphans() {

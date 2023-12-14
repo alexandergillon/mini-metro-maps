@@ -40,11 +40,9 @@ public class Util {
             throw new IllegalArgumentException(String.format("(line %d) Token expected.", textLineNumber));
         }
 
-        String token = s.substring(0, whitespaceIndex);
-        String rest = s.substring(whitespaceIndex+1);
+        String token = s.substring(0, whitespaceIndex).strip();
+        String rest = s.substring(whitespaceIndex+1).stripLeading();
 
-        token = token.strip();
-        rest = rest.stripLeading();
         return Pair.of(token, rest);
     }
 
