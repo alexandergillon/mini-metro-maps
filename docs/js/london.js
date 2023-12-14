@@ -52,7 +52,10 @@ async function setupCanvas() {
     registerEventListeners(canvas);
 
     const metroNetwork = await fetchMetroNetwork();
-    drawMetroLines(metroNetwork.metroLines, metroNetwork.lineWidth);
+    // We add 1 to the line width given to us, or otherwise there are small gaps between parallel lines (as paper.js
+    // doesn't know what to do in the middle of two parallel but non-overlapping lines). This means that every parallel
+    // set of lines is now slightly overlapping, but with only 1 pixel this is unnoticeable for fairly large line width.
+    drawMetroLines(metroNetwork.metroLines, metroNetwork.lineWidth + 1);
     paper.view.draw();
 }
 
