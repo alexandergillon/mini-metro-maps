@@ -13,6 +13,7 @@ import com.github.alexandergillon.mini_metro_maps.models.output.OutputEdge;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputLineSegment;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputMetroLine;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputStation;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,11 +63,34 @@ public class OutputWriter {
             outputMetroLines.add(toOutputMetroLine(metroLine));
         }
 
-        OutputNetwork outputNetwork = new OutputNetwork(GenerateMap.METRO_LINE_WIDTH, outputMetroLines);
+        Pair<Integer, Integer> maxXAndY = getMaxXAndY(metroLines);
+        int maxX = maxXAndY.getLeft() + GenerateMap.BORDER_SIZE;
+        int maxY = maxXAndY.getRight() + GenerateMap.BORDER_SIZE;
+
+        OutputNetwork outputNetwork = new OutputNetwork(GenerateMap.METRO_LINE_WIDTH, maxX, maxY, outputMetroLines);
 
         System.out.println("Writing output file.");
         Files.createDirectories(Path.of(outputPath).getParent());
         objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(outputPath), outputNetwork);
+    }
+
+    /**
+     * Finds the maximum X and Y values across all stations, plus a border.
+     * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
+     * @return The maximum X and Y values across all stations, as a pair (x,y).
+     */
+    private Pair<Integer, Integer> getMaxXAndY(Map<String, MetroLine> metroLines) {
+        int maxX = Integer.MIN_VALUE;
+        int maxY = Integer.MIN_VALUE;
+
+        for (MetroLine metroLine : metroLines.values()) {
+            for (Station station : metroLine.getStations().values()) {
+                maxX = Integer.max(maxX, station.getSolvedX());
+                maxY = Integer.max(maxY, station.getSolvedY());
+            }
+        }
+
+        return Pair.of(maxX, maxY);
     }
 
     /**

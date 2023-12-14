@@ -544,6 +544,34 @@ public class AmplDriver {
     }
 
     /**
+     * Finds the minimum X and Y values across all stations.
+     * @param ampl The AMPL object, which contains the solved X and Y values.
+     * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
+     * @return The minimum X and Y values across all stations, as a pair (x,y).
+     */
+    private static Pair<Integer, Integer> findMinXAndY(AMPL ampl, Map<String, MetroLine> metroLines) {
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+
+        for (MetroLine metroLine : metroLines.values()) {
+            for (Station station : metroLine.getStations().values()) {
+                double solvedX = (double) ampl.getValue(String.format("SOLVED_X_COORDS[\"%s\"]", station.getAmplUniqueId()));
+                double solvedY = (double) ampl.getValue(String.format("SOLVED_Y_COORDS[\"%s\"]", station.getAmplUniqueId()));
+
+                assert MathUtil.approxInt(solvedX);
+                assert MathUtil.approxInt(solvedY);
+                assert solvedX > Integer.MIN_VALUE && solvedX < Integer.MAX_VALUE;
+                assert solvedY > Integer.MIN_VALUE && solvedY < Integer.MAX_VALUE;
+
+                minX = Integer.min(minX, (int)Math.round(solvedX));
+                minY = Integer.min(minY, (int)Math.round(solvedY));
+            }
+        }
+
+        return Pair.of(minX, minY);
+    }
+
+    /**
      * Solves the AMPL model that dictates station layout, and writes solved station coordinates to Station objects.
      * @param amplModPath Path to the AMPL .mod path.
      * @param amplDatPath Path to the AMPL .dat path.
@@ -557,18 +585,18 @@ public class AmplDriver {
 
             ampl.solve();
 
+            Pair<Integer, Integer> minXAndY = findMinXAndY(ampl, metroLines);
+            int minX = minXAndY.getLeft();
+            int minY = minXAndY.getRight();
+
             for (MetroLine metroLine : metroLines.values()) {
                 for (Station station : metroLine.getStations().values()) {
                     double solvedX = (double) ampl.getValue(String.format("SOLVED_X_COORDS[\"%s\"]", station.getAmplUniqueId()));
                     double solvedY = (double) ampl.getValue(String.format("SOLVED_Y_COORDS[\"%s\"]", station.getAmplUniqueId()));
 
-                    assert MathUtil.approxInt(solvedX);
-                    assert MathUtil.approxInt(solvedY);
-                    assert solvedX > Integer.MIN_VALUE && solvedX < Integer.MAX_VALUE;
-                    assert solvedY > Integer.MIN_VALUE && solvedY < Integer.MAX_VALUE;
-
-                    station.setSolvedX((int)Math.round(solvedX));
-                    station.setSolvedY((int)Math.round(solvedY));
+                    // Transforms coordinates so that they are as far left and up as possible, with a border around the edge.
+                    station.setSolvedX((int)Math.round(solvedX) - minX + GenerateMap.BORDER_SIZE);
+                    station.setSolvedY((int)Math.round(solvedY) - minY + GenerateMap.BORDER_SIZE);
                 }
             }
         }
@@ -579,7 +607,7 @@ public class AmplDriver {
      * @param zAmplModPath Path to the z-index AMPL .mod path.
      * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
      */
-    private void solveZIndexModel(String zAmplModPath, Map<String, MetroLine> metroLines) throws IOException {
+    private static void solveZIndexModel(String zAmplModPath, Map<String, MetroLine> metroLines) throws IOException {
         try (AMPL ampl = new AMPL()) {
             ampl.read(zAmplModPath);
             ampl.setOption("solver", "scip"); // scip seems to work well - cbc is very slow

@@ -17,6 +17,12 @@ public class OutputNetwork {
     /** Line width of a metro line, in pixels. */
     private int lineWidth;
 
+    /** Maximum X value, for drawing purposes (essentially edge of the bounding box). */
+    private int maxX;
+
+    /** Maximum Y value, for drawing purposes (essentially edge of the bounding box). */
+    private int maxY;
+
     /** Metro lines in the network. */
     private List<OutputMetroLine> metroLines;
 

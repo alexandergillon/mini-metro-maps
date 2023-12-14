@@ -16,6 +16,9 @@ public class GenerateMap {
     /** Line width of a metro line on the map, in pixels. */
     public static final int METRO_LINE_WIDTH = 10 * SCALE_FACTOR; // must be even or AMPL constraints with be violated
 
+    /** Border around the map, in pixels. */
+    public static final int BORDER_SIZE = 100 * SCALE_FACTOR;
+
     /**
      * How long of a prefix you need to take from each metro line's name to ensure that all prefixes are unique.
      * Used to try and compress station AMPL identifiers. A value of -1 means use the entire length of metro line name.
