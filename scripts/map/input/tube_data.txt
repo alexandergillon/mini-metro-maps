@@ -293,6 +293,8 @@ line district:
   endpoint "Richmond" down-right
   endpoint "Wimbledon" horizontal
   endpoint "Upminster" down-right
+  endpoint "Kensington (Olympia)" horizontal
+  endpoint "Edgware Road (Circle Line)" vertical:stub
   
 
 line hammersmith-city:
@@ -508,7 +510,7 @@ line northern:
   station "Leicester Square" 2114 1498
   station "Morden" 1650 2579
   station "Moorgate" 2483 1354
-  station "Mill Hill East" 2256 627
+  station "Mill Hill East" 2234 616
   station "Mornington Crescent" 2155 1135
   station "Old Street" 2462 1283
   station "Oval" 2066 2163
@@ -769,6 +771,7 @@ multi-line:
   same-station central exact victoria "Oxford Circus"
   same-station central exact northern "Tottenham Court Road"
   same-station central exact circle "Liverpool Street"
+  same-station central above hammersmith-city "Mile End"
 
   same-station central left jubilee "Stratford"
 
@@ -829,6 +832,7 @@ multi-line:
   zindex central below hammersmith-city
   zindex central below district
   zindex central above jubilee
+  zindex central below piccadilly
   
   zindex piccadilly below district
   zindex piccadilly below circle 

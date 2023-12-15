@@ -2,7 +2,6 @@ package com.github.alexandergillon.mini_metro_maps.models.core;
 
 import com.github.alexandergillon.mini_metro_maps.GenerateMap;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.Point;
-import com.github.alexandergillon.mini_metro_maps.models.bezier.StraightLine;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputLineSegment;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -146,16 +145,16 @@ public class Endpoint {
 
             switch (direction) {
                 case "horizontal" -> {
-                    if (!ArrayUtils.contains(new String[]{"left", "right"}, modification)) throw badEndpoint;
+                    if (!ArrayUtils.contains(new String[]{"left", "right", "stub"}, modification)) throw badEndpoint;
                 }
                 case "vertical" -> {
-                    if (!ArrayUtils.contains(new String[]{"up", "down"}, modification)) throw badEndpoint;
+                    if (!ArrayUtils.contains(new String[]{"up", "down", "stub"}, modification)) throw badEndpoint;
                 }
                 case "up-right", "down-left" -> {
-                    if (!ArrayUtils.contains(new String[]{"up-right", "down-left"}, modification)) throw badEndpoint;
+                    if (!ArrayUtils.contains(new String[]{"up-right", "down-left", "stub"}, modification)) throw badEndpoint;
                 }
                 case "down-right", "up-left" -> {
-                    if (!ArrayUtils.contains(new String[]{"down-right", "up-left"}, modification)) throw badEndpoint;
+                    if (!ArrayUtils.contains(new String[]{"down-right", "up-left", "stub"}, modification)) throw badEndpoint;
                 }
                 default -> throw badEndpoint;
             }
