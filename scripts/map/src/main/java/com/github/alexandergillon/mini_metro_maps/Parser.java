@@ -44,8 +44,11 @@ public class Parser {
     /** z-index constraints among lines. */
     private final Set<ZIndexConstraint> zIndexConstraints = new HashSet<>();
 
-    /** List of curves which depend on other curves. */
-    private ArrayList<Curve> dependentCurves = new ArrayList<>();
+    /**
+     * List of curves which depend on other curves, the text tokens of which curve they depend on, and the line number
+     * that declared them.
+     */
+    private final ArrayList<Triple<Curve, String, Integer>> dependentCurves = new ArrayList<>();
 
     /**
      * @param inputPath Path to the input data file.
@@ -152,30 +155,39 @@ public class Parser {
     }
 
     /**
-     * Extracts the curve type from a line of input and validates it.
-     * @param textInput The part of the text input that declares a curve type.
-     * @return The extracted curve type.
+     * Validates a curve type.
+     * @param curveType The curve type to validate.
      */
-    private String getCurveType(String textInput) {
-        String[] tokens = textInput.split("\\s+");
-        if (tokens.length != 1) {
-            throw new IllegalArgumentException(String.format("(line %d) Invalid curve type \"%s\".", textLineNumber, textInput));
-        }
-
-        String curveType = tokens[0];
+    private void validateCurveType(String curveType) {
         if (!curveType.equals("special")) {
             String[] curveTypeTokens = curveType.split(",");
             if (curveTypeTokens.length != 2) {
-                throw new IllegalArgumentException(String.format("(line %d) Invalid curve type \"%s\".", textLineNumber, textInput));
+                throw new IllegalArgumentException(String.format("(line %d) Invalid curve type \"%s\".", textLineNumber, curveType));
             }
 
             String[] validTokens = {"up", "down", "left", "right", "up-right", "up-left", "down-right", "down-left"};
             if (!ArrayUtils.contains(validTokens, curveTypeTokens[0]) || !ArrayUtils.contains(validTokens, curveTypeTokens[1])) {
-                throw new IllegalArgumentException(String.format("(line %d) Invalid curve type \"%s\".", textLineNumber, textInput));
+                throw new IllegalArgumentException(String.format("(line %d) Invalid curve type \"%s\".", textLineNumber, curveType));
             }
         }
+    }
 
-        return curveType;
+    /**
+     * Process a 'dependson' clause in a curve declaration. For now, adds it to the map of depenent curves - these
+     * dependencies can only be resolved when all curves have been read in.
+     * @param dependsOnText Text that represents a dependson clause.
+     * @param curve The curve that was declared with this 'dependson' clause.
+     */
+    private void processDependsOn(String dependsOnText, Curve curve) {
+        Pair<String, String> dependsOnAndRest = Util.consumeToken(dependsOnText, textLineNumber);
+        String dependsOn = dependsOnAndRest.getLeft();
+        String textRest = dependsOnAndRest.getRight();
+
+        if (!dependsOn.equals("dependson")) {
+            throw new IllegalArgumentException(String.format("(line %d) Unrecognized trailing text on curve declaration.", textLineNumber));
+        }
+
+        dependentCurves.add(Triple.of(curve, textRest, textLineNumber));
     }
 
     /**
@@ -194,14 +206,22 @@ public class Parser {
         String stationsString = doubleQuotedResult.getLeft().strip();
         String textRest = doubleQuotedResult.getRight().strip();
 
-        String curveType = getCurveType(textRest);
+        Pair<String, String> curveTypeAndRest = Util.consumeToken(textRest, textLineNumber);
+        String curveType = curveTypeAndRest.getLeft();
+        textRest = curveTypeAndRest.getRight();
+
         String[] stations = Arrays.stream(stationsString.split(",")).map(String::strip).toArray(String[]::new);
+        validateCurveType(curveType);
 
         if (stations.length != 2) {
             throw new IllegalArgumentException(String.format("(line %d) Curve declaration does not have two stations.", textLineNumber));
         }
 
-        currentMetroLine.addCurve(stations[0], stations[1], curveType, textLineNumber);
+        Curve curve = currentMetroLine.addCurve(stations[0], stations[1], curveType, textLineNumber);
+
+        if (!textRest.isEmpty()) {
+            processDependsOn(textRest, curve);
+        }
     }
 
     /**
@@ -301,6 +321,74 @@ public class Parser {
         }
     }
 
+    /** Resolves a curve specifier (e.g. "picadilly: Northfields, South Ealing" to a curve object. */
+    private Curve resolveCurve(String curveSpecifier) {
+        Pair<String, String> doubleQuotedResult = Util.consumeDoubleQuoted(curveSpecifier, textLineNumber);
+
+        String[] tokens = doubleQuotedResult.getLeft().split(":");
+        if (tokens.length != 2) {
+            throw new IllegalArgumentException(String.format("(line %d) Unrecognized trailing text on curve declaration.", textLineNumber));
+        }
+
+        String[] stations = tokens[1].split(",");
+        if (stations.length != 2) {
+            throw new IllegalArgumentException(String.format("(line %d) Unrecognized trailing text on curve declaration.", textLineNumber));
+        }
+
+        String metroLineName = tokens[0].strip();
+        String station1 = stations[0].strip();
+        String station2 = stations[1].strip();
+
+        if (!metroLines.containsKey(metroLineName)) {
+            throw new IllegalArgumentException(String.format("(line %d) Unrecognized trailing text on curve declaration.", textLineNumber));
+        }
+
+        return metroLines.get(metroLineName).getCurve(station1, station2, textLineNumber);
+    }
+
+    /**
+     * Resolves a curve with the same 'from' and 'to' stations on a different line.
+     * @param curve A curve.
+     * @param metroLineName A line name.
+     * @return A curve on that line, with the same 'from' and 'to' stations as the curve.
+     */
+    private Curve resolveCurve(Curve curve, String metroLineName) {
+        if (!metroLines.containsKey(metroLineName)) {
+            throw new IllegalArgumentException(String.format("(line %d) Unrecognized trailing text on curve declaration.", textLineNumber));
+        }
+
+        Curve otherCurve = metroLines.get(metroLineName).getCurve(curve.getFrom().getName(), curve.getTo().getName(), textLineNumber);
+
+        if (!otherCurve.getType().equals(curve.getType())) {
+            throw new IllegalArgumentException(String.format(
+                    "(line %d) Curve with type %s declared to be dependent on curve with type %s.",
+                    textLineNumber, curve.getType(), otherCurve.getType()));
+        }
+
+        return otherCurve;
+    }
+
+    /**
+     * Resolves all curve dependencies (sets the Curve.dependentOn field for all curves appropriately).
+     */
+    private void resolveCurveDependencies() {
+        for (Triple<Curve, String, Integer> dependency : dependentCurves) {
+            Curve curve = dependency.getLeft();
+            String dependsOnText = dependency.getMiddle();
+            textLineNumber = dependency.getRight();
+
+            Pair<String, String> firstTokenAndRest = Util.consumeToken(dependsOnText, textLineNumber);
+            String firstToken = firstTokenAndRest.getLeft();
+            String textRest = firstTokenAndRest.getRight().strip();
+
+            // If the first token is 'curve' - read the curve from a double-quoted string. Otherwise, the first
+            // token is the line name of a line that has the exact same curve as this (between same stations, same
+            // direction, etc.).
+            Curve dependentOn = firstToken.equals("curve") ? resolveCurve(textRest) : resolveCurve(curve, firstToken);
+            curve.setDependentOn(dependentOn);
+        }
+    }
+
     /**
      * Parses data from the input file.
      * @return A triple of the following:
@@ -312,6 +400,7 @@ public class Parser {
         System.out.println("Parsing input data.");
         readData();
         checkNoOrphans();
+        resolveCurveDependencies();
         return Triple.of(metroLines, alignmentConstraints, zIndexConstraints);
     }
 }

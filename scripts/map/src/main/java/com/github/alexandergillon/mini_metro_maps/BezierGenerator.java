@@ -6,7 +6,6 @@ import com.github.alexandergillon.mini_metro_maps.models.core.Curve;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.BezierCurve;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.ModelBezierCurve;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.Point;
-import com.github.alexandergillon.mini_metro_maps.models.bezier.StraightLine;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputLineSegment;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -120,15 +119,15 @@ public class BezierGenerator {
      * @return Line segments for that curve.
      */
     public List<OutputLineSegment> toLineSegments(Curve curve) {
-        if (curve.type().equals("special")) {
+        if (curve.getType().equals("special")) {
             // todo: handle properly
-            Point station1 = Point.fromSolvedStationCoordinates(curve.from());
-            Point station2 = Point.fromSolvedStationCoordinates(curve.to());
+            Point station1 = Point.fromSolvedStationCoordinates(curve.getFrom());
+            Point station2 = Point.fromSolvedStationCoordinates(curve.getTo());
             return List.of(OutputLineSegment.fromStraightLine(station1, station2));
         }
 
         Curve canonicalCurve = toCanonical(curve);
-        if (ArrayUtils.contains(CANONICAL_SHARP_CURVE_TYPES, canonicalCurve.type())) {
+        if (ArrayUtils.contains(CANONICAL_SHARP_CURVE_TYPES, canonicalCurve.getType())) {
             return toSharpCurve(canonicalCurve);
         } else {
             return toWideCurve(canonicalCurve);
@@ -141,15 +140,15 @@ public class BezierGenerator {
      * @return An equivalent curve, with a canonical type.
      */
     private static Curve toCanonical(Curve curve) {
-        if (ArrayUtils.contains(CANONICAL_CURVE_TYPES, curve.type())) {
+        if (ArrayUtils.contains(CANONICAL_CURVE_TYPES, curve.getType())) {
             return curve; // curve is already canonical
         } else {
             // Why this works is best illustrated by trying some examples with pen and paper.
             // First, swap the two tokens, then convert each token to its opposite, and then swap the endpoints.
-            String[] curveTypeTokens = curve.type().split(",");
+            String[] curveTypeTokens = curve.getType().split(",");
             String newCurveType = SWAP_DIRECTION.get(curveTypeTokens[1]) + "," + SWAP_DIRECTION.get(curveTypeTokens[0]);
             assert ArrayUtils.contains(CANONICAL_CURVE_TYPES, newCurveType);
-            return new Curve(curve.to(), curve.from(), newCurveType, null);
+            return new Curve(curve.getTo(), curve.getFrom(), newCurveType, null);
         }
     }
 
@@ -249,9 +248,9 @@ public class BezierGenerator {
      * @return Line segments for a sharp curve that draws the input curve.
      */
     private List<OutputLineSegment> toSharpCurve(Curve curve) {
-        Point station1 = Point.fromSolvedStationCoordinates(curve.from());
-        Point station2 = Point.fromSolvedStationCoordinates(curve.to());
-        return toSharpCurve(station1, station2, curve.type());
+        Point station1 = Point.fromSolvedStationCoordinates(curve.getFrom());
+        Point station2 = Point.fromSolvedStationCoordinates(curve.getTo());
+        return toSharpCurve(station1, station2, curve.getType());
     }
 
     /**
@@ -368,9 +367,9 @@ public class BezierGenerator {
      * @return Line segments for a wide curve that draws the input curve.
      */
     private List<OutputLineSegment> toWideCurve(Curve curve) {
-        Point station1 = Point.fromSolvedStationCoordinates(curve.from());
-        Point station2 = Point.fromSolvedStationCoordinates(curve.to());
-        return toWideCurve(station1, station2, curve.type());
+        Point station1 = Point.fromSolvedStationCoordinates(curve.getFrom());
+        Point station2 = Point.fromSolvedStationCoordinates(curve.getTo());
+        return toWideCurve(station1, station2, curve.getType());
     }
 
 }

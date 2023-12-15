@@ -59,6 +59,37 @@ public class MetroLine {
     }
 
     /**
+     * Gets a curve between two stations in this metro line by their names, raising an exception on failure.
+     *
+     * NOTE: this function is ordered. The order of the two stations must match the curve order.
+     * @param station1Name First station in the curve.
+     * @param station2Name Second station in the curve.
+     * @param textLineNumber Line number of the input which used these station names.
+     * @return The curve in this metro line corresponding to those stations.
+     */
+    public Curve getCurve(String station1Name, String station2Name, int textLineNumber) throws NoSuchElementException {
+        if (!stations.containsKey(station1Name)) {
+            throw new NoSuchElementException(String.format("(line %d) Station %s does not exist for line %s.",
+                    textLineNumber, station1Name, name));
+        }
+        if (!stations.containsKey(station2Name)) {
+            throw new NoSuchElementException(String.format("(line %d) Station %s does not exist for line %s.",
+                    textLineNumber, station2Name, name));
+        }
+
+        // Not efficient, but it doesn't have to be.
+        for (Curve curve : curves) {
+            if (curve.getFrom().getName().equals(station1Name) && curve.getTo().getName().equals(station2Name)) {
+                return curve;
+            }
+        }
+
+        throw new NoSuchElementException(String.format(
+                "(line %d) Curve between %s and %s does not exist for line %s. Check ordering of stations.",
+                textLineNumber, station1Name, station2Name, name));
+    }
+
+    /**
      * Connects two stations in this metro line.
      * @param station1Name Name of the first station.
      * @param station2Name Name of the second station.
@@ -84,8 +115,9 @@ public class MetroLine {
      * @param station2Name Name of the second station.
      * @param curveType Curve type of the curve.
      * @param textLineNumber Line number of the input which used these station names.
+     * @return The curve that was newly added.
      */
-    public void addCurve(String station1Name, String station2Name, String curveType, int textLineNumber) {
+    public Curve addCurve(String station1Name, String station2Name, String curveType, int textLineNumber) {
         if (!stations.containsKey(station1Name)) {
             throw new NoSuchElementException(String.format("(line %d) Station %s does not exist for line %s.",
                     textLineNumber, station1Name, name));
@@ -104,7 +136,9 @@ public class MetroLine {
                     textLineNumber, station1Name, station2Name, name));
         }
 
-        curves.add(new Curve(station1, station2, curveType, null));
+        Curve curve = new Curve(station1, station2, curveType, null);
+        curves.add(curve);
+        return curve;
     }
 
     /**
