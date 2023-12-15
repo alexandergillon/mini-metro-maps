@@ -31,4 +31,9 @@ public record Edge(Station from, Station to) {
             return Objects.hash(to, from);
         }
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s <---> %s", from, to);
+    }
 }

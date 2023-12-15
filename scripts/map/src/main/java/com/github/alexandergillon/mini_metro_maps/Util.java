@@ -34,10 +34,14 @@ public class Util {
      * @return The first token in that string (delimited by whitespace), and the rest of the string.
      */
     public static Pair<String, String> consumeToken(String s, int textLineNumber) {
+        if (s.isEmpty()) {
+            throw new IllegalArgumentException(String.format("(line %d) Token expected.", textLineNumber));
+        }
+
         s = s.stripLeading();
         int whitespaceIndex = firstWhitespaceIndex(s);
         if (whitespaceIndex == -1) {
-            throw new IllegalArgumentException(String.format("(line %d) Token expected.", textLineNumber));
+            return Pair.of(s, "");
         }
 
         String token = s.substring(0, whitespaceIndex).strip();

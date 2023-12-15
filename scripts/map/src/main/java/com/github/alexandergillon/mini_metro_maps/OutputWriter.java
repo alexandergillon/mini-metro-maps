@@ -123,8 +123,8 @@ public class OutputWriter {
 
         for (Curve curve : metroLine.getCurves()) {
             // For curves, delegate line segments to bezierGenerator.
-            seenEdges.add(new Edge(curve.from(), curve.to()));
-            outputEdges.add(new OutputEdge(curve.from().getAmplUniqueId(), curve.to().getAmplUniqueId(), bezierGenerator.toLineSegments(curve)));
+            seenEdges.add(new Edge(curve.getFrom(), curve.getTo()));
+            outputEdges.add(new OutputEdge(curve.getFrom().getAmplUniqueId(), curve.getTo().getAmplUniqueId(), bezierGenerator.toLineSegments(curve)));
         }
 
         for (Edge edge : metroLine.getEdges()) {
