@@ -40,6 +40,7 @@ public class Endpoint {
 
     /** Converts this endpoint to an OutputLineSegment, to be drawn on the frontend. Do not call before solving AMPL model. */
     public OutputLineSegment toLineSegment() {
+        // todo: fix stubs being 1 pixel off
         if (station.getSolvedX() == -1 && station.getSolvedY() == -1) {
             throw new IllegalStateException("Endpoint.toLineSegment() called before AMPL model has been solved.");
         }
