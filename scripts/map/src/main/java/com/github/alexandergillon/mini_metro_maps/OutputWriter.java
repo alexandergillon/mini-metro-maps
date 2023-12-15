@@ -64,8 +64,8 @@ public class OutputWriter {
         }
 
         Pair<Integer, Integer> maxXAndY = getMaxXAndY(metroLines);
-        int maxX = maxXAndY.getLeft() + GenerateMap.BORDER_SIZE;
-        int maxY = maxXAndY.getRight() + GenerateMap.BORDER_SIZE;
+        int maxX = maxXAndY.getLeft();
+        int maxY = maxXAndY.getRight();
 
         OutputNetwork outputNetwork = new OutputNetwork(GenerateMap.METRO_LINE_WIDTH, maxX, maxY, outputMetroLines);
 

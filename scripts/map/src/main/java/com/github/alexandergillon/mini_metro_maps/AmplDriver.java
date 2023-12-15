@@ -594,9 +594,9 @@ public class AmplDriver {
                     double solvedX = (double) ampl.getValue(String.format("SOLVED_X_COORDS[\"%s\"]", station.getAmplUniqueId()));
                     double solvedY = (double) ampl.getValue(String.format("SOLVED_Y_COORDS[\"%s\"]", station.getAmplUniqueId()));
 
-                    // Transforms coordinates so that they are as far left and up as possible, with a border around the edge.
-                    station.setSolvedX((int)Math.round(solvedX) - minX + GenerateMap.BORDER_SIZE);
-                    station.setSolvedY((int)Math.round(solvedY) - minY + GenerateMap.BORDER_SIZE);
+                    // Transforms coordinates so that they are as far left and up as possible.
+                    station.setSolvedX((int)Math.round(solvedX) - minX);
+                    station.setSolvedY((int)Math.round(solvedY) - minY);
                 }
             }
         }
