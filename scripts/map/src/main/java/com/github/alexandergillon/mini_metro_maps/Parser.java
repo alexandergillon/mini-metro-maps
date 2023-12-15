@@ -195,8 +195,7 @@ public class Parser {
         String textRest = doubleQuotedResult.getRight().strip();
 
         String curveType = getCurveType(textRest);
-        String[] stations = stationsString.split(",");
-        stations = Arrays.stream(stations).map(String::strip).toArray(String[]::new); // some day, mapping a collection in Java won't be ugly
+        String[] stations = Arrays.stream(stationsString.split(",")).map(String::strip).toArray(String[]::new);
 
         if (stations.length != 2) {
             throw new IllegalArgumentException(String.format("(line %d) Curve declaration does not have two stations.", textLineNumber));

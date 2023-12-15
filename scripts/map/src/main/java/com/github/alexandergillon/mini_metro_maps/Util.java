@@ -89,8 +89,7 @@ public class Util {
     public static List<Pair<String, String>> allConsecutiveStationPairs(String stationsString, int textLineNumber) {
         stationsString = stationsString.strip();
 
-        String[] stations = stationsString.split(",");
-        stations = Arrays.stream(stations).map(String::strip).toArray(String[]::new); // some day, mapping a collection in Java won't be ugly
+        String[] stations = Arrays.stream(stationsString.split(",")).map(String::strip).toArray(String[]::new);
         if (stations.length < 2) {
             throw new IllegalArgumentException(String.format("(line %d) Line has fewer than two stations when >= 2 were expected.", textLineNumber));
         }

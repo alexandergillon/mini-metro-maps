@@ -345,8 +345,7 @@ public class AmplDriver {
 
             Pair<String, String> doubleQuotedResult = Util.consumeDoubleQuoted(token3Result.getRight(), textLineNumber);
             String stationsString = doubleQuotedResult.getLeft().strip();
-            String[] stations = stationsString.split(",");
-            stations = Arrays.stream(stations).map(String::strip).toArray(String[]::new); // some day, mapping a collection in Java won't be ugly
+            String[] stations = Arrays.stream(stationsString.split(",")).map(String::strip).toArray(String[]::new);
 
             for (String stationName : stations) {
                 String station1Id = metroLines.get(line1Name).getStation(stationName, textLineNumber).getAmplUniqueId();
@@ -399,12 +398,10 @@ public class AmplDriver {
 
         String lhs = lhsResult.getLeft();
         String rhs = rhsResult.getLeft();
-        String[] lhsSummands = lhs.split("\\+"); // splits on the symbol +
-        String[] rhsSummands = rhs.split("\\+");
-
-        lhsSummands = Arrays.stream(lhsSummands).map(String::strip)
+        // splits on the symbol +
+        String[] lhsSummands = Arrays.stream(lhs.split("\\+"))
                 .map(s -> processSummand(s, metroLines, textLineNumber)).toArray(String[]::new);
-        rhsSummands = Arrays.stream(rhsSummands).map(String::strip)
+        String[] rhsSummands = Arrays.stream(rhs.split("\\+"))
                 .map(s -> processSummand(s, metroLines, textLineNumber)).toArray(String[]::new);
 
         amplModFile.write(String.format("subject to equal_%d: %s = %s;", textLineNumber,
