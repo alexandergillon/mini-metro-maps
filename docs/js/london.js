@@ -51,15 +51,15 @@ function restoreBounds() {
     const bounds = paper.view.bounds;
 
     if (bounds.x < minPanningX) {
-        paper.view.translate(new paper.Point(bounds.x - minPanningX, 0));
+        paper.view.translate(bounds.x - minPanningX, 0);
     } else if (bounds.x + bounds.width > maxPanningX) {
-        paper.view.translate(new paper.Point(bounds.x + bounds.width - maxPanningX, 0));
+        paper.view.translate(bounds.x + bounds.width - maxPanningX, 0);
     }
 
     if (bounds.y < minPanningY) {
-        paper.view.translate(new paper.Point(0, bounds.y - minPanningY));
+        paper.view.translate(0, bounds.y - minPanningY);
     } else if (bounds.y + bounds.height > maxPanningY) {
-        paper.view.translate(new paper.Point(0, bounds.y + bounds.height - maxPanningY));
+        paper.view.translate(0, bounds.y + bounds.height - maxPanningY);
     }
 }
 
@@ -132,7 +132,7 @@ async function setupCanvas() {
     registerEventListeners(canvas);
     drawMetroLines(metroNetwork.metroLines, lineWidth);
 
-    paper.view.translate(new paper.Point(-maxStationX / 2, -maxStationY / 2)); // center the map to start
+    paper.view.translate(-maxStationX / 2, -maxStationY / 2); // center the map to start
     paper.view.draw();
 }
 
