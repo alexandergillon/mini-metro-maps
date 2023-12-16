@@ -2,3 +2,4 @@
 docs/** -linguist-documentation
 docs/js/paper.js linguist-vendored
 docs/js/paper.min.js linguist-vendored
+docs/js/acorn.js linguist-vendored
