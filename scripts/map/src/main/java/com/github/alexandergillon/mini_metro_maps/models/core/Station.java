@@ -33,18 +33,23 @@ public class Station {
     @Setter
     private int solvedY = -1;
 
-    public Station(String metroLineName, String name, String naptan, int x, int y) {
+    /** Whether this station is real, or is an alignment point for special curves. */
+    private final boolean alignmentPoint;
+
+    public Station(String metroLineName, String name, String naptan, int x, int y, boolean alignmentPoint) {
         this.metroLineName = metroLineName;
         this.name = name;
 
         String metroLinePrefix = GenerateMap.METRO_LINE_PREFIX_LENGTH == -1 ? metroLineName
                 : metroLineName.substring(0, GenerateMap.METRO_LINE_PREFIX_LENGTH);
         // AMPL cannot handle '-' in various identifiers that are built from amplUniqueId.
-        metroLinePrefix = metroLineName.replace("-", "");
+        metroLinePrefix = metroLinePrefix.replace("-", "");
         this.amplId = String.format("%s_%s", metroLinePrefix, naptan);
 
         this.originalX = x;
         this.originalY = y;
+
+        this.alignmentPoint = alignmentPoint;
     }
 
     @Override

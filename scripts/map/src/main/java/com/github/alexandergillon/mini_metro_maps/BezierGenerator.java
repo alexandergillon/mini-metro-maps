@@ -2,9 +2,10 @@ package com.github.alexandergillon.mini_metro_maps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.alexandergillon.mini_metro_maps.models.core.Curve;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.ModelBezierCurve;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.Point;
+import com.github.alexandergillon.mini_metro_maps.models.core.Curve;
+import com.github.alexandergillon.mini_metro_maps.models.core.Station;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputEdge;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputLineSegment;
 import org.apache.commons.lang3.ArrayUtils;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /** Class to handle converting curves (as specified in the input file) to line segments of straight lines and Bezier curves. */
 public class BezierGenerator {
@@ -86,7 +88,7 @@ public class BezierGenerator {
     private static final String[] CANONICAL_CURVE_TYPES = ArrayUtils.addAll(CANONICAL_SHARP_CURVE_TYPES, CANONICAL_WIDE_CURVE_TYPES);
 
     /** Opposite direction of each direction. */
-    private static final Map<String, String> SWAP_DIRECTION = Map.of(
+    private static final Map<String, String> SWAP_DIRECTION = new Util.ThrowingMap<>(Map.of(
             "right", "left",
             "left", "right",
             "up", "down",
@@ -97,7 +99,7 @@ public class BezierGenerator {
 
             "down-right", "up-left",
             "up-left", "down-right"
-    );
+    ));
 
     /** Path to store a temporary .csv file, to communicate with R. */
     private final String rCsvInPath;
@@ -137,10 +139,7 @@ public class BezierGenerator {
      */
     public List<OutputLineSegment> toLineSegments(Curve curve) {
         if (curve.getType().equals("special")) {
-            // todo: handle properly
-            Point station1 = Point.fromSolvedStationCoordinates(curve.getFrom());
-            Point station2 = Point.fromSolvedStationCoordinates(curve.getTo());
-            return List.of(OutputLineSegment.fromStraightLine(station1, station2));
+            return makeSpecialCurve(curve);
         }
         Curve canonicalCurve = toCanonical(curve);
 
@@ -195,6 +194,29 @@ public class BezierGenerator {
         lineSegments.add(0, OutputLineSegment.fromStraightLine(fromStation, lineSegments.get(0).getP0()));
         lineSegments.add(OutputLineSegment.fromStraightLine(lineSegments.get(lineSegments.size()-1).getP3(), toStation));
         // todo: make sure rounding was ok, alignment etc.
+
+        return lineSegments;
+    }
+
+    /**
+     * Turns a special curve into line segments. Takes each segment of the special curve, converts it into a dummy curve,
+     * and generates line segments for it. Then, stitches all these parts together to form the overall curve.
+     */
+    private List<OutputLineSegment> makeSpecialCurve(Curve curve) {
+        assert curve.getSpecialCurveInfo() != null;
+
+        Stream<Curve> dummyCurves = curve.getSpecialCurveInfo().getPointSequence().stream().map(
+                dummyCurveInfo -> {
+                    Station from = dummyCurveInfo.getLeft();
+                    Station to = dummyCurveInfo.getMiddle();
+                    String type = dummyCurveInfo.getRight();
+
+                    return new Curve(from, to, type, null, null);
+                }
+        );
+
+        ArrayList<OutputLineSegment> lineSegments = new ArrayList<>();
+        dummyCurves.map(this::toLineSegments).forEach(lineSegments::addAll);
 
         return lineSegments;
     }
@@ -261,6 +283,8 @@ public class BezierGenerator {
      * @return An equivalent curve, with a canonical type.
      */
     private static Curve toCanonical(Curve curve) {
+        if (curve.getType().equals("special")) throw new IllegalArgumentException("Special curves do not have a canonical type.");
+
         if (ArrayUtils.contains(CANONICAL_CURVE_TYPES, curve.getType())) {
             return curve; // curve is already canonical
         } else {
@@ -269,7 +293,7 @@ public class BezierGenerator {
             String[] curveTypeTokens = curve.getType().split(",");
             String newCurveType = SWAP_DIRECTION.get(curveTypeTokens[1]) + "," + SWAP_DIRECTION.get(curveTypeTokens[0]);
             assert ArrayUtils.contains(CANONICAL_CURVE_TYPES, newCurveType);
-            return new Curve(curve.getTo(), curve.getFrom(), newCurveType, null);
+            return new Curve(curve.getTo(), curve.getFrom(), newCurveType, null, null);
         }
     }
 
