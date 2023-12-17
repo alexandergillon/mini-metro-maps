@@ -101,6 +101,10 @@ line central:
 
   alignment-point "ChanceryLane_StPauls" 2311 1460
 
+  # ChanceryLane_StPauls.x - Chancery Lane.x = St\. Paul's.x - ChanceryLane_StPauls.x, rewritten to use + (same for y)
+  equal "ChanceryLane_StPauls.x + ChanceryLane_StPauls.x" "Chancery Lane.x + St\. Paul's.x"
+  equal "ChanceryLane_StPauls.y + ChanceryLane_StPauls.y" "Chancery Lane.y + St\. Paul's.y"
+
   curve "Northolt, Greenford" down,down-right
   curve "Hanger Lane, North Acton" down-right,right
   curve "Queensway, Lancaster Gate" right,up-right
@@ -266,7 +270,7 @@ line district:
   edges "Wimbledon, Wimbledon Park, Southfields, East Putney, Putney Bridge, Parsons Green, Fulham Broadway, West Brompton, Earl's Court, High Street Kensington, Notting Hill Gate, Bayswater, Paddington, Edgware Road (Circle Line)"
   edges "Earl's Court, Kensington (Olympia)"
 
-  alignment-point "TowerHill_AldgateEast" 2672 1507
+  alignment-point "TowerHill_AldgateEast" 2672 1507 # todo: align
 
   curve "Ealing Broadway, Ealing Common" right,down
   curve "Ealing Common, Acton Town" down,down-right dependson piccadilly
@@ -388,6 +392,9 @@ line jubilee:
   edges "Stanmore, Canons Park, Queensbury, Kingsbury, Wembley Park, Neasden, Dollis Hill, Willesden Green, Kilburn, West Hampstead, Finchley Road, Swiss Cottage, St. John's Wood, Baker Street, Bond Street, Green Park, Westminster, Waterloo, Southwark, London Bridge, Bermondsey, Canada Water, Canary Wharf, North Greenwich, Canning Town, West Ham, Stratford"
 
   alignment-point "Southwark_LondonBridge" 2343 1782
+
+  equal "Southwark_LondonBridge.x + Southwark_LondonBridge.x" "Southwark.x + London Bridge.x"
+  equal "Southwark_LondonBridge.y + Southwark_LondonBridge.y" "Southwark.y + London Bridge.y"
 
   curve "Kingsbury, Wembley Park" down,down-right
   curve "Finchley Road, Swiss Cottage" down-right,down
@@ -547,6 +554,19 @@ line northern:
   alignment-point "EustonBank_KingsX" 2231 1202
   alignment-point "Kennington_NineElms" 1971 2106
 
+  equal "CamdenTown_MorningtonCrescent.x + CamdenTown_MorningtonCrescent.x" "Camden Town.x + Mornington Crescent.x"
+  equal "CamdenTown_MorningtonCrescent.y + CamdenTown_MorningtonCrescent.y" "Camden Town.y + Mornington Crescent.y"
+
+  horizontal "CamdenTown_MorningtonCrescent, CamdenTown_EustonBank"
+  equal "CamdenTown_MorningtonCrescent.x + CamdenTown_EustonBank.x" "Camden Town.x + Camden Town.x"
+  
+  equal "EustonBank_KingsX.x + EustonBank_KingsX.x" "Euston (Bank branch).x + King's Cross St\. Pancras.x"
+  equal "EustonBank_KingsX.y + EustonBank_KingsX.y" "Euston (Bank branch).y + King's Cross St\. Pancras.y"
+  
+  equal "Kennington_NineElms.x + Kennington_NineElms.x" "Kennington.x + Nine Elms.x"
+  equal "Kennington_NineElms.y + Kennington_NineElms.y" "Kennington.y + Nine Elms.y"
+  
+
   curve "Mill Hill East, Finchley Central" down-right,down
   curve "Tufnell Park, Kentish Town" down,down-left
   curve "Kentish Town, Camden Town" down-left,down
@@ -567,6 +587,7 @@ line northern:
   vertical "Waterloo, Embankment, Charing Cross, Leicester Square, Tottenham Court Road, Goodge Street, Warren Street"
   vertical "London Bridge, Bank, Moorgate"
   vertical "Euston (Charing Cross branch), Mornington Crescent"
+  equal "Euston (Charing Cross branch).x + Euston (Bank branch).x" "Camden Town.x + Camden Town.x"
   vertical "Tufnell Park, Archway, Highgate, East Finchley, Finchley Central, West Finchley, Woodside Park, Totteridge & Whetstone, High Barnet"
   up-left "Chalk Farm, Belsize Park, Hampstead, Golders Green, Brent Cross, Hendon Central, Colindale, Burnt Oak, Edgware"
 
@@ -597,7 +618,7 @@ line piccadilly:
   station "Hillingdon" 702 728
   station "Hatton Cross" 728 1902
   station "Hyde Park Corner" 1860 1557
-  station "Heathrow Terminal 4" 687 2093
+  station "Heathrow Terminal 4" 675 2093
   station "Heathrow Terminal 5" 606 2073
   station "Heathrow Terminals 2 & 3" 695 1934
   station "Hammersmith (Dist&Picc Line)" 1405 1683
@@ -637,6 +658,8 @@ line piccadilly:
 
   alignment-point "HattonCross_Heathrow4" 715 2007
   alignment-point "Heathrow4_Heathrow23" 635 2041
+
+  equal "HattonCross_Heathrow4.x + Heathrow4_Heathrow23.x" "Heathrow Terminal 4.x + Heathrow Terminal 4.x"
 
   curve "Ruislip, Ruislip Manor" right,down-right
   curve "Rayners Lane, South Harrow" down-right,down
