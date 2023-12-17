@@ -357,22 +357,34 @@ public class AmplDriver {
      * Processes a summand from how it appears in the input file to how it should appear in the AMPL file.
      * E.g. processSummand("district: Embankment.x") --> "SOLVED_X_COORDS[AMPL ID]" for the appropriate AMPL ID.
      * @param summand The summand to process.
+     * @param metroLine The metro line in the network of any stations referred to in the constraint. If null, to be read from each station.
      * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
      * @param textLineNumber Line number of the input which declared this constraint.
      * @return The processed summand.
      */
-    private static String processSummand(String summand, Map<String, MetroLine> metroLines, int textLineNumber) {
-        Pair<String, String> lineAndName = extractMetroLine(summand, textLineNumber);
-        String metroLineName = lineAndName.getLeft().strip();
-        String stationNameWithXOrY = lineAndName.getRight().strip();
+    private static String processSummand(String summand, MetroLine metroLine, Map<String, MetroLine> metroLines, int textLineNumber) {
+        String stationNameWithXOrY;
+        MetroLine constraintMetroLine;
+        if (metroLine != null) {
+            stationNameWithXOrY = summand.strip();
+            constraintMetroLine = metroLine;
+        } else {
+            Pair<String, String> lineAndName = extractMetroLine(summand, textLineNumber);
+            stationNameWithXOrY = lineAndName.getRight().strip();
 
-        String[] stationNameTokens = stationNameWithXOrY.split("\\."); // splits on the symbol .
+            String metroLineName = lineAndName.getLeft().strip();
+            constraintMetroLine = metroLines.get(metroLineName);
+        }
+
+        // (?<!\\)\. matches . if not preceded by \. I.e. splits on non-escaped '.'.
+        String[] stationNameTokens = Arrays.stream(stationNameWithXOrY.split("(?<!\\\\)\\."))
+                .map(s -> s.replace("\\.", ".")).toArray(String[]::new);// un-escape escaped dot
         if (stationNameTokens.length != 2) {
             throw new IllegalArgumentException(String.format("(line %d) Malformed station \"%s\" in equal expression.",
                     textLineNumber, stationNameWithXOrY));
         }
 
-        String stationId = metroLines.get(metroLineName).getStation(stationNameTokens[0].strip(), textLineNumber).getAmplId();
+        String stationId = constraintMetroLine.getStation(stationNameTokens[0].strip(), textLineNumber).getAmplId();
         String xOrY = stationNameTokens[1].strip();
 
         return switch (xOrY) {
@@ -386,10 +398,12 @@ public class AmplDriver {
     /**
      * Process an 'equal' constraint. This is a type of constraint where two sums of X/Y coordinates are required to be equal.
      * @param inputText The input text which declares the constraint, with "equal" removed.
+     * @param metroLine The metro line in the network of any stations referred to in the constraint. If null, to be read from each station.
      * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
      * @param textLineNumber Line number of the input which declared this constraint.
      */
-    private void processEqualConstraint(String inputText, Map<String, MetroLine> metroLines, int textLineNumber) throws IOException {
+    private void processEqualConstraint(String inputText, MetroLine metroLine, Map<String, MetroLine> metroLines,
+                                        int textLineNumber) throws IOException {
         Pair<String, String> lhsResult = Util.consumeDoubleQuoted(inputText, textLineNumber);
         Pair<String, String> rhsResult = Util.consumeDoubleQuoted(lhsResult.getRight(), textLineNumber);
 
@@ -397,9 +411,9 @@ public class AmplDriver {
         String rhs = rhsResult.getLeft();
         // splits on the symbol +
         String[] lhsSummands = Arrays.stream(lhs.split("\\+"))
-                .map(s -> processSummand(s, metroLines, textLineNumber)).toArray(String[]::new);
+                .map(s -> processSummand(s, metroLine, metroLines, textLineNumber)).toArray(String[]::new);
         String[] rhsSummands = Arrays.stream(rhs.split("\\+"))
-                .map(s -> processSummand(s, metroLines, textLineNumber)).toArray(String[]::new);
+                .map(s -> processSummand(s, metroLine, metroLines, textLineNumber)).toArray(String[]::new);
 
         amplModFile.write(String.format("subject to equal_%d: %s = %s;", textLineNumber,
                 String.join(" + ", lhsSummands), String.join(" + ", rhsSummands)));
@@ -422,7 +436,7 @@ public class AmplDriver {
             case "vertical", "horizontal", "up-right", "down-right" ->
                     processCardinalDirectionConstraint(textLineRest, constraintType, metroLine, metroLines, textLineNumber);
             case "same-station" -> processSameStationConstraint(textLineRest, metroLines, textLineNumber);
-            case "equal" -> processEqualConstraint(textLineRest, metroLines, textLineNumber);
+            case "equal" -> processEqualConstraint(textLineRest, metroLine, metroLines, textLineNumber);
             default -> throw new IllegalArgumentException(String.format("Constraint (line %d) is invalid. Earlier code should have already validated this.", textLineNumber));
         }
     }
