@@ -83,13 +83,13 @@ public class Endpoint {
 
                 int dxyDownLeft = (modification == null || modification.equals("down-left")) ?
                     (int)Math.round(GenerateMap.METRO_LINE_WIDTH * (ENDPOINT_SCALE_FACTOR/2) / Math.sqrt(2))
-                  : (int)Math.round(GenerateMap.METRO_LINE_WIDTH / Math.sqrt(2)) - 1; // -1 to include center pixel, or
-                                                                            // half-end will overlap with adjacent line
+                  : (int)Math.round(GenerateMap.METRO_LINE_WIDTH / (2 * Math.sqrt(2))) - 1; // -1 to include center pixel,
+                                                                            // or half-end will overlap with adjacent line
 
                 int dxyUpRight = (modification == null || modification.equals("up-right")) ?
                     (int)Math.round(GenerateMap.METRO_LINE_WIDTH * (ENDPOINT_SCALE_FACTOR/2) / Math.sqrt(2))
-                  : (int)Math.round(GenerateMap.METRO_LINE_WIDTH / Math.sqrt(2)) - 1; // -1 to include center pixel, or
-                                                                            // half-end will overlap with adjacent line
+                  : (int)Math.round(GenerateMap.METRO_LINE_WIDTH / (2 * Math.sqrt(2))) - 1; // -1 to include center pixel,
+                                                                            // or half-end will overlap with adjacent line
 
                 p0 = new Point(station.getSolvedX() - dxyDownLeft, station.getSolvedY() + dxyDownLeft);
                 p1 = new Point(station.getSolvedX() + dxyUpRight, station.getSolvedY() - dxyUpRight);
@@ -98,13 +98,13 @@ public class Endpoint {
 
                 int dxyUpLeft = (modification == null || modification.equals("up-left")) ?
                     (int)Math.round(GenerateMap.METRO_LINE_WIDTH * (ENDPOINT_SCALE_FACTOR/2) / Math.sqrt(2))
-                  : (int)Math.round(GenerateMap.METRO_LINE_WIDTH / Math.sqrt(2)) - 1; // -1 to include center pixel, or
-                                                                            // half-end will overlap with adjacent line
+                  : (int)Math.round(GenerateMap.METRO_LINE_WIDTH / (2 * Math.sqrt(2))) - 1; // -1 to include center pixel,
+                                                                            // or half-end will overlap with adjacent line
 
                 int dxyDownRight = (modification == null || modification.equals("down-right")) ?
                     (int)Math.round(GenerateMap.METRO_LINE_WIDTH * (ENDPOINT_SCALE_FACTOR/2) / Math.sqrt(2))
-                  : (int)Math.round(GenerateMap.METRO_LINE_WIDTH / Math.sqrt(2)) - 1; // -1 to include center pixel, or
-                                                                            // half-end will overlap with adjacent line
+                  : (int)Math.round(GenerateMap.METRO_LINE_WIDTH / (2 * Math.sqrt(2))) - 1; // -1 to include center pixel,
+                                                                            // or half-end will overlap with adjacent line
 
                 p0 = new Point(station.getSolvedX() - dxyUpLeft, station.getSolvedY() - dxyUpLeft);
                 p1 = new Point(station.getSolvedX() + dxyDownRight, station.getSolvedY() + dxyDownRight);

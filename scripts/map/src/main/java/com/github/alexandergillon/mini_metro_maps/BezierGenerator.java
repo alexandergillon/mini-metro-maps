@@ -3,7 +3,6 @@ package com.github.alexandergillon.mini_metro_maps;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.alexandergillon.mini_metro_maps.models.core.Curve;
-import com.github.alexandergillon.mini_metro_maps.models.bezier.BezierCurve;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.ModelBezierCurve;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.Point;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputEdge;
@@ -18,6 +17,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -142,13 +142,21 @@ public class BezierGenerator {
             Point station2 = Point.fromSolvedStationCoordinates(curve.getTo());
             return List.of(OutputLineSegment.fromStraightLine(station1, station2));
         }
-
         Curve canonicalCurve = toCanonical(curve);
-        if (ArrayUtils.contains(CANONICAL_SHARP_CURVE_TYPES, canonicalCurve.getType())) {
-            return toSharpCurve(canonicalCurve);
-        } else {
-            return toWideCurve(canonicalCurve);
+
+        List<OutputLineSegment> lineSegments =
+                ArrayUtils.contains(CANONICAL_SHARP_CURVE_TYPES, canonicalCurve.getType()) ?
+                toSharpCurve(canonicalCurve) : toWideCurve(canonicalCurve);
+
+        // If canonical curve is reversed from input curve, we need to reverse the segments to go in the right direction.
+        if (!curve.getType().equals(canonicalCurve.getType())) {
+            // Need a copy, as sometimes returned list is immutable. Not the most efficient, but doesn't need to be.
+            lineSegments = new ArrayList<>(lineSegments);
+            Collections.reverse(lineSegments);
+            lineSegments = lineSegments.stream().map(OutputLineSegment::reverse).toList();
         }
+
+        return lineSegments;
     }
 
     /**
@@ -168,6 +176,24 @@ public class BezierGenerator {
             }
         }
 
+        assert dependentCurve.getFrom().getSolvedX() == lineSegments.get(0).getP0().getX()
+                || dependentCurve.getFrom().getSolvedY() == lineSegments.get(0).getP0().getY()
+                || (dependentCurve.getFrom().getSolvedX() - lineSegments.get(0).getP0().getX())
+                    == (dependentCurve.getFrom().getSolvedY() - lineSegments.get(0).getP0().getY())
+                || (dependentCurve.getFrom().getSolvedX() - lineSegments.get(0).getP0().getX())
+                    == -(dependentCurve.getFrom().getSolvedY() - lineSegments.get(0).getP0().getY());
+        
+        assert dependentCurve.getTo().getSolvedX() == lineSegments.get(lineSegments.size()-1).getP3().getX()
+                || dependentCurve.getTo().getSolvedY() == lineSegments.get(lineSegments.size()-1).getP3().getY()
+                || (dependentCurve.getTo().getSolvedX() - lineSegments.get(lineSegments.size()-1).getP3().getX())
+                == (dependentCurve.getTo().getSolvedY() - lineSegments.get(lineSegments.size()-1).getP3().getY())
+                || (dependentCurve.getTo().getSolvedX() - lineSegments.get(lineSegments.size()-1).getP3().getX())
+                == -(dependentCurve.getTo().getSolvedY() - lineSegments.get(lineSegments.size()-1).getP3().getY());
+
+        Point fromStation = Point.fromSolvedStationCoordinates(dependentCurve.getFrom());
+        Point toStation = Point.fromSolvedStationCoordinates(dependentCurve.getTo());
+        lineSegments.add(0, OutputLineSegment.fromStraightLine(fromStation, lineSegments.get(0).getP0()));
+        lineSegments.add(OutputLineSegment.fromStraightLine(lineSegments.get(lineSegments.size()-1).getP3(), toStation));
         // todo: make sure rounding was ok, alignment etc.
 
         return lineSegments;
@@ -222,7 +248,7 @@ public class BezierGenerator {
                 Point p2 = csvToPoint(csvFile.readLine());
                 Point p3 = csvToPoint(csvFile.readLine());
 
-                lineSegments.add(OutputLineSegment.fromBezierCurve(new BezierCurve(p0, p1, p2, p3)));
+                lineSegments.add(OutputLineSegment.fromBezierCurve(p0, p1, p2, p3));
             }
         }
 
@@ -295,7 +321,7 @@ public class BezierGenerator {
             segments.add(OutputLineSegment.fromStraightLine(station1, bezierP0));
         }
 
-        segments.add(OutputLineSegment.fromBezierCurve(new BezierCurve(bezierP0, bezierP1, bezierP2, bezierP3)));
+        segments.add(OutputLineSegment.fromBezierCurve(bezierP0, bezierP1, bezierP2, bezierP3));
 
         if (bezierP3.getY() < station2.getY()) {
             segments.add(OutputLineSegment.fromStraightLine(bezierP3, station2));
@@ -392,7 +418,7 @@ public class BezierGenerator {
             segments.add(OutputLineSegment.fromStraightLine(station1, bezierP0));
         }
 
-        segments.add(OutputLineSegment.fromBezierCurve(new BezierCurve(bezierP0, bezierP1, bezierP2, bezierP3)));
+        segments.add(OutputLineSegment.fromBezierCurve(bezierP0, bezierP1, bezierP2, bezierP3));
 
         if (bezierP3.getY() < station2.getY()) {
             segments.add(OutputLineSegment.fromStraightLine(bezierP3, station2));
