@@ -23,6 +23,16 @@ public class GenerateMap {
     public static final int METRO_LINE_PREFIX_LENGTH = 2;
 
     /**
+     * Weight for alignment points in AMPL (normal stations have weight 1). The idea of this is that we want to weight
+     * alignment points less than stations, as they are usually meant to help align things rather than enforce
+     * specific positions. However, we need to give them some weight so that AMPL puts them in a sensible place. If
+     * the weight is 0, it can just return garbage for alignment points that are not sufficiently constrained.
+     *
+     * This value is a string as it is written to an AMPL file - never used in Java code.
+     */
+    public static final String ALIGNMENT_POINT_WEIGHT = "0.1";
+
+    /**
      * Ensures that metroLinePrefixLength is set high enough so that all prefixes of metro line names are unique.
      * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
      */

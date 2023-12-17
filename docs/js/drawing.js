@@ -3,6 +3,7 @@ function drawStation(station, lineWidth, color) {
     const center = new paper.Point(station.x, station.y);
     const circle = new paper.Path.Circle(center, lineWidth * 0.2);
     circle.fillColor = "black";
+    circle.strokeColor = "white";
 }
 
 /** Draws a straight line segment. */

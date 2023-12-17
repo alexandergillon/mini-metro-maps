@@ -466,12 +466,16 @@ public class AmplDriver {
         Stream<Station> stations = metroLines.values().stream().flatMap(metroLine -> metroLine.getStations().values().stream());
         ArrayList<String> xCoordTokens = new ArrayList<>();
         ArrayList<String> yCoordTokens = new ArrayList<>();
+        ArrayList<String> isNotAlignmentPointTokens = new ArrayList<>();
         stations.forEach(station -> {
             xCoordTokens.add(station.getAmplId());
             xCoordTokens.add(Integer.toString(station.getOriginalX()));
 
             yCoordTokens.add(station.getAmplId());
             yCoordTokens.add(Integer.toString(station.getOriginalY()));
+
+            isNotAlignmentPointTokens.add(station.getAmplId());
+            isNotAlignmentPointTokens.add(station.isAlignmentPoint() ? GenerateMap.ALIGNMENT_POINT_WEIGHT : "1");
         });
 
         amplDatFile.write("param ORIGINAL_X_COORDS := ");
@@ -482,6 +486,12 @@ public class AmplDriver {
 
         amplDatFile.write("param ORIGINAL_Y_COORDS := ");
         amplDatFile.write(String.join(" ", yCoordTokens));
+        amplDatFile.write(";");
+        amplDatFile.newLine();
+        amplDatFile.newLine();
+
+        amplDatFile.write("param ALIGNMENT_POINT_WEIGHT := ");
+        amplDatFile.write(String.join(" ", isNotAlignmentPointTokens));
         amplDatFile.write(";");
         amplDatFile.newLine();
         amplDatFile.newLine();
