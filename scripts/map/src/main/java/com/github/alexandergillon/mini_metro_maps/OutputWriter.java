@@ -120,7 +120,7 @@ public class OutputWriter {
 
         List<OutputStation> stations = metroLine.getStations().values().stream()
                 .map(
-                    station -> new OutputStation(station.getAmplUniqueId(), station.getName(),
+                    station -> new OutputStation(station.getAmplId(), station.getName(),
                                                  station.getSolvedX(), station.getSolvedY())
                 )
                 .toList();
@@ -141,7 +141,7 @@ public class OutputWriter {
             if (curve.getDependentOn() != null) {
                 dependentCurves.add(curve); // Dependent curves will be processed later.
             } else {
-                OutputEdge outputEdge = new OutputEdge(curve.getFrom().getAmplUniqueId(), curve.getTo().getAmplUniqueId(), bezierGenerator.toLineSegments(curve));
+                OutputEdge outputEdge = new OutputEdge(curve.getFrom().getAmplId(), curve.getTo().getAmplId(), bezierGenerator.toLineSegments(curve));
                 outputEdges.add(outputEdge);
                 curveToOutputEdge.put(curve, outputEdge);
             }
@@ -161,7 +161,7 @@ public class OutputWriter {
                 validateStraightEdge(station1, station2);
 
                 OutputLineSegment straightLineSegment = OutputLineSegment.fromStraightLine(station1Pos, station2Pos);
-                outputEdges.add(new OutputEdge(station1.getAmplUniqueId(), station2.getAmplUniqueId(), List.of(straightLineSegment)));
+                outputEdges.add(new OutputEdge(station1.getAmplId(), station2.getAmplId(), List.of(straightLineSegment)));
             }
         }
 
@@ -181,7 +181,7 @@ public class OutputWriter {
                 if (curveToOutputEdge.containsKey(dependentCurve.getDependentOn())) {
                     OutputEdge dependentOnEdge = curveToOutputEdge.get(dependentCurve.getDependentOn());
                     OutputEdge dependentEdge = new OutputEdge(
-                            dependentCurve.getFrom().getAmplUniqueId(), dependentCurve.getTo().getAmplUniqueId(),
+                            dependentCurve.getFrom().getAmplId(), dependentCurve.getTo().getAmplId(),
                             bezierGenerator.makeDependentEdge(dependentCurve, dependentOnEdge));
 
                     outputMetroLines.get(dependentCurve.getFrom().getMetroLineName()).getEdges().add(dependentEdge);

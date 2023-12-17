@@ -17,7 +17,7 @@ public class Station {
     private final String name;
 
     /** Unique identifier for this station, for AMPL. */
-    private final String amplUniqueId;
+    private final String amplId;
 
     /** Original x coordinate of this station, from the input file. */
     private final int originalX;
@@ -41,7 +41,7 @@ public class Station {
                 : metroLineName.substring(0, GenerateMap.METRO_LINE_PREFIX_LENGTH);
         // AMPL cannot handle '-' in various identifiers that are built from amplUniqueId.
         metroLinePrefix = metroLineName.replace("-", "");
-        this.amplUniqueId = String.format("%s_%s", metroLinePrefix, naptan);
+        this.amplId = String.format("%s_%s", metroLinePrefix, naptan);
 
         this.originalX = x;
         this.originalY = y;
@@ -49,7 +49,7 @@ public class Station {
 
     @Override
     public String toString() {
-        return String.format("%s line station %s (%s)", metroLineName, name, amplUniqueId);
+        return String.format("%s line station %s (%s)", metroLineName, name, amplId);
     }
 
     @Override
@@ -63,11 +63,11 @@ public class Station {
                 && solvedY == station.solvedY
                 && Objects.equals(metroLineName, station.metroLineName)
                 && Objects.equals(name, station.name)
-                && Objects.equals(amplUniqueId, station.amplUniqueId);
+                && Objects.equals(amplId, station.amplId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(metroLineName, name, amplUniqueId, originalX, originalY, solvedX, solvedY);
+        return Objects.hash(metroLineName, name, amplId, originalX, originalY, solvedX, solvedY);
     }
 }

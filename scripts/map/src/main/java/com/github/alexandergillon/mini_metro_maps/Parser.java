@@ -60,6 +60,14 @@ public class Parser {
     }
 
     /**
+     * Throws a formatted IllegalArgumentException. This exists to make many instances of
+     * IllegalArgumentException(String.format(...)) more concise.
+     */
+    private void parseException(String format, Object... args) {
+        throw new IllegalArgumentException(String.format(format, args));
+    }
+
+    /**
      * @param textLine A line of text input.
      * @return That line with comments removed, and stripped of leading/trailing whitespace.
      */
@@ -79,9 +87,7 @@ public class Parser {
      */
     private MetroLine createNewMetroLine(String textLine) {
         String[] tokens = textLine.split("\\s+"); // splits on whitespace
-        if (tokens.length == 0) {
-            throw new IllegalArgumentException(String.format("Line %d does not have a metro line name.", textLineNumber));
-        }
+        if (tokens.length == 0) parseException("Line %d does not have a metro line name.", textLineNumber);
 
         String metroLineName = tokens[1];
         int colonIndex = metroLineName.indexOf(':');
@@ -90,9 +96,7 @@ public class Parser {
         }
         metroLineName = metroLineName.strip();
 
-        if (metroLines.containsKey(metroLineName)) {
-            throw new IllegalArgumentException(String.format("Redefinition of line %s.", metroLineName));
-        }
+        if (metroLines.containsKey(metroLineName)) parseException("Redefinition of line %s.", metroLineName);
 
         MetroLine metroLine = new MetroLine(metroLineName);
         metroLines.put(metroLineName, metroLine);
@@ -105,9 +109,7 @@ public class Parser {
      * @param currentMetroLine The current metro line that is selected in the network.
      */
     private void createNewStation(String textLine, MetroLine currentMetroLine) {
-        if (currentMetroLine == null) {
-            throw new IllegalArgumentException(String.format("(line %d) Station declared before a current line was set.", textLineNumber));
-        }
+        if (currentMetroLine == null) parseException("(line %d) Station declared before a current line was set.", textLineNumber);
 
         textLine = Util.removePrefix(textLine, "station").strip();
 
@@ -116,15 +118,14 @@ public class Parser {
         String textRest = doubleQuotedResult.getRight().strip();
 
         String[] tokens = textRest.split("\\s+");
-        if (tokens.length != 2) {
-            throw new IllegalArgumentException(String.format("(line %d) Station declaration does not have both coordinates, or has trailing text.", textLineNumber));
-        }
+        if (tokens.length != 2) parseException("(line %d) Station declaration does not have both coordinates, or has trailing text.", textLineNumber);
 
         int x, y;
         try {
             x = Integer.parseInt(tokens[0]);
             y = Integer.parseInt(tokens[1]);
         } catch (NumberFormatException ignored) {
+            // Can't use parseException or compiler cannot prove that x and y are initialized.
             throw new IllegalArgumentException(String.format("(line %d) Station declaration contains coordinate which is not an integer.", textLineNumber));
         }
 
@@ -139,9 +140,7 @@ public class Parser {
      * @param currentMetroLine The current metro line that is selected in the network.
      */
     private void addEdges(String textLine, MetroLine currentMetroLine) {
-        if (currentMetroLine == null) {
-            throw new IllegalArgumentException(String.format("(line %d) Edges declared before a current line was set.", textLineNumber));
-        }
+        if (currentMetroLine == null) parseException("(line %d) Edges declared before a current line was set.", textLineNumber);
 
         textLine = Util.removePrefix(textLine, "edges").strip();
 
@@ -161,13 +160,11 @@ public class Parser {
     private void validateCurveType(String curveType) {
         if (!curveType.equals("special")) {
             String[] curveTypeTokens = curveType.split(",");
-            if (curveTypeTokens.length != 2) {
-                throw new IllegalArgumentException(String.format("(line %d) Invalid curve type \"%s\".", textLineNumber, curveType));
-            }
+            if (curveTypeTokens.length != 2) parseException("(line %d) Invalid curve type \"%s\".", textLineNumber, curveType);
 
             String[] validTokens = {"up", "down", "left", "right", "up-right", "up-left", "down-right", "down-left"};
             if (!ArrayUtils.contains(validTokens, curveTypeTokens[0]) || !ArrayUtils.contains(validTokens, curveTypeTokens[1])) {
-                throw new IllegalArgumentException(String.format("(line %d) Invalid curve type \"%s\".", textLineNumber, curveType));
+                parseException("(line %d) Invalid curve type \"%s\".", textLineNumber, curveType);
             }
         }
     }
@@ -183,9 +180,7 @@ public class Parser {
         String dependsOn = dependsOnAndRest.getLeft();
         String textRest = dependsOnAndRest.getRight();
 
-        if (!dependsOn.equals("dependson")) {
-            throw new IllegalArgumentException(String.format("(line %d) Unrecognized trailing text on curve declaration.", textLineNumber));
-        }
+        if (!dependsOn.equals("dependson")) parseException("(line %d) Unrecognized trailing text on curve declaration.", textLineNumber);
 
         dependentCurves.add(Triple.of(curve, textRest, textLineNumber));
     }
@@ -196,9 +191,7 @@ public class Parser {
      * @param currentMetroLine The current metro line that is selected in the network.
      */
     private void addCurve(String textLine, MetroLine currentMetroLine) {
-        if (currentMetroLine == null) {
-            throw new IllegalArgumentException(String.format("(line %d) Curve declared before a current line was set.", textLineNumber));
-        }
+        if (currentMetroLine == null) parseException("(line %d) Curve declared before a current line was set.", textLineNumber);
 
         textLine = Util.removePrefix(textLine, "curve").strip();
 
@@ -213,9 +206,7 @@ public class Parser {
         String[] stations = Arrays.stream(stationsString.split(",")).map(String::strip).toArray(String[]::new);
         validateCurveType(curveType);
 
-        if (stations.length != 2) {
-            throw new IllegalArgumentException(String.format("(line %d) Curve declaration does not have two stations.", textLineNumber));
-        }
+        if (stations.length != 2) parseException("(line %d) Curve declaration does not have two stations.", textLineNumber);
 
         Curve curve = currentMetroLine.addCurve(stations[0], stations[1], curveType, textLineNumber);
 
@@ -230,9 +221,7 @@ public class Parser {
      * @param currentMetroLine The current metro line that is selected in the network.
      */
     private void addEndpoint(String textLine, MetroLine currentMetroLine) {
-        if (currentMetroLine == null) {
-            throw new IllegalArgumentException(String.format("(line %d) Endpoint declared before a current line was set.", textLineNumber));
-        }
+        if (currentMetroLine == null) parseException("(line %d) Endpoint declared before a current line was set.", textLineNumber);
 
         textLine = Util.removePrefix(textLine, "endpoint").strip();
 
@@ -251,9 +240,7 @@ public class Parser {
         textLine = Util.removePrefix(textLine, "zindex").strip();
         String[] tokens = textLine.split("\\s+");
 
-        if (tokens.length != 3) {
-            throw new IllegalArgumentException(String.format("(line %d) z-index constraint declaration is invalid.", textLineNumber));
-        }
+        if (tokens.length != 3) parseException("(line %d) z-index constraint declaration is invalid.", textLineNumber);
 
         String metroLineName1 = tokens[0];
         String constraintType = tokens[1];
@@ -262,7 +249,7 @@ public class Parser {
         switch (constraintType) {
             case "above" -> zIndexConstraints.add(new ZIndexConstraint(metroLineName1, metroLineName2));
             case "below" -> zIndexConstraints.add(new ZIndexConstraint(metroLineName2, metroLineName1));
-            default -> throw new IllegalArgumentException(String.format("(line %d) Bad z-index constraint type \"%s\".", textLineNumber, constraintType));
+            default -> parseException("(line %d) Bad z-index constraint type \"%s\".", textLineNumber, constraintType);
         }
     }
 
@@ -326,22 +313,16 @@ public class Parser {
         Pair<String, String> doubleQuotedResult = Util.consumeDoubleQuoted(curveSpecifier, textLineNumber);
 
         String[] tokens = doubleQuotedResult.getLeft().split(":");
-        if (tokens.length != 2) {
-            throw new IllegalArgumentException(String.format("(line %d) Unrecognized trailing text on curve declaration.", textLineNumber));
-        }
+        if (tokens.length != 2) parseException("(line %d) Unrecognized trailing text on curve declaration.", textLineNumber);
 
         String[] stations = tokens[1].split(",");
-        if (stations.length != 2) {
-            throw new IllegalArgumentException(String.format("(line %d) Unrecognized trailing text on curve declaration.", textLineNumber));
-        }
+        if (stations.length != 2) parseException("(line %d) Unrecognized trailing text on curve declaration.", textLineNumber);
 
         String metroLineName = tokens[0].strip();
         String station1 = stations[0].strip();
         String station2 = stations[1].strip();
 
-        if (!metroLines.containsKey(metroLineName)) {
-            throw new IllegalArgumentException(String.format("(line %d) Unrecognized trailing text on curve declaration.", textLineNumber));
-        }
+        if (!metroLines.containsKey(metroLineName)) parseException("(line %d) Unrecognized trailing text on curve declaration.", textLineNumber);
 
         return metroLines.get(metroLineName).getCurve(station1, station2, textLineNumber);
     }
@@ -353,16 +334,13 @@ public class Parser {
      * @return A curve on that line, with the same 'from' and 'to' stations as the curve.
      */
     private Curve resolveCurve(Curve curve, String metroLineName) {
-        if (!metroLines.containsKey(metroLineName)) {
-            throw new IllegalArgumentException(String.format("(line %d) Unrecognized trailing text on curve declaration.", textLineNumber));
-        }
+        if (!metroLines.containsKey(metroLineName)) parseException("(line %d) Unrecognized trailing text on curve declaration.", textLineNumber);
 
         Curve otherCurve = metroLines.get(metroLineName).getCurve(curve.getFrom().getName(), curve.getTo().getName(), textLineNumber);
 
         if (!otherCurve.getType().equals(curve.getType())) {
-            throw new IllegalArgumentException(String.format(
-                    "(line %d) Curve with type %s declared to be dependent on curve with type %s.",
-                    textLineNumber, curve.getType(), otherCurve.getType()));
+            parseException("(line %d) Curve with type %s declared to be dependent on curve with type %s.",
+                    textLineNumber, curve.getType(), otherCurve.getType());
         }
 
         return otherCurve;
