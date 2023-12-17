@@ -32,6 +32,15 @@ public class OutputLineSegment {
         return new OutputLineSegment(true, straightLine.getP0(), straightLine.getP1(), null, null);
     }
 
+    /** Returns this curve, with the order of points reversed. */
+    public OutputLineSegment reverse() {
+        if (isStraightLine) {
+            return OutputLineSegment.fromStraightLine(p1, p0);
+        } else {
+            return OutputLineSegment.fromBezierCurve(new BezierCurve(p3, p2, p1, p0));
+        }
+    }
+
     /** Converts two points on a straight line to an OutputLineSegment. */
     public static OutputLineSegment fromStraightLine(Point p0, Point p1) {
         return new OutputLineSegment(true, p0, p1, null, null);

@@ -18,6 +18,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -142,13 +143,21 @@ public class BezierGenerator {
             Point station2 = Point.fromSolvedStationCoordinates(curve.getTo());
             return List.of(OutputLineSegment.fromStraightLine(station1, station2));
         }
-
         Curve canonicalCurve = toCanonical(curve);
-        if (ArrayUtils.contains(CANONICAL_SHARP_CURVE_TYPES, canonicalCurve.getType())) {
-            return toSharpCurve(canonicalCurve);
-        } else {
-            return toWideCurve(canonicalCurve);
+
+        List<OutputLineSegment> lineSegments =
+                ArrayUtils.contains(CANONICAL_SHARP_CURVE_TYPES, canonicalCurve.getType()) ?
+                toSharpCurve(canonicalCurve) : toWideCurve(canonicalCurve);
+
+        // If canonical curve is reversed from input curve, we need to reverse the segments to go in the right direction.
+        if (!curve.getType().equals(canonicalCurve.getType())) {
+            // Need a copy, as sometimes returned list is immutable. Not the most efficient, but doesn't need to be.
+            lineSegments = new ArrayList<>(lineSegments);
+            Collections.reverse(lineSegments);
+            lineSegments = lineSegments.stream().map(OutputLineSegment::reverse).toList();
         }
+
+        return lineSegments;
     }
 
     /**
