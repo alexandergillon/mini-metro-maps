@@ -114,10 +114,12 @@ public class MetroLine {
      * @param station1Name Name of the first station.
      * @param station2Name Name of the second station.
      * @param curveType Curve type of the curve.
+     * @param specialCurveInfo Special curve info, if this curve has type 'special'.
      * @param textLineNumber Line number of the input which used these station names.
      * @return The curve that was newly added.
      */
-    public Curve addCurve(String station1Name, String station2Name, String curveType, int textLineNumber) {
+    public Curve addCurve(String station1Name, String station2Name, String curveType,
+                          Curve.SpecialCurveInfo specialCurveInfo, int textLineNumber) {
         if (!stations.containsKey(station1Name)) {
             throw new NoSuchElementException(String.format("(line %d) Station %s does not exist for line %s.",
                     textLineNumber, station1Name, name));
@@ -136,7 +138,7 @@ public class MetroLine {
                     textLineNumber, station1Name, station2Name, name));
         }
 
-        Curve curve = new Curve(station1, station2, curveType, null);
+        Curve curve = new Curve(station1, station2, curveType, specialCurveInfo, null);
         curves.add(curve);
         return curve;
     }
@@ -163,7 +165,7 @@ public class MetroLine {
      */
     public void assertNoOrphanStations() throws RuntimeException {
         for (Station station : stations.values()) {
-            if (!containsEdgeWithStation(station)) {
+            if (!station.isAlignmentPoint() && !containsEdgeWithStation(station)) {
                 throw new RuntimeException(String.format("Line %s has orphan station %s.", name, station.getName()));
             }
         }

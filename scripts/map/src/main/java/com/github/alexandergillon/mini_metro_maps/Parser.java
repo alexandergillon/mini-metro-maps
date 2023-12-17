@@ -107,11 +107,13 @@ public class Parser {
      * Creates a new station.
      * @param textLine Line of input text which declares a station.
      * @param currentMetroLine The current metro line that is selected in the network.
+     * @param isAlignmentPoint Whether this station is actually a station, or just an alignment point for special edges.
      */
-    private void createNewStation(String textLine, MetroLine currentMetroLine) {
+    private void createNewStation(String textLine, MetroLine currentMetroLine, boolean isAlignmentPoint) {
         if (currentMetroLine == null) parseException("(line %d) Station declared before a current line was set.", textLineNumber);
 
-        textLine = Util.removePrefix(textLine, "station").strip();
+        textLine = isAlignmentPoint ? Util.removePrefix(textLine, "alignment-point")
+                : Util.removePrefix(textLine, "station").strip();
 
         Pair<String, String> doubleQuotedResult = Util.consumeDoubleQuoted(textLine, textLineNumber);
         String stationName = doubleQuotedResult.getLeft().strip();
@@ -129,8 +131,9 @@ public class Parser {
             throw new IllegalArgumentException(String.format("(line %d) Station declaration contains coordinate which is not an integer.", textLineNumber));
         }
 
-        String naptan = naptanReader.getNaptan(stationName);
-        Station station = new Station(currentMetroLine.getName(), stationName, naptan, x, y);
+        // todo: maybe move ampl id out here
+        String naptan = isAlignmentPoint ? "alignmentpoint_" + stationName : naptanReader.getNaptan(stationName);
+        Station station = new Station(currentMetroLine.getName(), stationName, naptan, x, y, isAlignmentPoint);
         currentMetroLine.addStation(station);
     }
 
@@ -208,10 +211,19 @@ public class Parser {
 
         if (stations.length != 2) parseException("(line %d) Curve declaration does not have two stations.", textLineNumber);
 
-        Curve curve = currentMetroLine.addCurve(stations[0], stations[1], curveType, textLineNumber);
+        Curve.SpecialCurveInfo specialCurveInfo = curveType.equals("special") ?
+                new Curve.SpecialCurveInfo(textRest, currentMetroLine, textLineNumber) : null;
+        Curve curve = currentMetroLine.addCurve(stations[0], stations[1], curveType, specialCurveInfo, textLineNumber);
 
         if (!textRest.isEmpty()) {
-            processDependsOn(textRest, curve);
+            try {
+                processDependsOn(textRest, curve);
+            } catch (IllegalArgumentException e) {
+                // Curve has trailing text which is not 'dependson'. If the curve is 'special', that is ok.
+                if (!curveType.equals("special")) {
+                    throw e;
+                }
+            }
         }
     }
 
@@ -261,7 +273,9 @@ public class Parser {
         if (textLine.startsWith("line")) {
             currentMetroLine = createNewMetroLine(textLine);
         } else if (textLine.startsWith("station")) {
-            createNewStation(textLine, currentMetroLine);
+            createNewStation(textLine, currentMetroLine, false);
+        } else if (textLine.startsWith("alignment-point")) {
+            createNewStation(textLine, currentMetroLine, true);
         } else if (textLine.startsWith("edges")) {
             addEdges(textLine, currentMetroLine);
         } else if (textLine.startsWith("curve")) {

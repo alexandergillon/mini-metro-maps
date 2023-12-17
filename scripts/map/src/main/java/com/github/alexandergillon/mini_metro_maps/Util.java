@@ -4,7 +4,10 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 /** Class for various utility methods. */
 public class Util {
@@ -125,5 +128,32 @@ public class Util {
             }
         }
         return -1;
+    }
+
+    /**
+     * Override of HashMap which throws on .get() with no value present.
+     */
+    public static class ThrowingMap<K, V> extends HashMap<K, V> {
+        public ThrowingMap(int initialCapacity, float loadFactor) {
+            super(initialCapacity, loadFactor);
+        }
+
+        public ThrowingMap(int initialCapacity) {
+            super(initialCapacity);
+        }
+
+        public ThrowingMap() {
+            super();
+        }
+
+        public ThrowingMap(Map<? extends K, ? extends V> m) {
+            super(m);
+        }
+
+        @Override
+        public V get(Object key) {
+            if (!super.containsKey(key)) throw new NoSuchElementException(String.format("Key %s not found in map.", key.toString()));
+            return super.get(key);
+        }
     }
 }
