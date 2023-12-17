@@ -1,18 +1,18 @@
 package com.github.alexandergillon.mini_metro_maps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.alexandergillon.mini_metro_maps.models.core.Endpoint;
-import com.github.alexandergillon.mini_metro_maps.models.output.OutputNetwork;
-import com.github.alexandergillon.mini_metro_maps.models.parsing.ColorEntry;
+import com.github.alexandergillon.mini_metro_maps.models.bezier.Point;
 import com.github.alexandergillon.mini_metro_maps.models.core.Curve;
 import com.github.alexandergillon.mini_metro_maps.models.core.Edge;
+import com.github.alexandergillon.mini_metro_maps.models.core.Endpoint;
 import com.github.alexandergillon.mini_metro_maps.models.core.MetroLine;
 import com.github.alexandergillon.mini_metro_maps.models.core.Station;
-import com.github.alexandergillon.mini_metro_maps.models.bezier.Point;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputEdge;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputLineSegment;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputMetroLine;
+import com.github.alexandergillon.mini_metro_maps.models.output.OutputNetwork;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputStation;
+import com.github.alexandergillon.mini_metro_maps.models.parsing.ColorEntry;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
@@ -119,6 +119,7 @@ public class OutputWriter {
         int zIndex = metroLine.getZIndex();
 
         List<OutputStation> stations = metroLine.getStations().values().stream()
+                .filter(station -> !station.isAlignmentPoint()) // Exclude alignment points from final output (comment out for debugging)
                 .map(
                     station -> new OutputStation(station.getAmplId(), station.getName(),
                                                  station.getSolvedX(), station.getSolvedY())
