@@ -42,8 +42,6 @@ import lombok.Setter;
  * It's hard to make these look great due to the limitations of ASCII art. However, note that the sharp curve goes
  * from a horizontal to a vertical, whereas the wide curve goes from a horizontal to a diagonal.
  *
- * This class is separate from BezierCurve to ensure that the semantic difference between a ModelBezierCurve and a
- * BezierCurve is respected.
  */
 @Getter
 @Setter

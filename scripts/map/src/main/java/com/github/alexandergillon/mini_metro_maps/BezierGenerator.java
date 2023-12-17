@@ -3,7 +3,6 @@ package com.github.alexandergillon.mini_metro_maps;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.alexandergillon.mini_metro_maps.models.core.Curve;
-import com.github.alexandergillon.mini_metro_maps.models.bezier.BezierCurve;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.ModelBezierCurve;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.Point;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputEdge;
@@ -249,7 +248,7 @@ public class BezierGenerator {
                 Point p2 = csvToPoint(csvFile.readLine());
                 Point p3 = csvToPoint(csvFile.readLine());
 
-                lineSegments.add(OutputLineSegment.fromBezierCurve(new BezierCurve(p0, p1, p2, p3)));
+                lineSegments.add(OutputLineSegment.fromBezierCurve(p0, p1, p2, p3));
             }
         }
 
@@ -322,7 +321,7 @@ public class BezierGenerator {
             segments.add(OutputLineSegment.fromStraightLine(station1, bezierP0));
         }
 
-        segments.add(OutputLineSegment.fromBezierCurve(new BezierCurve(bezierP0, bezierP1, bezierP2, bezierP3)));
+        segments.add(OutputLineSegment.fromBezierCurve(bezierP0, bezierP1, bezierP2, bezierP3));
 
         if (bezierP3.getY() < station2.getY()) {
             segments.add(OutputLineSegment.fromStraightLine(bezierP3, station2));
@@ -419,7 +418,7 @@ public class BezierGenerator {
             segments.add(OutputLineSegment.fromStraightLine(station1, bezierP0));
         }
 
-        segments.add(OutputLineSegment.fromBezierCurve(new BezierCurve(bezierP0, bezierP1, bezierP2, bezierP3)));
+        segments.add(OutputLineSegment.fromBezierCurve(bezierP0, bezierP1, bezierP2, bezierP3));
 
         if (bezierP3.getY() < station2.getY()) {
             segments.add(OutputLineSegment.fromStraightLine(bezierP3, station2));

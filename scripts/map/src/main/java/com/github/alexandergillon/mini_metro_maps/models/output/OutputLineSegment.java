@@ -1,8 +1,6 @@
 package com.github.alexandergillon.mini_metro_maps.models.output;
 
-import com.github.alexandergillon.mini_metro_maps.models.bezier.BezierCurve;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.Point;
-import com.github.alexandergillon.mini_metro_maps.models.bezier.StraightLine;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,17 +25,12 @@ public class OutputLineSegment {
     private Point p2;
     private Point p3;
 
-    /** Converts a StraightLine into an OutputLineSegment. */
-    public static OutputLineSegment fromStraightLine(StraightLine straightLine) {
-        return new OutputLineSegment(true, straightLine.getP0(), straightLine.getP1(), null, null);
-    }
-
     /** Returns this curve, with the order of points reversed. */
     public OutputLineSegment reverse() {
         if (isStraightLine) {
             return OutputLineSegment.fromStraightLine(p1, p0);
         } else {
-            return OutputLineSegment.fromBezierCurve(new BezierCurve(p3, p2, p1, p0));
+            return OutputLineSegment.fromBezierCurve(p3, p2, p1, p0);
         }
     }
 
@@ -46,10 +39,9 @@ public class OutputLineSegment {
         return new OutputLineSegment(true, p0, p1, null, null);
     }
 
-    /** Converts a BezierCurve into an OutputLineSegment. */
-    public static OutputLineSegment fromBezierCurve(BezierCurve bezierCurve) {
-        return new OutputLineSegment(false,
-                bezierCurve.getP0(), bezierCurve.getP1(), bezierCurve.getP2(), bezierCurve.getP3());
+    /** Converts four points which define a Bezier curve into an OutputLineSegment. */
+    public static OutputLineSegment fromBezierCurve(Point p0, Point p1, Point p2, Point p3) {
+        return new OutputLineSegment(false, p0, p1, p2, p3);
     }
 
 }
