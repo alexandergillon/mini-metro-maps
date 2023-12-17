@@ -92,6 +92,12 @@ function zoom(event) { // todo: zoom in limit
     restoreBounds(maxPanningX, maxPanningY);
 }
 
+/** Resizes the canvas when the window is resized. */
+function resizeCanvas(event) {
+    paper.view.viewSize = new paper.Size(window.innerWidth, window.innerHeight);
+}
+
+
 /**
  * Registers event listeners with the browser/paper.js to handle user interaction.
  * @param canvas The canvas to register event listeners on.
@@ -100,6 +106,7 @@ function registerEventListeners(canvas) {
     const tool = new paper.Tool();
     tool.onMouseDrag = pan;
     canvas.addEventListener("wheel", zoom);
+    window.addEventListener("resize", resizeCanvas);
 }
 
 /**
@@ -118,6 +125,7 @@ async function fetchMetroNetwork() {
 async function setupCanvas() {
     const canvas = document.getElementById("mapCanvas");
     paper.setup(canvas);
+    resizeCanvas();
 
     const metroNetwork = await fetchMetroNetwork();
 
