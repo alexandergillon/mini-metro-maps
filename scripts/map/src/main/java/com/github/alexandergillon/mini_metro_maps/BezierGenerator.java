@@ -6,11 +6,17 @@ import com.github.alexandergillon.mini_metro_maps.models.core.Curve;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.BezierCurve;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.ModelBezierCurve;
 import com.github.alexandergillon.mini_metro_maps.models.bezier.Point;
+import com.github.alexandergillon.mini_metro_maps.models.output.OutputEdge;
 import com.github.alexandergillon.mini_metro_maps.models.output.OutputLineSegment;
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -93,11 +99,19 @@ public class BezierGenerator {
             "up-left", "down-right"
     );
 
+    /** Path to store a temporary .csv file, to communicate with R. */
+    private final String rCsvInPath;
+
+    /** Path that R writes its response to. */
+    private final String rCsvOutPath;
+
     /**
      * Constructor. Reads in the model curves from bezier.json.
      * @param bezierPath Path to bezier.json, for model Bezier curves.
+     * @param rCsvInPath Path to store a temporary .csv file, to communicate with R.
+     * @param rCsvOutPath Path that R writes its response to.
      */
-    public BezierGenerator(String bezierPath) throws IOException {
+    public BezierGenerator(String bezierPath, String rCsvInPath, String rCsvOutPath) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode json = objectMapper.readTree(new File(bezierPath));
 
@@ -111,6 +125,9 @@ public class BezierGenerator {
         // Ensures model wide curve is down/right
         assert modelWideCurve.getP0Offset().getX() < modelWideCurve.getP3Offset().getX();
         assert modelWideCurve.getP0Offset().getY() < modelWideCurve.getP3Offset().getY();
+
+        this.rCsvInPath = rCsvInPath;
+        this.rCsvOutPath = rCsvOutPath;
     }
 
     /**
@@ -132,6 +149,84 @@ public class BezierGenerator {
         } else {
             return toWideCurve(canonicalCurve);
         }
+    }
+
+    /**
+     * Generates a dependent edge.
+     * @param dependentCurve Curve that this edge is for.
+     * @param dependentOnEdge The edge that the curve depends on.
+     * @return A dependent edge for that curve.
+     */
+    public List<OutputLineSegment> makeDependentEdge(Curve dependentCurve, OutputEdge dependentOnEdge) throws IOException, InterruptedException {
+        ArrayList<OutputLineSegment> lineSegments = new ArrayList<>();
+
+        // todo: optimize so this doesn't just keep doubling edges
+
+        for (OutputLineSegment lineSegment : dependentOnEdge.getLineSegments()) {
+            if (!lineSegment.isStraightLine()) {
+                lineSegments.addAll(makeDependentBezierSegment(lineSegment));
+            }
+        }
+
+        // todo: make sure rounding was ok, alignment etc.
+
+        return lineSegments;
+    }
+
+    /** Converts a CSV value of the form "x, y" to a Point. */
+    private Point csvToPoint(String csv) {
+        String[] values = csv.split(",");
+        if (values.length != 2) throw new IllegalArgumentException("R CSV response does not have two columns");
+
+        int x = (int)Math.round(Double.parseDouble(values[0]));
+        int y = (int)Math.round(Double.parseDouble(values[1]));
+        return new Point(x, y);
+    }
+
+    /**
+     * Makes a dependent Bezier segment from a Bezier OutputLineSegment. Delegates solving for Bezier control points
+     * to an R script.
+     * @param lineSegment A Bezier line segment.
+     * @return A number of line segments which run parallel to that Bezier line segment, on the outside.
+     */
+    private List<OutputLineSegment> makeDependentBezierSegment(OutputLineSegment lineSegment) throws IOException, InterruptedException {
+        assert !lineSegment.isStraightLine();
+
+        try (BufferedWriter csvFile = new BufferedWriter(new FileWriter(rCsvInPath))) {
+            csvFile.write(String.format("%d, %d", GenerateMap.METRO_LINE_WIDTH, -1));
+            csvFile.newLine();
+            csvFile.write(String.format("%d, %d", lineSegment.getP0().getX(), lineSegment.getP0().getY()));
+            csvFile.newLine();
+            csvFile.write(String.format("%d, %d", lineSegment.getP1().getX(), lineSegment.getP1().getY()));
+            csvFile.newLine();
+            csvFile.write(String.format("%d, %d", lineSegment.getP2().getX(), lineSegment.getP2().getY()));
+            csvFile.newLine();
+            csvFile.write(String.format("%d, %d", lineSegment.getP3().getX(), lineSegment.getP3().getY()));
+            csvFile.newLine();
+        }
+
+        Process rProcess = new ProcessBuilder("rscript", "bezier.r").directory(Path.of(rCsvInPath).getParent().toFile()).inheritIO().start();
+        if (rProcess.waitFor() != 0) {
+            throw new RuntimeException("R process to fit Bezier curves terminated with non-zero exit code.");
+        }
+
+        ArrayList<OutputLineSegment> lineSegments = new ArrayList<>();
+        try (BufferedReader csvFile = new BufferedReader(new FileReader(rCsvOutPath))) {
+            String[] firstCsvLine = csvFile.readLine().split(",");
+            if (firstCsvLine.length != 2) throw new IllegalArgumentException("R CSV response does not have two columns");
+
+            int numBezierCurves = Integer.parseInt(firstCsvLine[0]);
+            for (int i = 0; i < numBezierCurves; i++) {
+                Point p0 = csvToPoint(csvFile.readLine());
+                Point p1 = csvToPoint(csvFile.readLine());
+                Point p2 = csvToPoint(csvFile.readLine());
+                Point p3 = csvToPoint(csvFile.readLine());
+
+                lineSegments.add(OutputLineSegment.fromBezierCurve(new BezierCurve(p0, p1, p2, p3)));
+            }
+        }
+
+        return lineSegments;
     }
 
     /**

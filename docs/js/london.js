@@ -77,7 +77,7 @@ function pan(event) {
  * Zooms the canvas in response to a mouse scroll event.
  * @param event A WheelEvent, supplied by the browser when the mouse wheel is scrolled.
  */
-function zoom(event) {
+function zoom(event) { // todo: zoom in limit
     event.preventDefault();
     if (event.deltaY < 0) { // scroll up
         paper.view.scale(1.25); // todo: define constant

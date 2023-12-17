@@ -37,6 +37,15 @@ public class OutputWriter {
     /** Mapping from metro line name --> hex color string. */
     private final HashMap<String, String> nameToColor = new HashMap<>();
 
+    /** Map from metro line name -> MetroLine object for the metro lines in the network. */
+    private final Map<String, MetroLine> metroLines;
+
+    /** Set of all dependent curves. */
+    private final HashSet<Curve> dependentCurves = new HashSet<>();
+
+    /** Map from Curve to OutputEdge for each curve that has already been processed. Needed for dependent curves. */
+    private final HashMap<Curve, OutputEdge> curveToOutputEdge = new HashMap<>();
+
     /** Jackson ObjectMapper for JSON parsing. */
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -45,29 +54,35 @@ public class OutputWriter {
      * @param outputPath Path to write the output JSON file.
      * @param bezierPath Path to bezier.json, for model Bezier curves.
      * @param colorsPath Path to colors.json, for colors of metro lines.
-     */
-    public OutputWriter(String outputPath, String bezierPath, String colorsPath) throws IOException {
-        this.outputPath = outputPath;
-        bezierGenerator = new BezierGenerator(bezierPath);
-        buildNameToColor(colorsPath);
-    }
-
-    /**
-     * Writes the output JSON file.
+     * @param rCsvInPath Path to store a temporary .csv file, to communicate with R.
+     * @param rCsvOutPath Path that R writes its response to.
      * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
      */
-    public void writeJson(Map<String, MetroLine> metroLines) throws IOException {
-        ArrayList<OutputMetroLine> outputMetroLines = new ArrayList<>();
+    public OutputWriter(String outputPath, String bezierPath, String colorsPath, String rCsvInPath, String rCsvOutPath,
+                        Map<String, MetroLine> metroLines) throws IOException {
+        this.outputPath = outputPath;
+        bezierGenerator = new BezierGenerator(bezierPath, rCsvInPath, rCsvOutPath);
+        buildNameToColor(colorsPath);
+        this.metroLines = metroLines;
+    }
+
+    /** Writes the output JSON file. */
+    public void writeJson() throws IOException, InterruptedException {
+        HashMap<String, OutputMetroLine> outputMetroLines = new HashMap<>();
 
         for (MetroLine metroLine : metroLines.values()) {
-            outputMetroLines.add(toOutputMetroLine(metroLine));
+            outputMetroLines.put(metroLine.getName(), toOutputMetroLine(metroLine));
         }
+
+        processDependentCurves(outputMetroLines);
 
         Pair<Integer, Integer> maxXAndY = getMaxXAndY(metroLines);
         int maxX = maxXAndY.getLeft();
         int maxY = maxXAndY.getRight();
 
-        OutputNetwork outputNetwork = new OutputNetwork(GenerateMap.METRO_LINE_WIDTH, maxX, maxY, outputMetroLines);
+
+        OutputNetwork outputNetwork = new OutputNetwork(GenerateMap.METRO_LINE_WIDTH, maxX, maxY,
+                outputMetroLines.values().stream().toList());
 
         System.out.println("Writing output file.");
         Files.createDirectories(Path.of(outputPath).getParent());
@@ -121,14 +136,21 @@ public class OutputWriter {
         HashSet<Edge> seenEdges = new HashSet<>(); // to avoid duplicating edges that have curve info
         ArrayList<OutputEdge> outputEdges = new ArrayList<>();
 
+        // For curves, delegate line segments to bezierGenerator.
         for (Curve curve : metroLine.getCurves()) {
-            // For curves, delegate line segments to bezierGenerator.
+            if (curve.getDependentOn() != null) {
+                dependentCurves.add(curve); // Dependent curves will be processed later.
+            } else {
+                OutputEdge outputEdge = new OutputEdge(curve.getFrom().getAmplUniqueId(), curve.getTo().getAmplUniqueId(), bezierGenerator.toLineSegments(curve));
+                outputEdges.add(outputEdge);
+                curveToOutputEdge.put(curve, outputEdge);
+            }
+
             seenEdges.add(new Edge(curve.getFrom(), curve.getTo()));
-            outputEdges.add(new OutputEdge(curve.getFrom().getAmplUniqueId(), curve.getTo().getAmplUniqueId(), bezierGenerator.toLineSegments(curve)));
         }
 
+        // Other edges must be straight lines - give them a straight line segment.
         for (Edge edge : metroLine.getEdges()) {
-            // Other edges must be straight lines - give them a straight line segment.
             if (!seenEdges.contains(edge)) {
                 Station station1 = edge.from();
                 Station station2 = edge.to();
@@ -144,6 +166,36 @@ public class OutputWriter {
         }
 
         return outputEdges;
+    }
+
+    /**
+     * Processes all dependent curves. Uses curve information from the curves that they are dependent on to
+     * generate line segments for all dependent curves.
+     * @param outputMetroLines Mapping from metro line name --> OutputMetroLine for all lines in the network.
+     */
+    private void processDependentCurves(HashMap<String, OutputMetroLine> outputMetroLines) throws IOException, InterruptedException {
+        while (!dependentCurves.isEmpty()) {
+            ArrayList<Curve> processed = new ArrayList<>();
+
+            for (Curve dependentCurve : dependentCurves) {
+                if (curveToOutputEdge.containsKey(dependentCurve.getDependentOn())) {
+                    OutputEdge dependentOnEdge = curveToOutputEdge.get(dependentCurve.getDependentOn());
+                    OutputEdge dependentEdge = new OutputEdge(
+                            dependentCurve.getFrom().getAmplUniqueId(), dependentCurve.getTo().getAmplUniqueId(),
+                            bezierGenerator.makeDependentEdge(dependentCurve, dependentOnEdge));
+
+                    outputMetroLines.get(dependentCurve.getFrom().getMetroLineName()).getEdges().add(dependentEdge);
+                    curveToOutputEdge.put(dependentCurve, dependentEdge);
+                    processed.add(dependentCurve);
+                }
+            }
+
+            if (processed.isEmpty()) {
+                throw new IllegalStateException("No dependent curves could be processed, but there are still dependent curves remaining. There is likely a cyclic dependency.");
+            }
+
+            processed.forEach(dependentCurves::remove);
+        }
     }
 
     /** Validates that two stations lie on a cardinal direction/diagonal. */
