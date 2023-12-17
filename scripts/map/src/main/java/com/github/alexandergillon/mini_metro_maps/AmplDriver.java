@@ -74,7 +74,7 @@ public class AmplDriver {
         ArrayList<String> stationIdentifiers = new ArrayList<>();
         for (MetroLine metroLine : metroLines.values()) {
             for (Station station : metroLine.getStations().values()) {
-                stationIdentifiers.add(String.format("\"%s\"", station.getAmplUniqueId()));
+                stationIdentifiers.add(String.format("\"%s\"", station.getAmplId()));
             }
         }
 
@@ -169,11 +169,11 @@ public class AmplDriver {
         if (metroLine == null) {
             Pair<String, String> lineAndName1 = extractMetroLine(station1Name, textLineNumber);
             Pair<String, String> lineAndName2 = extractMetroLine(station2Name, textLineNumber);
-            station1Id = metroLines.get(lineAndName1.getLeft()).getStation(lineAndName1.getRight(), textLineNumber).getAmplUniqueId();
-            station2Id = metroLines.get(lineAndName2.getLeft()).getStation(lineAndName2.getRight(), textLineNumber).getAmplUniqueId();
+            station1Id = metroLines.get(lineAndName1.getLeft()).getStation(lineAndName1.getRight(), textLineNumber).getAmplId();
+            station2Id = metroLines.get(lineAndName2.getLeft()).getStation(lineAndName2.getRight(), textLineNumber).getAmplId();
         } else {
-            station1Id = metroLine.getStation(station1Name, textLineNumber).getAmplUniqueId();
-            station2Id = metroLine.getStation(station2Name, textLineNumber).getAmplUniqueId();
+            station1Id = metroLine.getStation(station1Name, textLineNumber).getAmplId();
+            station2Id = metroLine.getStation(station2Name, textLineNumber).getAmplId();
         }
 
         switch (constraintType) {
@@ -327,10 +327,8 @@ public class AmplDriver {
             String constraintDirection = directionResult.getLeft();
             Pair<String, String> lineAndName2 = extractMetroLine(station2Result.getLeft(), textLineNumber);
 
-            String station1Id = metroLines.get(lineAndName1.getLeft())
-                    .getStation(lineAndName1.getRight(), textLineNumber).getAmplUniqueId();
-            String station2Id = metroLines.get(lineAndName2.getLeft())
-                    .getStation(lineAndName2.getRight(), textLineNumber).getAmplUniqueId();
+            String station1Id = metroLines.get(lineAndName1.getLeft()).getStation(lineAndName1.getRight(), textLineNumber).getAmplId();
+            String station2Id = metroLines.get(lineAndName2.getLeft()).getStation(lineAndName2.getRight(), textLineNumber).getAmplId();
 
             writeSameStationConstraint(station1Id, station2Id, constraintDirection);
         } else {
@@ -348,8 +346,8 @@ public class AmplDriver {
             String[] stations = Arrays.stream(stationsString.split(",")).map(String::strip).toArray(String[]::new);
 
             for (String stationName : stations) {
-                String station1Id = metroLines.get(line1Name).getStation(stationName, textLineNumber).getAmplUniqueId();
-                String station2Id = metroLines.get(line2Name).getStation(stationName, textLineNumber).getAmplUniqueId();
+                String station1Id = metroLines.get(line1Name).getStation(stationName, textLineNumber).getAmplId();
+                String station2Id = metroLines.get(line2Name).getStation(stationName, textLineNumber).getAmplId();
                 writeSameStationConstraint(station1Id, station2Id, constraintDirection);
             }
         }
@@ -374,8 +372,7 @@ public class AmplDriver {
                     textLineNumber, stationNameWithXOrY));
         }
 
-        String stationId = metroLines.get(metroLineName).getStation(stationNameTokens[0].strip(), textLineNumber)
-                .getAmplUniqueId();
+        String stationId = metroLines.get(metroLineName).getStation(stationNameTokens[0].strip(), textLineNumber).getAmplId();
         String xOrY = stationNameTokens[1].strip();
 
         return switch (xOrY) {
@@ -456,10 +453,10 @@ public class AmplDriver {
         ArrayList<String> xCoordTokens = new ArrayList<>();
         ArrayList<String> yCoordTokens = new ArrayList<>();
         stations.forEach(station -> {
-            xCoordTokens.add(station.getAmplUniqueId());
+            xCoordTokens.add(station.getAmplId());
             xCoordTokens.add(Integer.toString(station.getOriginalX()));
 
-            yCoordTokens.add(station.getAmplUniqueId());
+            yCoordTokens.add(station.getAmplId());
             yCoordTokens.add(Integer.toString(station.getOriginalY()));
         });
 
@@ -552,8 +549,8 @@ public class AmplDriver {
 
         for (MetroLine metroLine : metroLines.values()) {
             for (Station station : metroLine.getStations().values()) {
-                double solvedX = (double) ampl.getValue(String.format("SOLVED_X_COORDS[\"%s\"]", station.getAmplUniqueId()));
-                double solvedY = (double) ampl.getValue(String.format("SOLVED_Y_COORDS[\"%s\"]", station.getAmplUniqueId()));
+                double solvedX = (double) ampl.getValue(String.format("SOLVED_X_COORDS[\"%s\"]", station.getAmplId()));
+                double solvedY = (double) ampl.getValue(String.format("SOLVED_Y_COORDS[\"%s\"]", station.getAmplId()));
 
                 assert MathUtil.approxInt(solvedX);
                 assert MathUtil.approxInt(solvedY);
@@ -588,8 +585,8 @@ public class AmplDriver {
 
             for (MetroLine metroLine : metroLines.values()) {
                 for (Station station : metroLine.getStations().values()) {
-                    double solvedX = (double) ampl.getValue(String.format("SOLVED_X_COORDS[\"%s\"]", station.getAmplUniqueId()));
-                    double solvedY = (double) ampl.getValue(String.format("SOLVED_Y_COORDS[\"%s\"]", station.getAmplUniqueId()));
+                    double solvedX = (double) ampl.getValue(String.format("SOLVED_X_COORDS[\"%s\"]", station.getAmplId()));
+                    double solvedY = (double) ampl.getValue(String.format("SOLVED_Y_COORDS[\"%s\"]", station.getAmplId()));
 
                     // Transforms coordinates so that they are as far left and up as possible.
                     station.setSolvedX((int)Math.round(solvedX) - minX);
