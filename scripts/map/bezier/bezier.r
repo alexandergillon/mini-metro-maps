@@ -91,7 +91,6 @@ main = function() {
 
     header = matrix(c(2, -1), nrow=1, ncol=2)
     output = rbind(header, bezier_output_to_matrix(fitted_curve_1), bezier_output_to_matrix(fitted_curve_2))
-    print(output)
     write.table(output, file="bezier_out.csv", sep = ",", row.names = FALSE, col.names = FALSE)
 }
 

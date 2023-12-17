@@ -168,6 +168,24 @@ public class BezierGenerator {
             }
         }
 
+        assert dependentCurve.getFrom().getSolvedX() == lineSegments.get(0).getP0().getX()
+                || dependentCurve.getFrom().getSolvedY() == lineSegments.get(0).getP0().getY()
+                || (dependentCurve.getFrom().getSolvedX() - lineSegments.get(0).getP0().getX())
+                    == (dependentCurve.getFrom().getSolvedY() - lineSegments.get(0).getP0().getY())
+                || (dependentCurve.getFrom().getSolvedX() - lineSegments.get(0).getP0().getX())
+                    == -(dependentCurve.getFrom().getSolvedY() - lineSegments.get(0).getP0().getY());
+        
+        assert dependentCurve.getTo().getSolvedX() == lineSegments.get(lineSegments.size()-1).getP3().getX()
+                || dependentCurve.getTo().getSolvedY() == lineSegments.get(lineSegments.size()-1).getP3().getY()
+                || (dependentCurve.getTo().getSolvedX() - lineSegments.get(lineSegments.size()-1).getP3().getX())
+                == (dependentCurve.getTo().getSolvedY() - lineSegments.get(lineSegments.size()-1).getP3().getY())
+                || (dependentCurve.getTo().getSolvedX() - lineSegments.get(lineSegments.size()-1).getP3().getX())
+                == -(dependentCurve.getTo().getSolvedY() - lineSegments.get(lineSegments.size()-1).getP3().getY());
+
+        Point fromStation = Point.fromSolvedStationCoordinates(dependentCurve.getFrom());
+        Point toStation = Point.fromSolvedStationCoordinates(dependentCurve.getTo());
+        lineSegments.add(0, OutputLineSegment.fromStraightLine(fromStation, lineSegments.get(0).getP0()));
+        lineSegments.add(OutputLineSegment.fromStraightLine(lineSegments.get(lineSegments.size()-1).getP3(), toStation));
         // todo: make sure rounding was ok, alignment etc.
 
         return lineSegments;
