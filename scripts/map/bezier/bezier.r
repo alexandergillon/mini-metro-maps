@@ -18,6 +18,24 @@ cubic_bezier_derivative_at = function(p0, p1, p2, p3, t) {
     )
 }
 
+# Returns the second derivative of a cubic Bezier curve defined by (p0, p1, p2, p3) at input parameter t.
+cubic_bezier_second_derivative_at = function(p0, p1, p2, p3, t) {
+    return(
+        6 * (1-t) * (p2 - 2 * p1 + p0)
+        + 6 * t * (p3 - 2 * p2 + p1)
+    )
+}
+# Returns the curvature of a cubic Bezier curve defined by (p0, p1, p2, p3) at input parameter t.
+cubic_bezier_curvature_at = function(p0, p1, p2, p3, t) {
+    first_derivative = cubic_bezier_derivative_at(p0, p1, p2, p3, t)
+    second_derivative = cubic_bezier_second_derivative_at(p0, p1, p2, p3, t)
+    numerator_matrix = matrix(c(first_derivative, second_derivative), nrow=2, ncol=2)
+
+    return(
+        (det(numerator_matrix)) / ((norm(first_derivative, type="2")) ^ 3)
+    )
+}
+
 # Normalizes a vector.
 normalize = function(vector) {
     return(vector / sqrt(sum(vector^2)))
@@ -32,6 +50,8 @@ sample_points = function(control_points, n, distance) {
     p2 = control_points[3, 1:2]
     p3 = control_points[4, 1:2]
 
+    curvature = cubic_bezier_curvature_at(p0, p1, p2, p3, 0.5)
+
     points = matrix(NA, nrow=n, ncol=2)
     t_range = seq(0, 1, length=n)
 
@@ -42,11 +62,14 @@ sample_points = function(control_points, n, distance) {
         normal_vector_norm = normalize(matrix(c(tangent_vector[2], -tangent_vector[1]), nrow=1, ncol=2))
         normal_vector = normal_vector_norm * distance
 
-        normal_point_1 = bezier(t=t, p=control_points) - normal_vector
-        normal_point_2 = normal_point_1 + 2 * normal_vector
+        if (curvature <= 0) {
+            normal_point = bezier(t=t, p=control_points) - normal_vector
+        } else {
+            normal_point = bezier(t=t, p=control_points) + normal_vector
+        }
 
-        points[i, 1] = normal_point_2[1, 1]
-        points[i, 2] = normal_point_2[1, 2]
+        points[i, 1] = normal_point[1, 1]
+        points[i, 2] = normal_point[1, 2]
     }
 
     return(points)
