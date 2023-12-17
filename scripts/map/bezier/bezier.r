@@ -45,8 +45,8 @@ sample_points = function(control_points, n, distance) {
         normal_point_1 = bezier(t=t, p=control_points) - normal_vector
         normal_point_2 = normal_point_1 + 2 * normal_vector
 
-        points[i, 1] = normal_point_1[1, 1]
-        points[i, 2] = normal_point_1[1, 2]
+        points[i, 1] = normal_point_2[1, 1]
+        points[i, 2] = normal_point_2[1, 2]
     }
 
     return(points)
@@ -78,11 +78,16 @@ main = function() {
     sampled_points = sample_points(control_points, num_sample_points, line_width)
 
     # For now, we are hardcoding fitting the curve with 2 cubic Bezier curves.
-    first_half =  sampled_points[1                         : (num_sample_points %/% 2) , 1 : 2]
-    second_half = sampled_points[(num_sample_points %/% 2) : num_sample_points         , 1 : 2]
+    first_half =  sampled_points[1                              : (num_sample_points %/% 2)      , 1 : 2]
+    second_half = sampled_points[(num_sample_points %/% 2)      : num_sample_points              , 1 : 2]
+    #middle_part = sampled_points[round(num_sample_points * 0.4) : round(num_sample_points * 0.6) , 1 : 2]
+
+    # first_half =  sampled_points[1                         : round(num_sample_points * 0.6) , 1 : 2]
+    # second_half = sampled_points[round(num_sample_points * 0.4) : num_sample_points         , 1 : 2]
 
     fitted_curve_1 = bezierCurveFit(first_half, min.control.points=4, max.control.points=4, fix.start.end=TRUE)
     fitted_curve_2 = bezierCurveFit(second_half, min.control.points=4, max.control.points=4, fix.start.end=TRUE)
+    #middle_fitted_curve = bezierCurveFit(middle_part, min.control.points=4, max.control.points=4, fix.start.end=TRUE)
 
     header = matrix(c(2, -1), nrow=1, ncol=2)
     output = rbind(header, bezier_output_to_matrix(fitted_curve_1), bezier_output_to_matrix(fitted_curve_2))

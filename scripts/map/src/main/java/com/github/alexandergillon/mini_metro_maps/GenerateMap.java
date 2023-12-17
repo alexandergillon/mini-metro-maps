@@ -47,19 +47,23 @@ public class GenerateMap {
      * args[4] = colors.json path
      * args[5] = output path
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         String inputPath = args[0];
         String naptanPath = args[1];
         Path amplDir = Path.of(args[2]);
         String bezierPath = args[3];
         String colorsPath = args[4];
-        String outputPath = args[5];
+        Path rDir = Path.of(args[5]);
+        String outputPath = args[6];
 
         String amplInitialModelPath = amplDir.resolve("initial_model.mod").toString();
         String zAmplInitialModelPath = amplDir.resolve("z_index_initial_model.mod").toString();
         String amplModPath = amplDir.resolve("temp").resolve("model.mod").toString();
         String amplDatPath = amplDir.resolve("temp").resolve("data.dat").toString();
         String zAmplModPath = amplDir.resolve("temp").resolve("zModel.mod").toString();
+
+        String rCsvInPath = rDir.resolve("bezier_in.csv").toString();
+        String rCsvOutPath = rDir.resolve("bezier_out.csv").toString();
 
         Parser parser = new Parser(inputPath, naptanPath);
         var data = parser.parseData();
@@ -73,8 +77,8 @@ public class GenerateMap {
         amplDriver.writeAmplFiles(amplModPath, amplDatPath, zAmplModPath, alignmentConstraints, zIndexConstraints, metroLines);
         amplDriver.solveAmpl(amplModPath, amplDatPath, zAmplModPath, metroLines);
 
-        OutputWriter outputWriter = new OutputWriter(outputPath, bezierPath, colorsPath);
-        outputWriter.writeJson(metroLines);
+        OutputWriter outputWriter = new OutputWriter(outputPath, bezierPath, colorsPath, rCsvInPath, rCsvOutPath, metroLines);
+        outputWriter.writeJson();
 
         System.out.println("Done!");
 
