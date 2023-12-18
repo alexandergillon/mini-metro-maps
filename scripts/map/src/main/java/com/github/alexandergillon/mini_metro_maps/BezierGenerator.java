@@ -31,26 +31,26 @@ public class BezierGenerator {
      * The model curve was likely measured with a different scale than the map, so this factor scales it accordingly.
      * The value of this parameter was found by trial and error.
      */
-    private final double SHARP_CURVE_BEZIER_SCALE_FACTOR = 0.4;
+    private static final double SHARP_CURVE_BEZIER_SCALE_FACTOR = 0.4;
 
     /**
      * Scaling parameter for wide Bezier curves, relative to the model curve read from bezier.json.
      * The model curve was likely measured with a different scale than the map, so this factor scales it accordingly.
      * The value of this parameter was found by trial and error.
      */
-    private final double WIDE_CURVE_BEZIER_SCALE_FACTOR = 5;
+    private static final double WIDE_CURVE_BEZIER_SCALE_FACTOR = 5;
 
     /**
      * Overall scale factor that needs to be applied to generated sharp Bezier curves: incorporates the map's scale
      * factor so that if we change SCALE_FACTOR in GenerateMap, this still works.
      */
-    private final double SHARP_CURVE_SCALE_FACTOR = GenerateMap.SCALE_FACTOR * SHARP_CURVE_BEZIER_SCALE_FACTOR;
+    private static final double SHARP_CURVE_SCALE_FACTOR = GenerateMap.SCALE_FACTOR * SHARP_CURVE_BEZIER_SCALE_FACTOR;
 
     /**
      * Overall scale factor that needs to be applied to generated wide Bezier curves: incorporates the map's scale
      * factor so that if we change SCALE_FACTOR in GenerateMap, this still works.
      */
-    private final double WIDE_CURVE_SCALE_FACTOR = GenerateMap.SCALE_FACTOR * WIDE_CURVE_BEZIER_SCALE_FACTOR;
+    private static final double WIDE_CURVE_SCALE_FACTOR = GenerateMap.SCALE_FACTOR * WIDE_CURVE_BEZIER_SCALE_FACTOR;
 
     /**
      * Model Bezier curve for a sharp curve. A sharp curve is a 90 degree curve (going from one horizontal/vertical
@@ -336,22 +336,52 @@ public class BezierGenerator {
         assert bezierP0.getY() == station1.getY();
         assert bezierP3.getX() == station2.getX();
 
-        assert bezierP0.getX() >= station1.getX() : "Bezier curve extends beyond station.";
-        assert bezierP3.getY() <= station2.getY() : "Bezier curve extends beyond station.";
+        if (bezierP0.getX() <= station1.getX() || bezierP3.getY() >= station2.getY()) {
+            MathUtil.BezierCurve newCurve = truncateBezier(station1, station2,
+                    new MathUtil.BezierCurve(bezierP0, bezierP1, bezierP2, bezierP3));
+            bezierP0 = newCurve.p0();
+            bezierP1 = newCurve.p1();
+            bezierP2 = newCurve.p2();
+            bezierP3 = newCurve.p3();
+        }
 
         List<OutputLineSegment> segments = new ArrayList<>();
 
-        if (bezierP0.getX() > station1.getX()) {
+        // If Bezier curve was truncated, its endpoints are at (one or both) stations. Then, if an endpoint is not at
+        // a station, it hasn't been truncated - add the straight line segment to fill the gap.
+
+        if (!bezierP0.equals(station1)) {
             segments.add(OutputLineSegment.fromStraightLine(station1, bezierP0));
         }
 
         segments.add(OutputLineSegment.fromBezierCurve(bezierP0, bezierP1, bezierP2, bezierP3));
 
-        if (bezierP3.getY() < station2.getY()) {
+        if (!bezierP3.equals(station2)) {
             segments.add(OutputLineSegment.fromStraightLine(bezierP3, station2));
         }
 
         return segments;
+    }
+
+    /**
+     * Truncates a Bezier curve. If the Bezier curve extends beyond a station, truncates it to end at the station.
+     * This can happen to either or both ends. This function should only be called when an end should actually be
+     * truncated.
+     * @param station1 First station in the edge.
+     * @param station2 Second station in the edge.
+     * @param curve The originally generated Bezier curve.
+     * @return A truncated Bezier curve.
+     */
+    private MathUtil.BezierCurve truncateBezier(Point station1, Point station2, MathUtil.BezierCurve curve) {
+        if (curve.p0().getX() <= station1.getX()) {
+            curve = MathUtil.truncateBezier(station1, curve, false);
+        }
+
+        if (curve.p3().getY() >= station2.getY()) {
+            curve = MathUtil.truncateBezier(station2, curve, true);
+        }
+
+        return curve;
     }
 
     /**
@@ -433,18 +463,24 @@ public class BezierGenerator {
         assert bezierP0.getY() == station1.getY();
         assert MathUtil.approxEqual(bezierP3.getX() - station2.getX(), bezierP3.getY() - station2.getY());
 
-        assert bezierP0.getX() >= station1.getX() : "Bezier curve extends beyond station.";
-        assert bezierP3.getY() <= station2.getY() : "Bezier curve extends beyond station.";
+        if (bezierP0.getX() <= station1.getX() || bezierP3.getY() >= station2.getY()) {
+            MathUtil.BezierCurve newCurve = truncateBezier(station1, station2,
+                    new MathUtil.BezierCurve(bezierP0, bezierP1, bezierP2, bezierP3));
+            bezierP0 = newCurve.p0();
+            bezierP1 = newCurve.p1();
+            bezierP2 = newCurve.p2();
+            bezierP3 = newCurve.p3();
+        }
 
         List<OutputLineSegment> segments = new ArrayList<>();
 
-        if (bezierP0.getX() > station1.getX()) {
+        if (!bezierP0.equals(station1)) {
             segments.add(OutputLineSegment.fromStraightLine(station1, bezierP0));
         }
 
         segments.add(OutputLineSegment.fromBezierCurve(bezierP0, bezierP1, bezierP2, bezierP3));
 
-        if (bezierP3.getY() < station2.getY()) {
+        if (!bezierP3.equals(station2)) {
             segments.add(OutputLineSegment.fromStraightLine(bezierP3, station2));
         }
 

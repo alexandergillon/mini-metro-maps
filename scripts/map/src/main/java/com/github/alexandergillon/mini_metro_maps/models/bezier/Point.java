@@ -9,6 +9,8 @@ import lombok.Setter;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
+import java.util.Objects;
+
 /** Class for a point, structured so that JSON can be read into it with Jackson. */
 @Getter
 @Setter
@@ -74,5 +76,18 @@ public class Point {
     /** Converts the solved coordinates in a Station to a Point. */
     public static Point fromSolvedStationCoordinates(Station station) {
         return new Point(station.getSolvedX(), station.getSolvedY());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Point point = (Point) o;
+        return x == point.x && y == point.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 }
