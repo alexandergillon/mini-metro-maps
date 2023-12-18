@@ -226,13 +226,13 @@ line district:
   station "East Putney" 1556 2027
   station "Edgware Road (Circle Line)" 1696 1260
   station "Fulham Broadway" 1556 1894
-  station "Gunnersbury" 1100 1807
+  station "Gunnersbury" 1102 1834
   station "Gloucester Road" 1664 1707
   station "Hornchurch" 3646 933
   station "Hammersmith (Dist&Picc Line)" 1404 1707
   station "High Street Kensington" 1597 1578
   station "Kensington (Olympia)" 1556 1604
-  station "Kew Gardens" 1025 1881
+  station "Kew Gardens" 1027 1903
   station "Mile End" 2960 1308
   station "Monument" 2528 1557
   station "Mansion House" 2381 1610
@@ -241,7 +241,7 @@ line district:
   station "Plaistow" 3293 1286
   station "Parsons Green" 1556 1924
   station "Putney Bridge" 1556 1953
-  station "Richmond" 983 1923
+  station "Richmond" 983 1949
   station "Ravenscourt Park" 1353 1707
   station "Stamford Brook" 1265 1707
   station "Southfields" 1556 2065
@@ -271,11 +271,12 @@ line district:
   edges "Earl's Court, Kensington (Olympia)"
 
   alignment-point "TowerHill_AldgateEast" 2672 1507 # todo: align
+  alignment-point "Gunnersbury_TurnhamGreen" 1131 1768
 
   curve "Ealing Broadway, Ealing Common" right,down
   curve "Ealing Common, Acton Town" down,down-right dependson piccadilly
   curve "Acton Town, Chiswick Park" down-right,right
-  curve "Gunnersbury, Turnham Green" up,right
+  curve "Gunnersbury, Turnham Green" special "Gunnersbury, Gunnersbury_TurnhamGreen, Turnham Green" "up-right,up : up,right"
   curve "Earl's Court, Kensington (Olympia)" up-left,up
   curve "Earl's Court, West Brompton" down-left,down
   curve "Earl's Court, High Street Kensington" up-right,up
