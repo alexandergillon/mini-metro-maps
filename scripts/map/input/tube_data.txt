@@ -45,54 +45,54 @@ line bakerloo:
   endpoint "Harrow & Wealdstone" horizontal
 
 line central:
-  station "Barkingside" 3369 762
-  station "Buckhurst Hill" 3221 542
+  station "Barkingside" 3393 738 
+  station "Buckhurst Hill" 3245 518 
   station "Bethnal Green" 2821 1281
   station "Bond Street" 1887 1426
   station "Bank" 2442 1465
   station "Chancery Lane" 2236 1426
-  station "Chigwell" 3305 637
-  station "Debden" 3291 472
+  station "Chigwell" 3329 613 
+  station "Debden" 3315 448 
   station "East Acton" 1296 1493
   station "Ealing Broadway" 979 1493
-  station "Epping" 3371 392
-  station "Fairlop" 3369 724
+  station "Epping" 3395 368 
+  station "Fairlop" 3393 700 
   station "Greenford" 850 1158
-  station "Grange Hill" 3347 637
-  station "Gants Hill" 3347 845
+  station "Grange Hill" 3371 613 
+  station "Gants Hill" 3371 821 
   station "Holborn" 2187 1426
   station "Hanger Lane" 986 1294
-  station "Hainault" 3369 683
+  station "Hainault" 3393 659 
   station "Holland Park" 1545 1493
-  station "Loughton" 3254 508
+  station "Loughton" 3278 484 
   station "Lancaster Gate" 1756 1484
   station "Liverpool Street" 2514 1391
-  station "Leyton" 3203 1004
-  station "Leytonstone" 3203 898
+  station "Leyton" 3227 980 
+  station "Leytonstone" 3227 874 
   station "Marble Arch" 1789 1451
   station "Mile End" 2960 1281
   station "North Acton" 1238 1493
-  station "Newbury Park" 3369 807
+  station "Newbury Park" 3393 783 
   station "Notting Hill Gate" 1601 1493
   station "Northolt" 806 1021
   station "Oxford Circus" 1972 1426
   station "Perivale" 931 1240
   station "Queensway" 1691 1493
-  station "Redbridge" 3299 845
+  station "Redbridge" 3323 821 
   station "Ruislip Gardens" 807 845
-  station "Roding Valley" 3250 637
+  station "Roding Valley" 3274 613 
   station "Shepherd's Bush (Central)" 1490 1493
-  station "Snaresbrook" 3203 773
+  station "Snaresbrook" 3227 749 
   station "St. Paul's" 2371 1493
   station "South Ruislip" 807 933
-  station "Stratford" 3179 1098
-  station "South Woodford" 3203 732
+  station "Stratford" 3203 1074 
+  station "South Woodford" 3227 708 
   station "Tottenham Court Road" 2088 1426
-  station "Theydon Bois" 3329 434
+  station "Theydon Bois" 3353 410 
   station "White City" 1371 1493
-  station "Woodford" 3203 690
+  station "Woodford" 3227 666 
   station "West Ruislip" 807 662
-  station "Wanstead" 3251 845
+  station "Wanstead" 3275 821 
   station "West Acton" 1105 1493
 
   edges "West Ruislip, Ruislip Gardens, South Ruislip, Northolt, Greenford, Perivale, Hanger Lane, North Acton, East Acton, White City, Shepherd's Bush (Central), Holland Park, Notting Hill Gate, Queensway, Lancaster Gate, Marble Arch, Bond Street, Oxford Circus, Tottenham Court Road, Holborn, Chancery Lane, St. Paul's, Bank, Liverpool Street, Bethnal Green, Mile End, Stratford, Leyton, Leytonstone, Snaresbrook, South Woodford, Woodford, Buckhurst Hill, Loughton, Debden, Theydon Bois, Epping"
@@ -206,7 +206,7 @@ line circle:
 line district:
   station "Acton Town" 1069 1703
   station "Aldgate East" 2734 1415
-  station "Bromley-by-Bow" 3148 1309
+  station "Bromley-by-Bow" 3127 1308
   station "Becontree" 3505 1073
   station "Blackfriars" 2315 1675
   station "Barking" 3412 1165
@@ -258,7 +258,7 @@ line district:
   station "Upney" 3464 1115
   station "Victoria" 1902 1707
   station "West Brompton" 1556 1809
-  station "West Ham" 3223 1308
+  station "West Ham"  3193 1309
   station "Wimbledon" 1555 2146
   station "Wimbledon Park" 1556 2104
   station "West Kensington" 1513 1707
@@ -308,7 +308,7 @@ line district:
 
 line hammersmith-city:
   station "Aldgate East" 2730 1409
-  station "Bromley-by-Bow" 3148 1301
+  station "Bromley-by-Bow" 3127 1300
   station "Barbican" 2395 1351
   station "Barking" 3409 1158
   station "Baker Street" 1893 1238
@@ -332,7 +332,7 @@ line hammersmith-city:
   station "Shepherd's Bush Market" 1400 1573
   station "Stepney Green" 2886 1301
   station "Upton Park" 3331 1236
-  station "West Ham" 3224 1301
+  station "West Ham" 3193 1300
   station "Wood Lane" 1400 1524
   station "Whitechapel" 2759 1378
   station "Westbourne Park" 1400 1370
@@ -383,7 +383,7 @@ line jubilee:
   station "Stanmore" 1533 661
   station "Swiss Cottage" 1860 1170
   station "Southwark" 2216 1858
-  station "West Ham" 3194 1275
+  station "West Ham" 3193 1304
   station "West Hampstead" 1754 1038
   station "Willesden Green" 1632 915
   station "Waterloo" 2090 1795
@@ -819,7 +819,7 @@ multi-line:
   same-station central exact circle "Liverpool Street"
   same-station central above hammersmith-city "Mile End"
 
-  same-station central left jubilee "Stratford"
+  same-station central above-left jubilee "Stratford"
 
   #todo: move stratford right, align jubilee with west ham, move hainaut loop"
 
@@ -853,7 +853,6 @@ multi-line:
   same-station jubilee exact northern "London Bridge"
 
   # todo: west ham / stratford
-  horizontal "jubilee: Stratford, central: Stratford"
 
   # northern line
   horizontal "northern: Euston (Bank branch), northern: Euston (Charing Cross branch)"
