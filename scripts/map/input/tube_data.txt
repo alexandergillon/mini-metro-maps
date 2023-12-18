@@ -206,7 +206,7 @@ line circle:
 line district:
   station "Acton Town" 1069 1703
   station "Aldgate East" 2734 1415
-  station "Bromley-by-Bow" 3148 1309
+  station "Bromley-by-Bow" 3127 1308
   station "Becontree" 3505 1073
   station "Blackfriars" 2315 1675
   station "Barking" 3412 1165
@@ -258,7 +258,7 @@ line district:
   station "Upney" 3464 1115
   station "Victoria" 1902 1707
   station "West Brompton" 1556 1809
-  station "West Ham" 3223 1308
+  station "West Ham"  3193 1309
   station "Wimbledon" 1555 2146
   station "Wimbledon Park" 1556 2104
   station "West Kensington" 1513 1707
@@ -308,7 +308,7 @@ line district:
 
 line hammersmith-city:
   station "Aldgate East" 2730 1409
-  station "Bromley-by-Bow" 3148 1301
+  station "Bromley-by-Bow" 3127 1300
   station "Barbican" 2395 1351
   station "Barking" 3409 1158
   station "Baker Street" 1893 1238
@@ -332,7 +332,7 @@ line hammersmith-city:
   station "Shepherd's Bush Market" 1400 1573
   station "Stepney Green" 2886 1301
   station "Upton Park" 3331 1236
-  station "West Ham" 3224 1301
+  station "West Ham" 3193 1300
   station "Wood Lane" 1400 1524
   station "Whitechapel" 2759 1378
   station "Westbourne Park" 1400 1370
@@ -383,7 +383,7 @@ line jubilee:
   station "Stanmore" 1533 661
   station "Swiss Cottage" 1860 1170
   station "Southwark" 2216 1858
-  station "West Ham" 3194 1275
+  station "West Ham" 3193 1304
   station "West Hampstead" 1754 1038
   station "Willesden Green" 1632 915
   station "Waterloo" 2090 1795
@@ -819,7 +819,7 @@ multi-line:
   same-station central exact circle "Liverpool Street"
   same-station central above hammersmith-city "Mile End"
 
-  same-station central left jubilee "Stratford"
+  same-station central above-left jubilee "Stratford"
 
   #todo: move stratford right, align jubilee with west ham, move hainaut loop"
 
@@ -853,7 +853,6 @@ multi-line:
   same-station jubilee exact northern "London Bridge"
 
   # todo: west ham / stratford
-  horizontal "jubilee: Stratford, central: Stratford"
 
   # northern line
   horizontal "northern: Euston (Bank branch), northern: Euston (Charing Cross branch)"
