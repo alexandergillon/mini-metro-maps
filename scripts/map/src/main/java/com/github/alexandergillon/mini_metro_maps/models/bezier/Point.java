@@ -51,18 +51,6 @@ public class Point {
         return new Point(x - dx, y - dy);
     }
 
-    /** Returns the point obtained by scaling this point from the origin with a factor of c. */
-    public Point scale(int c) {
-        return new Point(x * c, y * c);
-    }
-
-    /** Returns the distance between this point and another point. */
-    public double distanceFrom(Point p) {
-        int dx = x - p.x;
-        int dy = y - p.y;
-        return Math.sqrt(dx * dx + dy * dy);
-    }
-
     /** Converts this Point to an Apache Commons Math matrix. */
     public RealMatrix toRealMatrix() {
         return MatrixUtils.createRealMatrix(new double[][]{{x}, {y}});
