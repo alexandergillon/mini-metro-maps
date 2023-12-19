@@ -1,15 +1,13 @@
 package com.github.alexandergillon.mini_metro_maps;
 
 import com.ampl.AMPL;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.alexandergillon.mini_metro_maps.models.Constraint;
-import com.github.alexandergillon.mini_metro_maps.models.MetroLine;
-import com.github.alexandergillon.mini_metro_maps.models.OutputStation;
-import com.github.alexandergillon.mini_metro_maps.models.Station;
+import com.github.alexandergillon.mini_metro_maps.models.core.AlignmentConstraint;
+import com.github.alexandergillon.mini_metro_maps.models.core.MetroLine;
+import com.github.alexandergillon.mini_metro_maps.models.core.Station;
+import com.github.alexandergillon.mini_metro_maps.models.core.ZIndexConstraint;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /** Class to interact with AMPL. */
@@ -41,17 +40,21 @@ public class AmplDriver {
     /** X/Y offset of two stations that are diagonally adjacent. */
     private final int diagonalOffset;
 
-    /** Jackson ObjectMapper for JSON parsing. */
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    /** Path to the initial AMPL model file for z-index constraints. */
+    private final String initialZIndexModelPath;
 
     /**
      * @param initialModelPath Path to the initial AMPL model file.
+     * @param scaleFactor Scale factor for the map.
+     * @param metroLineWidth Line width of a metro line on the map, in pixels.
+     * @param initialZIndexModelPath Path to the initial z-index AMPL model file.
      */
-    public AmplDriver(String initialModelPath, int scaleFactor, int metroLineWidth) {
+    public AmplDriver(String initialModelPath, int scaleFactor, int metroLineWidth, String initialZIndexModelPath) {
         this.initialModelPath = initialModelPath;
         this.scaleFactor = scaleFactor;
         this.metroLineWidth = metroLineWidth;
         this.diagonalOffset = (int)Math.floor(((double)metroLineWidth) / Math.sqrt(2));
+        this.initialZIndexModelPath = initialZIndexModelPath;
     }
 
     /**
@@ -71,7 +74,7 @@ public class AmplDriver {
         ArrayList<String> stationIdentifiers = new ArrayList<>();
         for (MetroLine metroLine : metroLines.values()) {
             for (Station station : metroLine.getStations().values()) {
-                stationIdentifiers.add(String.format("\"%s\"", station.getAmplUniqueId()));
+                stationIdentifiers.add(String.format("\"%s\"", station.getAmplId()));
             }
         }
 
@@ -111,9 +114,9 @@ public class AmplDriver {
      * @param station2Id Identifier of the second station, in the STATIONS AMPL set.
      */
     private void writeRisingDiagonalConstraint(String station1Id, String station2Id) throws IOException {
-        amplModFile.write(String.format("subject to rising_diagonal_%s_%s: SOLVED_X_COORDS[\"%s\"] - SOLVED_X_COORDS[\"%s\"] " +
-                "= -(SOLVED_Y_COORDS[\"%s\"] - SOLVED_Y_COORDS[\"%s\"]);", station1Id, station2Id,
-                station1Id, station2Id, station1Id, station2Id));
+        amplModFile.write(String.format("subject to rising_diagonal_%s_%s: " +
+                "SOLVED_X_COORDS[\"%s\"] - SOLVED_X_COORDS[\"%s\"] = -(SOLVED_Y_COORDS[\"%s\"] - SOLVED_Y_COORDS[\"%s\"]);",
+                station1Id, station2Id, station1Id, station2Id, station1Id, station2Id));
         amplModFile.newLine();
     }
 
@@ -124,9 +127,9 @@ public class AmplDriver {
      * @param station2Id Identifier of the second station, in the STATIONS AMPL set.
      */
     private void writeFallingDiagonalConstraint(String station1Id, String station2Id) throws IOException {
-        amplModFile.write(String.format("subject to falling_diagonal_%s_%s: SOLVED_X_COORDS[\"%s\"] - SOLVED_X_COORDS[\"%s\"] " +
-                "= SOLVED_Y_COORDS[\"%s\"] - SOLVED_Y_COORDS[\"%s\"];", station1Id, station2Id,
-                station1Id, station2Id, station1Id, station2Id));
+        amplModFile.write(String.format("subject to falling_diagonal_%s_%s: " +
+                "SOLVED_X_COORDS[\"%s\"] - SOLVED_X_COORDS[\"%s\"] = SOLVED_Y_COORDS[\"%s\"] - SOLVED_Y_COORDS[\"%s\"];",
+                station1Id, station2Id, station1Id, station2Id, station1Id, station2Id));
         amplModFile.newLine();
     }
 
@@ -143,10 +146,9 @@ public class AmplDriver {
             throw new IllegalArgumentException(String.format("(line %d) Invalid station name (\"lineName: stationName\" expected).", textLineNumber));
         }
 
-        String metroLineName = tokens[0];
-        String stationName = tokens[1];
-        metroLineName = metroLineName.strip();
-        stationName = stationName.strip();
+        String metroLineName = tokens[0].strip();
+        String stationName = tokens[1].strip();
+
         return Pair.of(metroLineName, stationName);
     }
 
@@ -167,11 +169,11 @@ public class AmplDriver {
         if (metroLine == null) {
             Pair<String, String> lineAndName1 = extractMetroLine(station1Name, textLineNumber);
             Pair<String, String> lineAndName2 = extractMetroLine(station2Name, textLineNumber);
-            station1Id = metroLines.get(lineAndName1.getLeft()).getStation(lineAndName1.getRight(), textLineNumber).getAmplUniqueId();
-            station2Id = metroLines.get(lineAndName2.getLeft()).getStation(lineAndName2.getRight(), textLineNumber).getAmplUniqueId();
+            station1Id = metroLines.get(lineAndName1.getLeft()).getStation(lineAndName1.getRight(), textLineNumber).getAmplId();
+            station2Id = metroLines.get(lineAndName2.getLeft()).getStation(lineAndName2.getRight(), textLineNumber).getAmplId();
         } else {
-            station1Id = metroLine.getStation(station1Name, textLineNumber).getAmplUniqueId();
-            station2Id = metroLine.getStation(station2Name, textLineNumber).getAmplUniqueId();
+            station1Id = metroLine.getStation(station1Name, textLineNumber).getAmplId();
+            station2Id = metroLine.getStation(station2Name, textLineNumber).getAmplId();
         }
 
         switch (constraintType) {
@@ -188,19 +190,20 @@ public class AmplDriver {
      * rising/falling diagonal constraint).
      * @param inputText The input text which declares the constraint, with the constraint type removed.
      * @param constraintType Type of the constraint (one of 'vertical', 'horizontal', 'up-right', 'down-right').
-     * @param metroLine The metro line in the network of any stations referred to in the constraint. If null, to be read from each station.
+     * @param metroLine The metro line in the network of any stations referred to in the constraint. If null, to be
+     *                  read from each station.
      * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
      * @param textLineNumber Line number of the input which declared this constraint.
      */
     private void processCardinalDirectionConstraint(String inputText, String constraintType, MetroLine metroLine,
                                                     Map<String, MetroLine> metroLines, int textLineNumber) throws IOException {
         Pair<String, String> doubleQuotedResult = Util.consumeDoubleQuoted(inputText, textLineNumber);
-        String stationsString = doubleQuotedResult.getLeft();
-        stationsString = stationsString.strip();
+        String stationsString = doubleQuotedResult.getLeft().strip();
 
         List<Pair<String, String>> stationPairs = Util.allConsecutiveStationPairs(stationsString, textLineNumber);
         for (Pair<String, String> stationPair : stationPairs) {
-            writeCardinalDirectionConstraint(stationPair.getLeft(), stationPair.getRight(), constraintType, metroLine, metroLines, textLineNumber);
+            writeCardinalDirectionConstraint(stationPair.getLeft(), stationPair.getRight(), constraintType, metroLine,
+                    metroLines, textLineNumber);
         }
     }
 
@@ -211,7 +214,8 @@ public class AmplDriver {
      */
     private void writeSameStationAboveConstraint(String station1Id, String station2Id) throws IOException {
         writeVerticalConstraint(station1Id, station2Id);
-        amplModFile.write(String.format("subject to same_station_above_%s_%s: SOLVED_Y_COORDS[\"%s\"] + %d = SOLVED_Y_COORDS[\"%s\"];",
+        amplModFile.write(String.format("subject to same_station_above_%s_%s: " +
+                "SOLVED_Y_COORDS[\"%s\"] + %d = SOLVED_Y_COORDS[\"%s\"];",
                 station1Id, station2Id, station1Id, metroLineWidth, station2Id));
         amplModFile.newLine();
     }
@@ -223,7 +227,8 @@ public class AmplDriver {
      */
     private void writeSameStationLeftConstraint(String station1Id, String station2Id) throws IOException {
         writeHorizontalConstraint(station1Id, station2Id);
-        amplModFile.write(String.format("subject to same_station_left_%s_%s: SOLVED_X_COORDS[\"%s\"] + %d = SOLVED_X_COORDS[\"%s\"];",
+        amplModFile.write(String.format("subject to same_station_left_%s_%s: " +
+                "SOLVED_X_COORDS[\"%s\"] + %d = SOLVED_X_COORDS[\"%s\"];",
                 station1Id, station2Id, station1Id, metroLineWidth, station2Id));
         amplModFile.newLine();
     }
@@ -234,10 +239,12 @@ public class AmplDriver {
      * @param station2Id Identifier of the second station, in the STATIONS AMPL set.
      */
     private void writeSameStationAboveRightConstraint(String station1Id, String station2Id) throws IOException {
-        amplModFile.write(String.format("subject to same_station_above_right_above_%s_%s: SOLVED_Y_COORDS[\"%s\"] + %d = SOLVED_Y_COORDS[\"%s\"];",
+        amplModFile.write(String.format("subject to same_station_above_right_above_%s_%s: " +
+                "SOLVED_Y_COORDS[\"%s\"] + %d = SOLVED_Y_COORDS[\"%s\"];",
                 station1Id, station2Id, station1Id, diagonalOffset, station2Id));
         amplModFile.newLine();
-        amplModFile.write(String.format("subject to same_station_above_right_right_%s_%s: SOLVED_X_COORDS[\"%s\"] - %d = SOLVED_X_COORDS[\"%s\"];",
+        amplModFile.write(String.format("subject to same_station_above_right_right_%s_%s: " +
+                "SOLVED_X_COORDS[\"%s\"] - %d = SOLVED_X_COORDS[\"%s\"];",
                 station1Id, station2Id, station1Id, diagonalOffset, station2Id));
         amplModFile.newLine();
     }
@@ -248,10 +255,12 @@ public class AmplDriver {
      * @param station2Id Identifier of the second station, in the STATIONS AMPL set.
      */
     private void writeSameStationAboveLeftConstraint(String station1Id, String station2Id) throws IOException {
-        amplModFile.write(String.format("subject to same_station_above_left_above_%s_%s: SOLVED_Y_COORDS[\"%s\"] + %d = SOLVED_Y_COORDS[\"%s\"];",
+        amplModFile.write(String.format("subject to same_station_above_left_above_%s_%s: " +
+                "SOLVED_Y_COORDS[\"%s\"] + %d = SOLVED_Y_COORDS[\"%s\"];",
                 station1Id, station2Id, station1Id, diagonalOffset, station2Id));
         amplModFile.newLine();
-        amplModFile.write(String.format("subject to same_station_above_left_left_%s_%s: SOLVED_X_COORDS[\"%s\"] + %d = SOLVED_X_COORDS[\"%s\"];",
+        amplModFile.write(String.format("subject to same_station_above_left_left_%s_%s: " +
+                "SOLVED_X_COORDS[\"%s\"] + %d = SOLVED_X_COORDS[\"%s\"];",
                 station1Id, station2Id, station1Id, diagonalOffset, station2Id));
         amplModFile.newLine();
     }
@@ -262,10 +271,12 @@ public class AmplDriver {
      * @param station2Id Identifier of the second station, in the STATIONS AMPL set.
      */
     private void writeSameStationEqualConstraint(String station1Id, String station2Id) throws IOException {
-        amplModFile.write(String.format("subject to same_station_equal_x_%s_%s: SOLVED_X_COORDS[\"%s\"] = SOLVED_X_COORDS[\"%s\"];",
+        amplModFile.write(String.format("subject to same_station_equal_x_%s_%s: " +
+                "SOLVED_X_COORDS[\"%s\"] = SOLVED_X_COORDS[\"%s\"];",
                 station1Id, station2Id, station1Id, station2Id));
         amplModFile.newLine();
-        amplModFile.write(String.format("subject to same_station_equal_y_%s_%s: SOLVED_Y_COORDS[\"%s\"] = SOLVED_Y_COORDS[\"%s\"];",
+        amplModFile.write(String.format("subject to same_station_equal_y_%s_%s: " +
+                "SOLVED_Y_COORDS[\"%s\"] = SOLVED_Y_COORDS[\"%s\"];",
                 station1Id, station2Id, station1Id, station2Id));
         amplModFile.newLine();
     }
@@ -316,10 +327,8 @@ public class AmplDriver {
             String constraintDirection = directionResult.getLeft();
             Pair<String, String> lineAndName2 = extractMetroLine(station2Result.getLeft(), textLineNumber);
 
-            String station1Id = metroLines.get(lineAndName1.getLeft())
-                    .getStation(lineAndName1.getRight(), textLineNumber).getAmplUniqueId();
-            String station2Id = metroLines.get(lineAndName2.getLeft())
-                    .getStation(lineAndName2.getRight(), textLineNumber).getAmplUniqueId();
+            String station1Id = metroLines.get(lineAndName1.getLeft()).getStation(lineAndName1.getRight(), textLineNumber).getAmplId();
+            String station2Id = metroLines.get(lineAndName2.getLeft()).getStation(lineAndName2.getRight(), textLineNumber).getAmplId();
 
             writeSameStationConstraint(station1Id, station2Id, constraintDirection);
         } else {
@@ -333,14 +342,12 @@ public class AmplDriver {
             String line2Name = token3Result.getLeft();
 
             Pair<String, String> doubleQuotedResult = Util.consumeDoubleQuoted(token3Result.getRight(), textLineNumber);
-            String stationsString = doubleQuotedResult.getLeft();
-            stationsString = stationsString.strip();
-            String[] stations = stationsString.split(",");
-            stations = Arrays.stream(stations).map(String::strip).toArray(String[]::new); // some day, mapping a collection in Java won't be ugly
+            String stationsString = doubleQuotedResult.getLeft().strip();
+            String[] stations = Arrays.stream(stationsString.split(",")).map(String::strip).toArray(String[]::new);
 
             for (String stationName : stations) {
-                String station1Id = metroLines.get(line1Name).getStation(stationName, textLineNumber).getAmplUniqueId();
-                String station2Id = metroLines.get(line2Name).getStation(stationName, textLineNumber).getAmplUniqueId();
+                String station1Id = metroLines.get(line1Name).getStation(stationName, textLineNumber).getAmplId();
+                String station2Id = metroLines.get(line2Name).getStation(stationName, textLineNumber).getAmplId();
                 writeSameStationConstraint(station1Id, station2Id, constraintDirection);
             }
         }
@@ -350,22 +357,34 @@ public class AmplDriver {
      * Processes a summand from how it appears in the input file to how it should appear in the AMPL file.
      * E.g. processSummand("district: Embankment.x") --> "SOLVED_X_COORDS[AMPL ID]" for the appropriate AMPL ID.
      * @param summand The summand to process.
+     * @param metroLine The metro line in the network of any stations referred to in the constraint. If null, to be read from each station.
      * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
      * @param textLineNumber Line number of the input which declared this constraint.
      * @return The processed summand.
      */
-    private static String processSummand(String summand, Map<String, MetroLine> metroLines, int textLineNumber) {
-        Pair<String, String> lineAndName = extractMetroLine(summand, textLineNumber);
-        String metroLineName = lineAndName.getLeft().strip();
-        String stationNameWithXOrY = lineAndName.getRight().strip();
+    private static String processSummand(String summand, MetroLine metroLine, Map<String, MetroLine> metroLines, int textLineNumber) {
+        String stationNameWithXOrY;
+        MetroLine constraintMetroLine;
+        if (metroLine != null) {
+            stationNameWithXOrY = summand.strip();
+            constraintMetroLine = metroLine;
+        } else {
+            Pair<String, String> lineAndName = extractMetroLine(summand, textLineNumber);
+            stationNameWithXOrY = lineAndName.getRight().strip();
 
-        String[] stationNameTokens = stationNameWithXOrY.split("\\."); // splits on the symbol .
+            String metroLineName = lineAndName.getLeft().strip();
+            constraintMetroLine = metroLines.get(metroLineName);
+        }
+
+        // (?<!\\)\. matches . if not preceded by \. I.e. splits on non-escaped '.'.
+        String[] stationNameTokens = Arrays.stream(stationNameWithXOrY.split("(?<!\\\\)\\."))
+                .map(s -> s.replace("\\.", ".")).toArray(String[]::new);// un-escape escaped dot
         if (stationNameTokens.length != 2) {
             throw new IllegalArgumentException(String.format("(line %d) Malformed station \"%s\" in equal expression.",
                     textLineNumber, stationNameWithXOrY));
         }
 
-        String stationId = metroLines.get(metroLineName).getStation(stationNameTokens[0].strip(), textLineNumber).getAmplUniqueId();
+        String stationId = constraintMetroLine.getStation(stationNameTokens[0].strip(), textLineNumber).getAmplId();
         String xOrY = stationNameTokens[1].strip();
 
         return switch (xOrY) {
@@ -379,20 +398,22 @@ public class AmplDriver {
     /**
      * Process an 'equal' constraint. This is a type of constraint where two sums of X/Y coordinates are required to be equal.
      * @param inputText The input text which declares the constraint, with "equal" removed.
+     * @param metroLine The metro line in the network of any stations referred to in the constraint. If null, to be read from each station.
      * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
      * @param textLineNumber Line number of the input which declared this constraint.
      */
-    private void processEqualConstraint(String inputText, Map<String, MetroLine> metroLines, int textLineNumber) throws IOException {
+    private void processEqualConstraint(String inputText, MetroLine metroLine, Map<String, MetroLine> metroLines,
+                                        int textLineNumber) throws IOException {
         Pair<String, String> lhsResult = Util.consumeDoubleQuoted(inputText, textLineNumber);
         Pair<String, String> rhsResult = Util.consumeDoubleQuoted(lhsResult.getRight(), textLineNumber);
 
         String lhs = lhsResult.getLeft();
         String rhs = rhsResult.getLeft();
-        String[] lhsSummands = lhs.split("\\+"); // splits on the symbol +
-        String[] rhsSummands = rhs.split("\\+");
-
-        lhsSummands = Arrays.stream(lhsSummands).map(String::strip).map(s -> processSummand(s, metroLines, textLineNumber)).toArray(String[]::new);
-        rhsSummands = Arrays.stream(rhsSummands).map(String::strip).map(s -> processSummand(s, metroLines, textLineNumber)).toArray(String[]::new);
+        // splits on the symbol +
+        String[] lhsSummands = Arrays.stream(lhs.split("\\+"))
+                .map(s -> processSummand(s, metroLine, metroLines, textLineNumber)).toArray(String[]::new);
+        String[] rhsSummands = Arrays.stream(rhs.split("\\+"))
+                .map(s -> processSummand(s, metroLine, metroLines, textLineNumber)).toArray(String[]::new);
 
         amplModFile.write(String.format("subject to equal_%d: %s = %s;", textLineNumber,
                 String.join(" + ", lhsSummands), String.join(" + ", rhsSummands)));
@@ -409,26 +430,25 @@ public class AmplDriver {
     private void processConstraint(String textLine, MetroLine metroLine, Map<String, MetroLine> metroLines,
                                    int textLineNumber) throws IOException {
         String constraintType = textLine.split("\\s+")[0];
-        String textLineRest = Util.removePrefix(textLine, constraintType);
-        textLineRest = textLineRest.strip();
+        String textLineRest = Util.removePrefix(textLine, constraintType).strip();
 
         switch (constraintType) {
             case "vertical", "horizontal", "up-right", "down-right" ->
                     processCardinalDirectionConstraint(textLineRest, constraintType, metroLine, metroLines, textLineNumber);
             case "same-station" -> processSameStationConstraint(textLineRest, metroLines, textLineNumber);
-            case "equal" -> processEqualConstraint(textLineRest, metroLines, textLineNumber);
+            case "equal" -> processEqualConstraint(textLineRest, metroLine, metroLines, textLineNumber);
             default -> throw new IllegalArgumentException(String.format("Constraint (line %d) is invalid. Earlier code should have already validated this.", textLineNumber));
         }
     }
 
     /**
      * Processes all alignment constraints.
-     * @param constraints The constraints.
+     * @param alignmentConstraints The constraints.
      * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
      */
-    private void processConstraints(List<Constraint> constraints, Map<String, MetroLine> metroLines) throws IOException {
-        for (Constraint constraint : constraints) {
-            processConstraint(constraint.constraintText(), constraint.metroLine(), metroLines, constraint.textLineNumber());
+    private void processConstraints(List<AlignmentConstraint> alignmentConstraints, Map<String, MetroLine> metroLines) throws IOException {
+        for (AlignmentConstraint alignmentConstraint : alignmentConstraints) {
+            processConstraint(alignmentConstraint.constraintText(), alignmentConstraint.metroLine(), metroLines, alignmentConstraint.textLineNumber());
         }
     }
 
@@ -446,12 +466,16 @@ public class AmplDriver {
         Stream<Station> stations = metroLines.values().stream().flatMap(metroLine -> metroLine.getStations().values().stream());
         ArrayList<String> xCoordTokens = new ArrayList<>();
         ArrayList<String> yCoordTokens = new ArrayList<>();
+        ArrayList<String> isNotAlignmentPointTokens = new ArrayList<>();
         stations.forEach(station -> {
-            xCoordTokens.add(station.getAmplUniqueId());
+            xCoordTokens.add(station.getAmplId());
             xCoordTokens.add(Integer.toString(station.getOriginalX()));
 
-            yCoordTokens.add(station.getAmplUniqueId());
+            yCoordTokens.add(station.getAmplId());
             yCoordTokens.add(Integer.toString(station.getOriginalY()));
+
+            isNotAlignmentPointTokens.add(station.getAmplId());
+            isNotAlignmentPointTokens.add(station.isAlignmentPoint() ? GenerateMap.ALIGNMENT_POINT_WEIGHT : "1");
         });
 
         amplDatFile.write("param ORIGINAL_X_COORDS := ");
@@ -465,16 +489,64 @@ public class AmplDriver {
         amplDatFile.write(";");
         amplDatFile.newLine();
         amplDatFile.newLine();
+
+        amplDatFile.write("param ALIGNMENT_POINT_WEIGHT := ");
+        amplDatFile.write(String.join(" ", isNotAlignmentPointTokens));
+        amplDatFile.write(";");
+        amplDatFile.newLine();
+        amplDatFile.newLine();
+    }
+
+    /**
+     * Writes the z-index model file.
+     * @param zAmplModPath Path to write the AMPL z-index .mod file to.
+     * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
+     * @param zConstraints z-index constraints between metro lines.
+     */
+    private void writeZIndexModel(String zAmplModPath, Map<String, MetroLine> metroLines,
+                                  Set<ZIndexConstraint> zConstraints) throws IOException {
+        try (BufferedWriter zIndexAmplModFile = new BufferedWriter(new FileWriter(zAmplModPath))) {
+            String initialModelText = Files.readString(Path.of(initialZIndexModelPath));
+            int firstPercentIndex = initialModelText.indexOf('%');
+            if (firstPercentIndex == -1) throw new IllegalArgumentException("Cannot find first % in initial z-index AMPL model file.");
+            int secondPercentIndex = initialModelText.indexOf('%', firstPercentIndex + 1);
+            if (secondPercentIndex == -1) throw new IllegalArgumentException("Cannot find first % in initial z-index AMPL model file.");
+
+            // Constraint names that use these values cannot handle '-'
+            String[] metroLineNames = metroLines.keySet().stream()
+                    .map(name -> '"' + name.replace("-", "_") + '"').toArray(String[]::new);
+
+            zIndexAmplModFile.write(initialModelText.substring(0, firstPercentIndex));
+            zIndexAmplModFile.write(String.join(", ", metroLineNames));
+            zIndexAmplModFile.write(initialModelText.substring(firstPercentIndex+1, secondPercentIndex));
+            zIndexAmplModFile.write(String.format("%d", metroLines.size()));
+            zIndexAmplModFile.write(initialModelText.substring(secondPercentIndex+1));
+            zIndexAmplModFile.newLine();
+
+            zConstraints.forEach(constraint -> {
+                try {
+                    String aboveName = constraint.above().replace("-", "_");
+                    String belowName = constraint.below().replace("-", "_");
+
+                    zIndexAmplModFile.write(String.format("subject to %s_above_%s: Z_INDEX[\"%s\"] >= 1 + Z_INDEX[\"%s\"];",
+                            aboveName, belowName, aboveName, belowName));
+                    zIndexAmplModFile.newLine();
+                } catch (IOException e) { throw new RuntimeException(e); } // ugly, but we can't declare lambdas to throw checked exceptions
+            });
+        }
     }
 
     /**
      * Writes the AMPL .mod and .dat files based on the constraints and parameters of the network.
      * @param amplModPath Path to write the AMPL .mod file to.
      * @param amplDatPath Path to write the AMPL .dat file to.
-     * @param constraints The constraints.
+     * @param zAmplModPath Path to write the AMPL z-index .mod file to.
+     * @param alignmentConstraints Alignment constraints.
+     * @param zIndexConstraints z-index constraints between metro lines.
      * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
      */
-    public void writeAmplFiles(String amplModPath, String amplDatPath, List<Constraint> constraints, Map<String, MetroLine> metroLines) throws IOException {
+    public void writeAmplFiles(String amplModPath, String amplDatPath, String zAmplModPath, List<AlignmentConstraint> alignmentConstraints,
+                               Set<ZIndexConstraint> zIndexConstraints, Map<String, MetroLine> metroLines) throws IOException {
         System.out.println("Writing AMPL files.");
         try (BufferedWriter modFile = new BufferedWriter(new FileWriter(amplModPath));
              BufferedWriter datFile = new BufferedWriter(new FileWriter(amplDatPath))) {
@@ -482,20 +554,48 @@ public class AmplDriver {
             amplDatFile = datFile;
 
             writeInitialModel(metroLines);
-            processConstraints(constraints, metroLines);
+            processConstraints(alignmentConstraints, metroLines);
             writeData(metroLines);
         }
+
+        writeZIndexModel(zAmplModPath, metroLines, zIndexConstraints);
     }
 
     /**
-     * Solves the AMPL model and writes the results to the output file.
+     * Finds the minimum X and Y values across all stations.
+     * @param ampl The AMPL object, which contains the solved X and Y values.
+     * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
+     * @return The minimum X and Y values across all stations, as a pair (x,y).
+     */
+    private static Pair<Integer, Integer> findMinXAndY(AMPL ampl, Map<String, MetroLine> metroLines) {
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+
+        for (MetroLine metroLine : metroLines.values()) {
+            for (Station station : metroLine.getStations().values()) {
+                double solvedX = (double) ampl.getValue(String.format("SOLVED_X_COORDS[\"%s\"]", station.getAmplId()));
+                double solvedY = (double) ampl.getValue(String.format("SOLVED_Y_COORDS[\"%s\"]", station.getAmplId()));
+
+                assert MathUtil.approxInt(solvedX);
+                assert MathUtil.approxInt(solvedY);
+                assert solvedX > Integer.MIN_VALUE && solvedX < Integer.MAX_VALUE;
+                assert solvedY > Integer.MIN_VALUE && solvedY < Integer.MAX_VALUE;
+
+                minX = Integer.min(minX, (int)Math.round(solvedX));
+                minY = Integer.min(minY, (int)Math.round(solvedY));
+            }
+        }
+
+        return Pair.of(minX, minY);
+    }
+
+    /**
+     * Solves the AMPL model that dictates station layout, and writes solved station coordinates to Station objects.
      * @param amplModPath Path to the AMPL .mod path.
      * @param amplDatPath Path to the AMPL .dat path.
-     * @param outputPath Output path, to save results to.
      * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
      */
-    public void solveAmpl(String amplModPath, String amplDatPath, String outputPath, Map<String, MetroLine> metroLines) throws IOException {
-        System.out.println("Solving AMPL model.");
+    private static void solveStationModel(String amplModPath, String amplDatPath, Map<String, MetroLine> metroLines) throws IOException {
         try (AMPL ampl = new AMPL()) {
             ampl.read(amplModPath);
             ampl.readData(amplDatPath);
@@ -503,19 +603,58 @@ public class AmplDriver {
 
             ampl.solve();
 
-            ArrayList<OutputStation> outputStations = new ArrayList<>();
+            Pair<Integer, Integer> minXAndY = findMinXAndY(ampl, metroLines);
+            int minX = minXAndY.getLeft();
+            int minY = minXAndY.getRight();
+
             for (MetroLine metroLine : metroLines.values()) {
                 for (Station station : metroLine.getStations().values()) {
-                    station.setSolvedX((int)(double)ampl.getValue(String.format("SOLVED_X_COORDS[\"%s\"]", station.getAmplUniqueId())));
-                    station.setSolvedY((int)(double)ampl.getValue(String.format("SOLVED_Y_COORDS[\"%s\"]", station.getAmplUniqueId())));
+                    double solvedX = (double) ampl.getValue(String.format("SOLVED_X_COORDS[\"%s\"]", station.getAmplId()));
+                    double solvedY = (double) ampl.getValue(String.format("SOLVED_Y_COORDS[\"%s\"]", station.getAmplId()));
 
-                    outputStations.add(new OutputStation(metroLine.getName(), station.getName(),
-                            station.getAmplUniqueId(), station.getSolvedX(), station.getSolvedY()));
+                    // Transforms coordinates so that they are as far left and up as possible.
+                    station.setSolvedX((int)Math.round(solvedX) - minX);
+                    station.setSolvedY((int)Math.round(solvedY) - minY);
                 }
             }
-
-            Files.createDirectories(Path.of(outputPath).getParent());
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(outputPath), outputStations);
         }
     }
+
+    /**
+     * Solves the AMPL model for z-index of metro lines, and writes the solved z-indices to MetroLine objects.
+     * @param zAmplModPath Path to the z-index AMPL .mod path.
+     * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
+     */
+    private static void solveZIndexModel(String zAmplModPath, Map<String, MetroLine> metroLines) throws IOException {
+        try (AMPL ampl = new AMPL()) {
+            ampl.read(zAmplModPath);
+            ampl.setOption("solver", "scip"); // scip seems to work well - cbc is very slow
+
+            ampl.solve();
+
+            for (MetroLine metroLine : metroLines.values()) {
+                double zIndex = (double) ampl.getValue(String.format("Z_INDEX[\"%s\"]", metroLine.getName().replace("-", "_")));
+
+                assert MathUtil.approxInt(zIndex);
+                assert zIndex > 0 && zIndex < Integer.MAX_VALUE;
+
+                metroLine.setZIndex((int)Math.round(zIndex));
+            }
+        }
+    }
+
+    /**
+     * Solves the AMPL model and stores the solved coordinates for each station.
+     * @param amplModPath Path to the AMPL .mod path.
+     * @param amplDatPath Path to the AMPL .dat path.
+     * @param zAmplModPath Path to the AMPL z-index .mod path.
+     * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
+     */
+    public void solveAmpl(String amplModPath, String amplDatPath, String zAmplModPath,
+                          Map<String, MetroLine> metroLines) throws IOException {
+        System.out.println("Solving AMPL model.");
+        solveStationModel(amplModPath, amplDatPath, metroLines);
+        solveZIndexModel(zAmplModPath, metroLines);
+    }
+
 }

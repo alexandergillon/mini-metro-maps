@@ -42,66 +42,74 @@ line bakerloo:
   down-right "Piccadilly Circus, Charing Cross"
   vertical "Embankment, Waterloo, Lambeth North"
 
+  endpoint "Harrow & Wealdstone" horizontal
+
 line central:
-  station "Barkingside" 3369 762
-  station "Buckhurst Hill" 3221 542
-  station "Bethnal Green" 2821 1281
+  station "Barkingside" 3408 753 
+  station "Buckhurst Hill" 3260 533 
+  station "Bethnal Green" 2836 1296 
   station "Bond Street" 1887 1426
   station "Bank" 2442 1465
   station "Chancery Lane" 2236 1426
-  station "Chigwell" 3305 637
-  station "Debden" 3291 472
+  station "Chigwell" 3344 628 
+  station "Debden" 3330 463 
   station "East Acton" 1296 1493
   station "Ealing Broadway" 979 1493
-  station "Epping" 3371 392
-  station "Fairlop" 3369 724
+  station "Epping" 3410 383 
+  station "Fairlop" 3408 715 
   station "Greenford" 850 1158
-  station "Grange Hill" 3347 637
-  station "Gants Hill" 3347 845
+  station "Grange Hill" 3386 628 
+  station "Gants Hill" 3386 836 
   station "Holborn" 2187 1426
   station "Hanger Lane" 986 1294
-  station "Hainault" 3369 683
+  station "Hainault" 3408 674 
   station "Holland Park" 1545 1493
-  station "Loughton" 3254 508
+  station "Loughton" 3293 499 
   station "Lancaster Gate" 1756 1484
   station "Liverpool Street" 2514 1391
-  station "Leyton" 3203 1004
-  station "Leytonstone" 3203 898
+  station "Leyton" 3242 995 
+  station "Leytonstone" 3242 889 
   station "Marble Arch" 1789 1451
-  station "Mile End" 2960 1281
+  station "Mile End" 2975 1296 
   station "North Acton" 1238 1493
-  station "Newbury Park" 3369 807
+  station "Newbury Park" 3408 798 
   station "Notting Hill Gate" 1601 1493
   station "Northolt" 806 1021
   station "Oxford Circus" 1972 1426
   station "Perivale" 931 1240
   station "Queensway" 1691 1493
-  station "Redbridge" 3299 845
+  station "Redbridge" 3338 836 
   station "Ruislip Gardens" 807 845
-  station "Roding Valley" 3250 637
+  station "Roding Valley" 3289 628 
   station "Shepherd's Bush (Central)" 1490 1493
-  station "Snaresbrook" 3203 773
+  station "Snaresbrook" 3242 764 
   station "St. Paul's" 2371 1493
   station "South Ruislip" 807 933
-  station "Stratford" 3179 1098
-  station "South Woodford" 3203 732
+  station "Stratford" 3218 1089 
+  station "South Woodford" 3242 723 
   station "Tottenham Court Road" 2088 1426
-  station "Theydon Bois" 3329 434
+  station "Theydon Bois" 3368 425 
   station "White City" 1371 1493
-  station "Woodford" 3203 690
+  station "Woodford" 3242 681 
   station "West Ruislip" 807 662
-  station "Wanstead" 3251 845
+  station "Wanstead" 3290 836 
   station "West Acton" 1105 1493
 
   edges "West Ruislip, Ruislip Gardens, South Ruislip, Northolt, Greenford, Perivale, Hanger Lane, North Acton, East Acton, White City, Shepherd's Bush (Central), Holland Park, Notting Hill Gate, Queensway, Lancaster Gate, Marble Arch, Bond Street, Oxford Circus, Tottenham Court Road, Holborn, Chancery Lane, St. Paul's, Bank, Liverpool Street, Bethnal Green, Mile End, Stratford, Leyton, Leytonstone, Snaresbrook, South Woodford, Woodford, Buckhurst Hill, Loughton, Debden, Theydon Bois, Epping"
   edges "Ealing Broadway, West Acton, North Acton"
   edges "Leytonstone, Wanstead, Redbridge, Gants Hill, Newbury Park, Barkingside, Fairlop, Hainault, Grange Hill, Chigwell, Roding Valley, Woodford"
 
+  alignment-point "ChanceryLane_StPauls" 2311 1460
+
+  # ChanceryLane_StPauls.x - Chancery Lane.x = St\. Paul's.x - ChanceryLane_StPauls.x, rewritten to use + (same for y)
+  equal "ChanceryLane_StPauls.x + ChanceryLane_StPauls.x" "Chancery Lane.x + St\. Paul's.x"
+  equal "ChanceryLane_StPauls.y + ChanceryLane_StPauls.y" "Chancery Lane.y + St\. Paul's.y"
+
   curve "Northolt, Greenford" down,down-right
   curve "Hanger Lane, North Acton" down-right,right
   curve "Queensway, Lancaster Gate" right,up-right
   curve "Marble Arch, Bond Street" up-right,right
-  curve "Chancery Lane, St. Paul's" special
+  curve "Chancery Lane, St. Paul's" special "Chancery Lane, ChanceryLane_StPauls, St. Paul's" "right,down-right : down-right,right"
   curve "St. Paul's, Bank" right,up-right
   curve "Liverpool Street, Bethnal Green" up-right,right
   curve "Mile End, Stratford" right,up-right
@@ -124,6 +132,10 @@ line central:
   vertical "Newbury Park, Barkingside, Fairlop, Hainault"
   horizontal "Grange Hill, Chigwell, Roding Valley"
   up-right "Buckhurst Hill, Loughton, Debden, Theydon Bois, Epping"
+
+  endpoint "West Ruislip" horizontal
+  endpoint "Ealing Broadway" vertical:up
+  endpoint "Epping" down-right
 
 
 line circle:
@@ -169,18 +181,18 @@ line circle:
 
   curve "Westbourne Park, Royal Oak" up,up-right
   curve "Royal Oak, Paddington (H&C Line)-Underground" up-right,right
-  curve "King's Cross St. Pancras, Farringdon" right,down-right
-  curve "Barbican, Moorgate" down-right,right
-  curve "Liverpool Street, Aldgate" right,down
-  curve "Aldgate, Tower Hill" down,left
-  curve "Monument, Cannon Street" left,down-left
+  curve "King's Cross St. Pancras, Farringdon" right,down-right parallelto metropolitan
+  curve "Barbican, Moorgate" down-right,right parallelto hammersmith-city
+  curve "Liverpool Street, Aldgate" right,down parallelto metropolitan
+  curve "Tower Hill, Aldgate" right,up
+  curve "Monument, Cannon Street" left,down-left parallelto district
   curve "Blackfriars, Temple" down-left,left
   curve "Gloucester Road, High Street Kensington" left,up
   curve "Bayswater, Paddington" up,up-right
   curve "Paddington, Edgware Road (Circle Line) w/ District" up-right,right
 
   vertical "Hammersmith (H&C Line), Goldhawk Road, Shepherd's Bush Market, Wood Lane, Latimer Road, Ladbroke Grove, Westbourne Park"
-  horizontal "Paddington, Edgware Road (Circle Line) w/ H&C, Baker Street, Great Portland Street, Euston Square, King's Cross St. Pancras"
+  horizontal "Paddington (H&C Line)-Underground, Edgware Road (Circle Line) w/ H&C, Baker Street, Great Portland Street, Euston Square, King's Cross St. Pancras"
   down-right "Farringdon, Barbican"
   horizontal "Moorgate, Liverpool Street"
   horizontal "Tower Hill, Monument"
@@ -188,66 +200,69 @@ line circle:
   horizontal "Temple, Embankment, Westminster, St. James's Park, Victoria, Sloane Square, South Kensington, Gloucester Road"
   vertical "High Street Kensington, Notting Hill Gate, Bayswater"
 
+  endpoint "Hammersmith (H&C Line)" horizontal:right
+  endpoint "Edgware Road (Circle Line) w/ District" vertical:down
+
 line district:
   station "Acton Town" 1069 1703
-  station "Aldgate East" 2734 1415
-  station "Bromley-by-Bow" 3148 1309
-  station "Becontree" 3505 1073
+  station "Aldgate East" 2749 1430 
+  station "Bromley-by-Bow" 3142 1323 
+  station "Becontree" 3520 1088 
   station "Blackfriars" 2315 1675
-  station "Barking" 3412 1165
+  station "Barking" 3427 1180 
   station "Barons Court" 1468 1707
-  station "Bow Road" 3049 1308
+  station "Bow Road" 3064 1323 
   station "Bayswater" 1597 1375
   station "Cannon Street" 2412 1578
   station "Chiswick Park" 1097 1707
-  station "Dagenham East" 3570 1008
-  station "Dagenham Heathway" 3538 1039
+  station "Dagenham East" 3585 1023 
+  station "Dagenham Heathway" 3553 1054 
   station "Ealing Broadway" 978 1518
   station "Ealing Common" 1014 1598
   station "Earl's Court" 1577 1707
-  station "East Ham" 3377 1201
+  station "East Ham" 3392 1216 
   station "Embankment" 2138 1706
-  station "Elm Park" 3615 963
+  station "Elm Park" 3630 978 
   station "East Putney" 1556 2027
   station "Edgware Road (Circle Line)" 1696 1260
   station "Fulham Broadway" 1556 1894
-  station "Gunnersbury" 1100 1807
+  station "Gunnersbury" 1102 1834
   station "Gloucester Road" 1664 1707
-  station "Hornchurch" 3646 933
+  station "Hornchurch" 3661 948 
   station "Hammersmith (Dist&Picc Line)" 1404 1707
   station "High Street Kensington" 1597 1578
   station "Kensington (Olympia)" 1556 1604
-  station "Kew Gardens" 1025 1881
-  station "Mile End" 2960 1308
+  station "Kew Gardens" 1027 1903
+  station "Mile End" 2975 1323 
   station "Monument" 2528 1557
   station "Mansion House" 2381 1610
   station "Notting Hill Gate" 1597 1493
   station "Paddington" 1607 1270
-  station "Plaistow" 3293 1286
+  station "Plaistow" 3308 1301 
   station "Parsons Green" 1556 1924
   station "Putney Bridge" 1556 1953
-  station "Richmond" 983 1923
+  station "Richmond" 983 1949
   station "Ravenscourt Park" 1353 1707
   station "Stamford Brook" 1265 1707
   station "Southfields" 1556 2065
-  station "Stepney Green" 2886 1309
+  station "Stepney Green" 2901 1324 
   station "St. James's Park" 1951 1707
   station "South Kensington" 1713 1708
   station "Sloane Square" 1808 1707
   station "Temple" 2248 1707
   station "Turnham Green" 1191 1706
   station "Tower Hill" 2616 1557
-  station "Upminster Bridge" 3680 898
-  station "Upton Park" 3338 1241
-  station "Upminster" 3718 860
-  station "Upney" 3464 1115
+  station "Upminster Bridge" 3695 913 
+  station "Upton Park" 3353 1256 
+  station "Upminster" 3733 875 
+  station "Upney" 3479 1130 
   station "Victoria" 1902 1707
   station "West Brompton" 1556 1809
-  station "West Ham" 3223 1308
+  station "West Ham" 3208 1324 
   station "Wimbledon" 1555 2146
   station "Wimbledon Park" 1556 2104
   station "West Kensington" 1513 1707
-  station "Whitechapel" 2764 1385
+  station "Whitechapel" 2779 1400 
   station "Westminster" 2068 1708
 
   edges "Ealing Broadway, Ealing Common, Acton Town, Chiswick Park, Turnham Green, Stamford Brook, Ravenscourt Park, Hammersmith (Dist&Picc Line), Barons Court, West Kensington, Earl's Court, Gloucester Road, South Kensington, Sloane Square, Victoria, St. James's Park, Westminster, Embankment, Temple, Blackfriars, Mansion House, Cannon Street, Monument, Tower Hill, Aldgate East, Whitechapel, Stepney Green, Mile End, Bow Road, Bromley-by-Bow, West Ham, Plaistow, Upton Park, East Ham, Barking, Upney, Becontree, Dagenham Heathway, Dagenham East, Elm Park, Hornchurch, Upminster Bridge, Upminster"
@@ -255,20 +270,28 @@ line district:
   edges "Wimbledon, Wimbledon Park, Southfields, East Putney, Putney Bridge, Parsons Green, Fulham Broadway, West Brompton, Earl's Court, High Street Kensington, Notting Hill Gate, Bayswater, Paddington, Edgware Road (Circle Line)"
   edges "Earl's Court, Kensington (Olympia)"
 
+  alignment-point "TowerHill_AldgateEast" 2687 1522 
+  alignment-point "TowerHill_AldgateEast_FakeStation" 2687 1486 
+  alignment-point "Gunnersbury_TurnhamGreen" 1131 1768
+
   curve "Ealing Broadway, Ealing Common" right,down
-  curve "Ealing Common, Acton Town" down,down-right
+  curve "Ealing Common, Acton Town" down,down-right parallelto piccadilly
   curve "Acton Town, Chiswick Park" down-right,right
-  curve "Gunnersbury, Turnham Green" up,right
+  curve "Gunnersbury, Turnham Green" special "Gunnersbury, Gunnersbury_TurnhamGreen, Turnham Green" "up-right,up : up,right"
   curve "Earl's Court, Kensington (Olympia)" up-left,up
   curve "Earl's Court, West Brompton" down-left,down
   curve "Earl's Court, High Street Kensington" up-right,up
-  curve "Bayswater, Paddington" up,up-right
-  curve "Paddington, Edgware Road (Circle Line)" up-right,right
-  curve "Temple, Blackfriars" right,up-right
-  curve "Cannon Street, Monument" up-right,right
-  curve "Tower Hill, Aldgate East" special
-  curve "Whitechapel, Stepney Green" up-right,right
-  curve "West Ham, Plaistow" right,up-right
+  curve "Bayswater, Paddington" up,up-right parallelto circle
+  curve "Paddington, Edgware Road (Circle Line)" up-right,right parallelto curve "circle: Paddington, Edgware Road (Circle Line) w/ District"
+  curve "Blackfriars, Temple" down-left,left parallelto circle
+  curve "Monument, Cannon Street" left,down-left
+  curve "Tower Hill, TowerHill_AldgateEast" right,up parallelto curve "circle: Tower Hill, Aldgate"
+  curve "TowerHill_AldgateEast, Aldgate East" up,up-right
+  curve "Tower Hill, Aldgate East" special of "Tower Hill, TowerHill_AldgateEast" "TowerHill_AldgateEast, Aldgate East"
+  curve "Whitechapel, Stepney Green" up-right,right 
+  curve "West Ham, Plaistow" right,up-right parallelto hammersmith-city
+
+  vertical "TowerHill_AldgateEast, TowerHill_AldgateEast_FakeStation"
 
   up-right "Richmond, Kew Gardens, Gunnersbury"
   horizontal "Chiswick Park, Turnham Green, Stamford Brook, Ravenscourt Park, Hammersmith (Dist&Picc Line), Barons Court, West Kensington, Earl's Court, Gloucester Road, South Kensington, Sloane Square, Victoria, St. James's Park, Westminster, Embankment, Temple"
@@ -279,16 +302,23 @@ line district:
   up-right "Plaistow, Upton Park, East Ham, Barking, Upney, Becontree, Dagenham Heathway, Dagenham East, Elm Park, Hornchurch, Upminster Bridge, Upminster"
   vertical "Wimbledon, Wimbledon Park, Southfields, East Putney, Putney Bridge, Parsons Green, Fulham Broadway, West Brompton"
   vertical "High Street Kensington, Notting Hill Gate, Bayswater"
+
+  endpoint "Ealing Broadway" vertical:down
+  endpoint "Richmond" down-right
+  endpoint "Wimbledon" horizontal
+  endpoint "Upminster" down-right
+  endpoint "Kensington (Olympia)" horizontal
+  endpoint "Edgware Road (Circle Line)" vertical:stub
   
 
 line hammersmith-city:
-  station "Aldgate East" 2730 1409
-  station "Bromley-by-Bow" 3148 1301
+  station "Aldgate East" 2745 1424 
+  station "Bromley-by-Bow" 3142 1315 
   station "Barbican" 2395 1351
-  station "Barking" 3409 1158
+  station "Barking" 3424 1173 
   station "Baker Street" 1893 1238
-  station "Bow Road" 3050 1301
-  station "East Ham" 3373 1194
+  station "Bow Road" 3065 1316 
+  station "East Ham" 3388 1209 
   station "Edgware Road (Circle Line)" 1696 1238
   station "Euston Square" 2082 1238
   station "Farringdon" 2338 1291
@@ -299,27 +329,33 @@ line hammersmith-city:
   station "Ladbroke Grove" 1400 1400
   station "Latimer Road" 1400 1432
   station "Liverpool Street" 2515 1383
-  station "Mile End" 2960 1301
+  station "Mile End" 2975 1316 
   station "Moorgate" 2443 1384
   station "Paddington (H&C Line)-Underground" 1580 1238
-  station "Plaistow" 3287 1279
+  station "Plaistow" 3302 1294 
   station "Royal Oak" 1420 1322
   station "Shepherd's Bush Market" 1400 1573
-  station "Stepney Green" 2886 1301
-  station "Upton Park" 3331 1236
-  station "West Ham" 3224 1301
+  station "Stepney Green" 2901 1316 
+  station "Upton Park" 3346 1251 
+  station "West Ham" 3208 1315 
   station "Wood Lane" 1400 1524
-  station "Whitechapel" 2759 1378
+  station "Whitechapel" 2774 1393 
   station "Westbourne Park" 1400 1370
 
   edges "Hammersmith (H&C Line), Goldhawk Road, Shepherd's Bush Market, Wood Lane, Latimer Road, Ladbroke Grove, Westbourne Park, Royal Oak, Paddington (H&C Line)-Underground, Edgware Road (Circle Line), Baker Street, Great Portland Street, Euston Square, King's Cross St. Pancras, Farringdon, Barbican, Moorgate, Liverpool Street, Aldgate East, Whitechapel, Stepney Green, Mile End, Bow Road, Bromley-by-Bow, West Ham, Plaistow, Upton Park, East Ham, Barking"
 
-  curve "Westbourne Park, Royal Oak" up,up-right
-  curve "Royal Oak, Paddington (H&C Line)-Underground" up-right,right
-  curve "King's Cross St. Pancras, Farringdon" right,down-right
+  alignment-point "LiverpoolStreet_AldgateEast1" 2686 1434 
+  alignment-point "LiverpoolStreet_AldgateEast2" 2705 1455 
+
+  curve "Westbourne Park, Royal Oak" up,up-right parallelto circle
+  curve "Royal Oak, Paddington (H&C Line)-Underground" up-right,right parallelto circle
+  curve "King's Cross St. Pancras, Farringdon" right,down-right parallelto circle
   curve "Barbican, Moorgate" down-right,right
-  curve "Liverpool Street, Aldgate East" special
-  curve "Whitechapel, Stepney Green" up-right,right
+  curve "Liverpool Street, LiverpoolStreet_AldgateEast1" right,down parallelto curve "circle: Liverpool Street, Aldgate"
+  curve "LiverpoolStreet_AldgateEast1, LiverpoolStreet_AldgateEast2" down,right
+  curve "LiverpoolStreet_AldgateEast2, Aldgate East" right,up-right
+  curve "Liverpool Street, Aldgate East" special of "Liverpool Street, LiverpoolStreet_AldgateEast1" "LiverpoolStreet_AldgateEast1, LiverpoolStreet_AldgateEast2" "LiverpoolStreet_AldgateEast2, Aldgate East"
+  curve "Whitechapel, Stepney Green" up-right,right parallelto district
   curve "West Ham, Plaistow" right,up-right
 
   vertical "Hammersmith (H&C Line), Goldhawk Road, Shepherd's Bush Market, Wood Lane, Latimer Road, Ladbroke Grove, Westbourne Park"
@@ -330,13 +366,17 @@ line hammersmith-city:
   horizontal "Stepney Green, Mile End, Bow Road, Bromley-by-Bow, West Ham"
   up-right "Plaistow, Upton Park, East Ham, Barking"
 
+  endpoint "Hammersmith (H&C Line)" horizontal:left
+  endpoint "Barking" up-left:up-left
+
+
 line jubilee:
-  station "Bermondsey" 2591 1745
+  station "Bermondsey" 2593 1707
   station "Bond Street" 1860 1399
   station "Baker Street" 1860 1278
-  station "Canning Town" 3194 1546
+  station "Canning Town" 3209 1561 
   station "Canons Park" 1533 702
-  station "Canada Water" 2765 1757
+  station "Canada Water"  2763 1707
   station "Canary Wharf" 2982 1706
   station "Dollis Hill" 1603 887
   station "Finchley Road" 1779 1064
@@ -347,12 +387,12 @@ line jubilee:
   station "Neasden" 1572 855
   station "North Greenwich" 3148 1693
   station "Queensbury" 1533 740
-  station "St. John's Wood" 1860 1201
-  station "Stratford" 3223 1102
+  station "St. John's Wood" 1859 1225
+  station "Stratford" 3238 1117 
   station "Stanmore" 1533 661
-  station "Swiss Cottage" 1860 1170
+  station "Swiss Cottage" 1847 1149
   station "Southwark" 2216 1858
-  station "West Ham" 3194 1275
+  station "West Ham" 3208 1319 
   station "West Hampstead" 1754 1038
   station "Willesden Green" 1632 915
   station "Waterloo" 2090 1795
@@ -361,24 +401,39 @@ line jubilee:
 
   edges "Stanmore, Canons Park, Queensbury, Kingsbury, Wembley Park, Neasden, Dollis Hill, Willesden Green, Kilburn, West Hampstead, Finchley Road, Swiss Cottage, St. John's Wood, Baker Street, Bond Street, Green Park, Westminster, Waterloo, Southwark, London Bridge, Bermondsey, Canada Water, Canary Wharf, North Greenwich, Canning Town, West Ham, Stratford"
 
+  alignment-point "Southwark_LondonBridge" 2343 1782
+
+  equal "Southwark_LondonBridge.x + Southwark_LondonBridge.x" "Southwark.x + London Bridge.x"
+  equal "Southwark_LondonBridge.y + Southwark_LondonBridge.y" "Southwark.y + London Bridge.y"
+
   curve "Kingsbury, Wembley Park" down,down-right
-  curve "Finchley Road, Swiss Cottage" down-right,down
+  curve "Swiss Cottage, St. John's Wood" down-right,down
   curve "Bond Street, Green Park" down,down-right
   curve "Westminster, Waterloo" down-right,down
   curve "Waterloo, Southwark" down,right
-  curve "Southwark, London Bridge" special
-  curve "London Bridge, Bermondsey" right,down-right
-  curve "Bermondsey, Canada Water" special
-  curve "Canada Water, Canary Wharf" up-right,right
+  curve "Southwark, London Bridge" special "Southwark, Southwark_LondonBridge, London Bridge" "right,up-right : up-right,right"
   curve "Canary Wharf, North Greenwich" right,up-right
   curve "North Greenwich, Canning Town" up-right,up
   curve "West Ham, Stratford" up,up-right
 
+  alignment-point "StJohnsWoodMet" 1859 1212
+  alignment-point "StJohnsWoodHC" 1860 1239
+  alignment-point "JubileeMetCurve" 1534 815
+
+  vertical "StJohnsWoodMet, St. John's Wood, StJohnsWoodHC"
+  equal "StJohnsWoodMet.y + StJohnsWoodHC.y" "St\. John's Wood.y + St\. John's Wood.y"
+  vertical "JubileeMetCurve, Kingsbury"
+  down-right "JubileeMetCurve, Wembley Park"
+
   vertical "Stanmore, Canons Park, Queensbury, Kingsbury"
-  down-right "Wembley Park, Neasden, Dollis Hill, Willesden Green, Kilburn, West Hampstead, Finchley Road"
-  vertical "Swiss Cottage, St. John's Wood, Baker Street, Bond Street"
+  down-right "Wembley Park, Neasden, Dollis Hill, Willesden Green, Kilburn, West Hampstead, Finchley Road, Swiss Cottage"
+  vertical "St. John's Wood, Baker Street, Bond Street"
   down-right "Green Park, Westminster"
+  horizontal "London Bridge, Bermondsey, Canada Water, Canary Wharf"
   vertical "Canning Town, West Ham"
+
+  endpoint "Stanmore" horizontal
+  endpoint "Stratford" down-right:down-right
 
 line metropolitan:
   station "Aldgate" 2656 1471
@@ -414,7 +469,7 @@ line metropolitan:
   station "Uxbridge" 630 717
   station "Watford" 942 491
   station "West Harrow" 1118 828
-  station?? "Willesden Green" 1599 951
+  station "Willesden Green" 1599 951
   station "Wembley Park" 1517 869
 
   edges "Chesham, Chalfont & Latimer"
@@ -425,14 +480,18 @@ line metropolitan:
   curve "Chesham, Chalfont & Latimer" down-right,right
   curve "Chalfont & Latimer, Chorleywood" right,down-right
   curve "Croxley, Moor Park" down,down-right
-  curve "Ruislip, Ruislip Manor" right,down-right
+  curve "Ruislip, Ruislip Manor" right,down-right parallelto piccadilly
   curve "Rayners Lane, West Harrow" down-right,right
   curve "North Harrow, Harrow-on-the-Hill" down-right,right
   curve "Preston Road, Wembley Park" right,down-right
   curve "Baker Street, Great Portland Street" down-right,right
   curve "King's Cross St. Pancras, Farringdon" right,down-right
-  curve "Barbican, Moorgate" down-right,right
+  curve "Barbican, Moorgate" down-right,right parallelto circle
   curve "Liverpool Street, Aldgate" right,down
+
+  alignment-point "JubileeMetCurve" 1475 829
+  horizontal "JubileeMetCurve, Preston Road"
+  down-right "JubileeMetCurve, Wembley Park"
 
   horizontal "Amersham, Chalfont & Latimer"
   down-right "Chorleywood, Rickmansworth, Moor Park, Northwood, Northwood Hills, Pinner, North Harrow"
@@ -444,6 +503,12 @@ line metropolitan:
   horizontal "Great Portland Street, Euston Square, King's Cross St. Pancras"
   down-right "Farringdon, Barbican"
   horizontal "Moorgate, Liverpool Street"
+
+  endpoint "Amersham" vertical
+  endpoint "Chesham" up-right
+  endpoint "Watford" horizontal
+  endpoint "Uxbridge" vertical:up
+  endpoint "Aldgate" horizontal:left
 
 line northern:
   station "Battersea Power Station" 1782 2082
@@ -483,7 +548,7 @@ line northern:
   station "Leicester Square" 2114 1498
   station "Morden" 1650 2579
   station "Moorgate" 2483 1354
-  station "Mill Hill East" 2256 627
+  station "Mill Hill East" 2234 616
   station "Mornington Crescent" 2155 1135
   station "Old Street" 2462 1283
   station "Oval" 2066 2163
@@ -506,27 +571,57 @@ line northern:
   edges "Camden Town, Mornington Crescent, Euston (Charing Cross branch), Warren Street, Goodge Street, Tottenham Court Road, Leicester Square, Charing Cross, Embankment, Waterloo, Kennington, Nine Elms, Battersea Power Station"
   edges "Kennington, Oval, Stockwell, Clapham North, Clapham Common, Clapham South, Balham, Tooting Bec, Tooting Broadway, Colliers Wood, South Wimbledon, Morden"
 
+  alignment-point "CamdenTown_MorningtonCrescent" 2160 1118
+  alignment-point "CamdenTown_EustonBank" 2184 1118
+  alignment-point "EustonCharingX_WarrenSt" 2133 1238
+  alignment-point "EustonBank_KingsX" 2231 1202
+  alignment-point "Kennington_NineElms" 1971 2106
+
+  equal "CamdenTown_MorningtonCrescent.x + CamdenTown_MorningtonCrescent.x" "Camden Town.x + Mornington Crescent.x"
+  equal "CamdenTown_MorningtonCrescent.y + CamdenTown_MorningtonCrescent.y" "Camden Town.y + Mornington Crescent.y"
+
+  horizontal "CamdenTown_MorningtonCrescent, CamdenTown_EustonBank"
+  equal "CamdenTown_MorningtonCrescent.x + CamdenTown_EustonBank.x" "Camden Town.x + Camden Town.x"
+  
+  equal "EustonBank_KingsX.x + EustonBank_KingsX.x" "Euston (Bank branch).x + King's Cross St\. Pancras.x"
+  equal "EustonBank_KingsX.y + EustonBank_KingsX.y" "Euston (Bank branch).y + King's Cross St\. Pancras.y"
+  
+  equal "Kennington_NineElms.x + Kennington_NineElms.x" "Kennington.x + Nine Elms.x"
+  equal "Kennington_NineElms.y + Kennington_NineElms.y" "Kennington.y + Nine Elms.y"
+  
   curve "Mill Hill East, Finchley Central" down-right,down
+  curve "Tufnell Park, Kentish Town" down,down-left
   curve "Kentish Town, Camden Town" down-left,down
   curve "Chalk Farm, Camden Town" down-right,down
-  curve "Camden Town, Mornington Crescent" special
-  curve "Camden Town, Euston (Bank branch)" special
-  curve "Euston (Charing Cross branch), Warren Street" special
-  curve "Euston (Bank branch), King's Cross St. Pancras" special
+  curve "Camden Town, Mornington Crescent" special "Camden Town, CamdenTown_MorningtonCrescent, Mornington Crescent" "down,down-left : down-left,down"
+  curve "Camden Town, Euston (Bank branch)" special "Camden Town, CamdenTown_EustonBank, Euston (Bank branch)" "down,down-right : down-right,down"
+  curve "Euston (Charing Cross branch), Warren Street" special "Euston (Charing Cross branch), EustonCharingX_WarrenSt, Warren Street" "down,down-left : down-left,down"
+  curve "Euston (Bank branch), King's Cross St. Pancras" special "Euston (Bank branch), EustonBank_KingsX, King's Cross St. Pancras" "down,right : right,down-right"
   curve "King's Cross St. Pancras, Angel" down-right,right
   curve "Angel, Old Street" right,down-right
   curve "Old Street, Moorgate" down-right,down
   curve "London Bridge, Borough" down,down-left
   curve "Waterloo, Kennington" down,down-left
-  curve "Kennington, Nine Elms" special
+  curve "Kennington, Nine Elms" special "Kennington, Kennington_NineElms, Nine Elms" "left,up-left : up-left,left"
+
+  alignment-point "CamdenTownBranches" 2172 1049
 
   horizontal "Battersea Power Station, Nine Elms"
   up-right "Morden, South Wimbledon, Colliers Wood, Tooting Broadway, Tooting Bec, Balham, Clapham South, Clapham Common, Clapham Common, Clapham North, Stockwell, Oval, Kennington, Elephant & Castle, Borough"
-  vertical "Waterloo, Embankment, Charing Cross, Leicester Square, Tottenham Court Road, Warren Street"
+  vertical "Waterloo, Embankment, Charing Cross, Leicester Square, Tottenham Court Road, Goodge Street, Warren Street"
   vertical "London Bridge, Bank, Moorgate"
   vertical "Euston (Charing Cross branch), Mornington Crescent"
+  equal "Euston (Charing Cross branch).x + Euston (Bank branch).x" "Camden Town.x + Camden Town.x"
   vertical "Tufnell Park, Archway, Highgate, East Finchley, Finchley Central, West Finchley, Woodside Park, Totteridge & Whetstone, High Barnet"
-  up-left "Chalk Farm, Belsize Park, Hampstead, Golders Green, Brent Cross, Hendon Central, Colindale, Burnt Oak, Edgware"
+  vertical "CamdenTownBranches, Camden Town"
+  up-right "CamdenTownBranches, Kentish Town"
+  up-left "CamdenTownBranches, Chalk Farm, Belsize Park, Hampstead, Golders Green, Brent Cross, Hendon Central, Colindale, Burnt Oak, Edgware"
+
+  endpoint "Edgware" up-right
+  endpoint "High Barnet" horizontal
+  endpoint "Mill Hill East" up-right
+  endpoint "Battersea Power Station" vertical
+  endpoint "Morden" down-right
 
 line piccadilly:
   station "Acton Town" 1089 1683
@@ -549,8 +644,8 @@ line piccadilly:
   station "Hillingdon" 702 728
   station "Hatton Cross" 728 1902
   station "Hyde Park Corner" 1860 1557
-  station "Heathrow Terminal 4" 687 2093
-  station "Heathrow Terminal 5" 606 2073
+  station "Heathrow Terminal 4" 675 2093
+  station "Heathrow Terminal 5" 586 2094
   station "Heathrow Terminals 2 & 3" 695 1934
   station "Hammersmith (Dist&Picc Line)" 1405 1683
   station "Hounslow Central" 814 1816
@@ -578,7 +673,7 @@ line piccadilly:
   station "South Kensington" 1714 1682
   station "Sudbury Hill" 1035 979
   station "Sudbury Town" 1035 1054
-  station? "Turnham Green" 1191 1683
+  station "Turnham Green" 1191 1683
   station "Turnpike Lane" 2622 743
   station "Uxbridge" 630 728
   station "Wood Green" 2622 701
@@ -587,12 +682,18 @@ line piccadilly:
   edges "Heathrow Terminal 5, Heathrow Terminals 2 & 3, Hatton Cross, Hounslow West, Hounslow Central, Hounslow East, Osterley, Boston Manor, Northfields, South Ealing, Acton Town, Turnham Green, Hammersmith (Dist&Picc Line), Barons Court, Earl's Court, Gloucester Road, South Kensington, Knightsbridge, Hyde Park Corner, Green Park, Piccadilly Circus, Leicester Square, Covent Garden, Holborn, Russell Square, King's Cross St. Pancras, Caledonian Road, Holloway Road, Arsenal, Finsbury Park, Manor House, Turnpike Lane, Wood Green, Bounds Green, Arnos Grove, Southgate, Oakwood, Cockfosters"
   edges "Hatton Cross, Heathrow Terminal 4, Heathrow Terminals 2 & 3"
 
+  alignment-point "HattonCross_Heathrow4" 715 2007
+  alignment-point "Heathrow4_Heathrow23" 635 2041
+
+  equal "HattonCross_Heathrow4.x + Heathrow4_Heathrow23.x" "Heathrow Terminal 4.x + Heathrow Terminal 4.x"
+
   curve "Ruislip, Ruislip Manor" right,down-right
   curve "Rayners Lane, South Harrow" down-right,down
   curve "Ealing Common, Acton Town" down,down-right
   curve "Heathrow Terminal 5, Heathrow Terminals 2 & 3" up,up-right
-  curve "Heathrow Terminal 4, Heathrow Terminals 2 & 3" special
-  curve "Hatton Cross, Heathrow Terminal 4" special
+  curve "Heathrow Terminal 4, Heathrow Terminals 2 & 3" special "Heathrow Terminal 4, Heathrow4_Heathrow23, Heathrow Terminals 2 & 3" "left,up : up,up-right"
+  curve "Hatton Cross, Heathrow Terminal 4" special "Hatton Cross, HattonCross_Heathrow4, Heathrow Terminal 4" "down-left,down : down,left"
+  curve "Northfields, South Ealing" up-right,right
   curve "South Kensington, Knightsbridge" right,up-right
   curve "Hyde Park Corner, Green Park" up-right,right
   curve "Piccadilly Circus, Leicester Square" right,up-right
@@ -600,9 +701,10 @@ line piccadilly:
   curve "King's Cross St. Pancras, Caledonian Road" up,up-right
   curve "Finsbury Park, Manor House" up-right,up
   
+  horizontal "Heathrow Terminal 4, Heathrow Terminal 5"
   horizontal "Uxbridge, Hillingdon, Ickenham, Ruislip"
   down-right "Ruislip Manor, Eastcote, Rayners Lane"
-  vertical "South Harrow, Sudbury Hill, Sudbury Town, Alperton, Park Royal, Ealing Common"
+  vertical "South Harrow, Sudbury Hill, Sudbury Town, Alperton, Park Royal, North Ealing, Ealing Common"
   up-right "Heathrow Terminals 2 & 3, Hatton Cross, Hounslow West, Hounslow Central, Hounslow East, Osterley, Boston Manor, Northfields"
   horizontal "South Ealing, Acton Town, Turnham Green, Hammersmith (Dist&Picc Line), Barons Court, Earl's Court, Gloucester Road, South Kensington"
   up-right "Knightsbridge, Hyde Park Corner"
@@ -611,6 +713,10 @@ line piccadilly:
   vertical "Russell Square, King's Cross St. Pancras"
   up-right "Caledonian Road, Holloway Road, Arsenal, Finsbury Park"
   vertical "Manor House, Turnpike Lane, Wood Green, Bounds Green, Arnos Grove, Southgate, Oakwood, Cockfosters"
+
+  endpoint "Uxbridge" vertical:down
+  endpoint "Heathrow Terminal 5" horizontal
+  endpoint "Cockfosters" horizontal
 
 line victoria:
   station "Blackhorse Road" 2863 829
@@ -632,18 +738,23 @@ line victoria:
 
   edges "Brixton, Stockwell, Vauxhall, Pimlico, Victoria, Green Park, Oxford Circus, Warren Street, Euston, King's Cross St. Pancras, Highbury & Islington, Finsbury Park, Seven Sisters, Tottenham Hale, Blackhorse Road, Walthamstow Central"
 
+  alignment-point "KingsX_HAndI" 2497 1162
+
   curve "Vauxhall, Pimlico" up-left,up
   curve "Green Park, Oxford Circus" up,up-right
   curve "Warren Street, Euston" up-right,right
-  curve "King's Cross St. Pancras, Highbury & Islington" special
+  curve "King's Cross St. Pancras, Highbury & Islington" special "King's Cross St. Pancras, KingsX_HAndI, Highbury & Islington" "right,up-right : up-right,up"
   curve "Highbury & Islington, Finsbury Park" up,up-right
   curve "Finsbury Park, Seven Sisters" up-right,right
 
   up-left "Brixton, Stockwell, Vauxhall"
-  vertical "Pimlico, Victoria"
+  vertical "Pimlico, Victoria, Green Park"
   up-right "Oxford Circus, Warren Street"
   horizontal "Euston, King's Cross St. Pancras"
   horizontal "Seven Sisters, Tottenham Hale, Blackhorse Road, Walthamstow Central"
+
+  endpoint "Walthamstow Central" vertical
+  endpoint "Brixton" up-right
 
 line waterloo-city:
   station "Bank" 2446 1471
@@ -651,7 +762,12 @@ line waterloo-city:
 
   edges "Bank, Waterloo"
 
-  curve "Waterloo, Bank" special
+  alignment-point "Waterloo_Bank1" 2359 1726
+  alignment-point "Waterloo_Bank2" 2428 1580
+
+  curve "Waterloo, Bank" special "Waterloo, Waterloo_Bank1, Waterloo_Bank2, Bank" "right,up-right : up-right,up : up,up-right"
+
+  endpoint "Bank" down-right:down-right
 
 multi-line:
   # piccadilly line
@@ -660,7 +776,7 @@ multi-line:
   same-station metropolitan above-right piccadilly "Ruislip Manor, Eastcote, Rayners Lane"
   same-station piccadilly right district "Ealing Common"
 
-  vertical "piccadilly: Acton Town, district: Acton Town"
+  same-station "piccadilly: Acton Town" above "district: Acton Town"
   vertical "piccadilly: Turnham Green, district: Turnham Green"
   vertical "piccadilly: Hammersmith (Dist&Picc Line), district: Hammersmith (Dist&Picc Line)"
 
@@ -714,11 +830,13 @@ multi-line:
   horizontal "central: Notting Hill Gate, district: Notting Hill Gate"
   equal "district: Notting Hill Gate.x + circle: Notting Hill Gate.x" "central: Notting Hill Gate.x + central: Notting Hill Gate.x"
 
-  down-right "bakerloo: Paddington, hammersmith-city: Paddington (H&C Line)-Underground, district: Paddington"
+  down-right "hammersmith-city: Paddington (H&C Line)-Underground, district: Paddington"
 
   vertical "district: Edgware Road (Circle Line), hammersmith-city: Edgware Road (Circle Line)"
 
   vertical "district: Mile End, central: Mile End"
+
+  same-station "district: TowerHill_AldgateEast_FakeStation" right "circle: Aldgate"
 
   # central line
   
@@ -727,8 +845,9 @@ multi-line:
   same-station central exact victoria "Oxford Circus"
   same-station central exact northern "Tottenham Court Road"
   same-station central exact circle "Liverpool Street"
+  same-station central above hammersmith-city "Mile End"
 
-  #todo: move stratford right, align jubilee with west ham, move hainaut loop"
+  same-station central above-left jubilee "Stratford"
 
   # metropolitan
   same-station metropolitan below-left jubilee "Wembley Park, Willesden Green, Finchley Road"
@@ -748,15 +867,22 @@ multi-line:
   same-station "hammersmith-city: Edgware Road (Circle Line)" above "circle: Edgware Road (Circle Line) w/ H&C"
   same-station hammersmith-city above-right circle "Farringdon, Barbican"
   same-station hammersmith-city above circle "Moorgate, Liverpool Street"
+  same-station "bakerloo: Edgware Road (Bakerloo)" above "hammersmith-city: Edgware Road (Circle Line)"
+  same-station "bakerloo: Paddington" above "hammersmith-city: Paddington (H&C Line)-Underground"
+
+  vertical "hammersmith-city: West Ham, jubilee: West Ham"
+  equal "hammersmith-city: West Ham.y + district: West Ham.y" "jubilee: West Ham.y + jubilee: West Ham.y"
+
+  vertical "hammersmith-city: LiverpoolStreet_AldgateEast1, district: TowerHill_AldgateEast"
 
   # jubilee line
   same-station jubilee exact bakerloo "Baker Street"
   same-station jubilee left northern "Waterloo"
   same-station jubilee exact northern "London Bridge"
+  same-station jubilee above-right metropolitan "JubileeMetCurve"
 
-  # todo: west ham / stratford
-  up-left "jubilee: West Ham, hammersmith-city: West Ham"
-  horizontal "jubilee: Stratford, central: Stratford"
+  up-left "jubilee: StJohnsWoodMet, metropolitan: Finchley Road"
+  horizontal "jubilee: StJohnsWoodHC, hammersmith-city: Great Portland Street"
 
   # northern line
   horizontal "northern: Euston (Bank branch), northern: Euston (Charing Cross branch)"
@@ -766,10 +892,51 @@ multi-line:
 
   #todo: move moorgate, Liverpool street
   up-right "circle: Moorgate, northern: Moorgate"
-  # todo: align bakerloo with h&c around edgeware road
 
   same-station northern exact victoria "Stockwell"
+  
+  # victoria line
+
+  equal "victoria: Euston.y + victoria: Euston.y" "northern: EustonBank_KingsX.y + hammersmith-city: King's Cross St\. Pancras.y"
 
   # W&C line
-  same-station waterloo-city exact northern "Waterloo"
+  same-station waterloo-city exact bakerloo "Waterloo"
   same-station waterloo-city below-right central "Bank"
+
+  # central constraints are conflicting - above metropolitan in the west, below in the east
+  #zindex central above metropolitan
+  #zindex central above piccadilly
+  zindex central below circle
+  zindex central below hammersmith-city
+  zindex central below district
+  zindex central above jubilee
+  zindex central below piccadilly
+  
+  zindex piccadilly below district
+  zindex piccadilly below circle 
+  zindex piccadilly below hammersmith-city
+  zindex piccadilly below metropolitan
+
+  zindex metropolitan above circle
+  zindex metropolitan above hammersmith-city
+  zindex metropolitan above jubilee
+
+  zindex district above jubilee
+  zindex district above northern
+  zindex district above victoria
+  
+  zindex victoria below circle
+  zindex victoria below hammersmith-city
+  zindex victoria below metropolitan
+  
+  zindex northern below hammersmith-city
+  zindex northern below circle
+  zindex northern below metropolitan
+  zindex northern below central
+  zindex northern above jubilee
+  zindex northern above victoria
+  zindex northern above bakerloo
+
+  zindex jubilee below bakerloo
+  
+  zindex waterloo-city below bakerloo

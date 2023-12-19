@@ -1,0 +1,38 @@
+{
+    "sharp_curve": {
+        "p0Offset": {
+            "x": -60,
+            "y": 0
+        },
+        "p1Offset": {
+            "x": -23,
+            "y": 0
+        },
+        "p2Offset": {
+            "x": 0,
+            "y": 23
+        },
+        "p3Offset": {
+            "x": 0,
+            "y": 60
+        }
+    },
+    "wide_curve": {
+        "p0Offset": {
+            "x": -4,
+            "y": 0
+        },
+        "p1Offset": {
+            "x": 0,
+            "y": 0
+        },
+        "p2Offset": {
+            "x": 0,
+            "y": 0
+        },
+        "p3Offset": {
+            "x": 3,
+            "y": 3
+        }
+    }   
+}

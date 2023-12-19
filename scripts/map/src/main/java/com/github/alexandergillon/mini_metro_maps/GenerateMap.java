@@ -1,6 +1,6 @@
 package com.github.alexandergillon.mini_metro_maps;
 
-import com.github.alexandergillon.mini_metro_maps.models.MetroLine;
+import com.github.alexandergillon.mini_metro_maps.models.core.MetroLine;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -11,16 +11,26 @@ import java.util.Set;
 public class GenerateMap {
 
     /** Scale factor for the map. If adjusted, line width should be adjusted too. */
-    private static final int SCALE_FACTOR = 5;
+    public static final int SCALE_FACTOR = 5;
 
     /** Line width of a metro line on the map, in pixels. */
-    private static final int METRO_LINE_WIDTH = 10 * SCALE_FACTOR;
+    public static final int METRO_LINE_WIDTH = 10 * SCALE_FACTOR; // must be even or AMPL constraints with be violated
 
     /**
      * How long of a prefix you need to take from each metro line's name to ensure that all prefixes are unique.
      * Used to try and compress station AMPL identifiers. A value of -1 means use the entire length of metro line name.
      */
     public static final int METRO_LINE_PREFIX_LENGTH = 2;
+
+    /**
+     * Weight for alignment points in AMPL (normal stations have weight 1). The idea of this is that we want to weight
+     * alignment points less than stations, as they are usually meant to help align things rather than enforce
+     * specific positions. However, we need to give them some weight so that AMPL puts them in a sensible place. If
+     * the weight is 0, it can just return garbage for alignment points that are not sufficiently constrained.
+     *
+     * This value is a string as it is written to an AMPL file - never used in Java code.
+     */
+    public static final String ALIGNMENT_POINT_WEIGHT = "0.1";
 
     /**
      * Ensures that metroLinePrefixLength is set high enough so that all prefixes of metro line names are unique.
@@ -31,7 +41,8 @@ public class GenerateMap {
             return;
         }
 
-        Set<String> prefixes = new HashSet<>(metroLines.values().stream().map(line -> line.getName().substring(0, METRO_LINE_PREFIX_LENGTH)).toList());
+        Set<String> prefixes = new HashSet<>(metroLines.values().stream()
+                .map(line -> line.getName().substring(0, METRO_LINE_PREFIX_LENGTH)).toList());
         if (prefixes.size() != metroLines.values().size()) {
             // Prefixes are not unique.
             throw new IllegalStateException(String.format("Metro line prefixes are not unique with prefix length %d.", METRO_LINE_PREFIX_LENGTH));
@@ -42,27 +53,46 @@ public class GenerateMap {
      * args[0] = input file path
      * args[1] = naptan.json path
      * args[2] = AMPL directory path
-     * args[3] = output path
+     * args[3] = bezier.json path
+     * args[4] = colors.json path
+     * args[5] = output path
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         String inputPath = args[0];
         String naptanPath = args[1];
         Path amplDir = Path.of(args[2]);
-        String outputPath = args[3];
+        String bezierPath = args[3];
+        String colorsPath = args[4];
+        Path rDir = Path.of(args[5]);
+        String outputPath = args[6];
 
         String amplInitialModelPath = amplDir.resolve("initial_model.mod").toString();
+        String zAmplInitialModelPath = amplDir.resolve("z_index_initial_model.mod").toString();
         String amplModPath = amplDir.resolve("temp").resolve("model.mod").toString();
         String amplDatPath = amplDir.resolve("temp").resolve("data.dat").toString();
+        String zAmplModPath = amplDir.resolve("temp").resolve("zModel.mod").toString();
+
+        String rCsvInPath = rDir.resolve("bezier_in.csv").toString();
+        String rCsvOutPath = rDir.resolve("bezier_out.csv").toString();
 
         Parser parser = new Parser(inputPath, naptanPath);
         var data = parser.parseData();
         var metroLines = data.getLeft();
+        var alignmentConstraints = data.getMiddle();
+        var zIndexConstraints = data.getRight();
 
         checkPrefixLength(metroLines);
 
-        AmplDriver amplDriver = new AmplDriver(amplInitialModelPath, SCALE_FACTOR, METRO_LINE_WIDTH);
-        amplDriver.writeAmplFiles(amplModPath, amplDatPath, data.getRight(), metroLines);
-        amplDriver.solveAmpl(amplModPath, amplDatPath, outputPath, metroLines);
+        AmplDriver amplDriver = new AmplDriver(amplInitialModelPath, SCALE_FACTOR, METRO_LINE_WIDTH, zAmplInitialModelPath);
+        amplDriver.writeAmplFiles(amplModPath, amplDatPath, zAmplModPath, alignmentConstraints, zIndexConstraints, metroLines);
+        amplDriver.solveAmpl(amplModPath, amplDatPath, zAmplModPath, metroLines);
+
+        OutputWriter outputWriter = new OutputWriter(outputPath, bezierPath, colorsPath, rCsvInPath, rCsvOutPath, metroLines);
+        outputWriter.writeJson();
+
         System.out.println("Done!");
+
+        Runtime.getRuntime().exec("python copy_json.py");
+        Runtime.getRuntime().exec("python plot_output.py");
     }
 }

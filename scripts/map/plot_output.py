@@ -2,34 +2,49 @@ import json
 import matplotlib.pyplot as plt
 from collections import defaultdict
 
-colors = {
-    "hammersmith-city": "#ec9bad",
-    "victoria": "#00a0df",
-    "waterloo-city": "#6bcdb1",
-    "central": "#e1251b",
-    "metropolitan": "#870f53",
-    "piccadilly": "#00109f",
-    "district": "#007934",
-    "bakerloo": "#a65a2a",
-    "jubilee": "#7b868c",
-    "circle": "#ffcc00",
-    "northern": "#000000",
-}
-data = defaultdict(lambda: {"x": list(), "y": list()})
+MARKER_SIZE = 5
 
-def load_data():
-    json_file = open("output/stations.json", "r")
-    stations = json.load(json_file)
-    json_file.close()
+def plot_line(line):
+    name = line["name"]
+    color = line["color"]
+    stations = line["stations"]
+    edges = line["edges"]
 
+    x_coords = []
+    y_coords = []
     for station in stations:
-        data[station["metroLine"]]["x"].append(station["x"])
-        data[station["metroLine"]]["y"].append(station["y"])
+        x_coords.append(station["x"])
+        y_coords.append(station["y"])
+
+    plt.plot(x_coords, y_coords, marker="o", linestyle="", color=color, markersize=MARKER_SIZE)
+
+    control_point_x_coords = []
+    control_point_y_coords = []
+    for edge in edges:
+        for line_segment in edge["lineSegments"]:
+            if not line_segment["straightLine"]:
+                control_point_x_coords.append(line_segment["p0"]["x"])
+                control_point_x_coords.append(line_segment["p1"]["x"])
+                control_point_x_coords.append(line_segment["p2"]["x"])
+                control_point_x_coords.append(line_segment["p3"]["x"])
+
+                control_point_y_coords.append(line_segment["p0"]["y"])
+                control_point_y_coords.append(line_segment["p1"]["y"])
+                control_point_y_coords.append(line_segment["p2"]["y"])
+                control_point_y_coords.append(line_segment["p3"]["y"])
+
+    plt.plot(control_point_x_coords, control_point_y_coords, marker="x", linestyle="", color=color, markersize=0.75 * MARKER_SIZE)
+
+
 
 
 def plot_data():
-    for line in data:
-        plt.plot(data[line]["x"], data[line]["y"], marker="o", linestyle="", color=colors[line])
+    json_file = open("output/london.json", "r")
+    lines = json.load(json_file)["metroLines"]
+    json_file.close()
+
+    for line in lines:
+        plot_line(line)
 
     plt.gca().invert_yaxis()
     plt.gca().set_aspect('equal')
@@ -37,5 +52,4 @@ def plot_data():
 
 
 if __name__ == "__main__":
-    load_data()
     plot_data()

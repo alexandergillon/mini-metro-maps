@@ -4,7 +4,10 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 /** Class for various utility methods. */
 public class Util {
@@ -34,17 +37,19 @@ public class Util {
      * @return The first token in that string (delimited by whitespace), and the rest of the string.
      */
     public static Pair<String, String> consumeToken(String s, int textLineNumber) {
-        s = s.stripLeading();
-        int whitespaceIndex = firstWhitespaceIndex(s);
-        if (whitespaceIndex == -1) {
+        if (s.isEmpty()) {
             throw new IllegalArgumentException(String.format("(line %d) Token expected.", textLineNumber));
         }
 
-        String token = s.substring(0, whitespaceIndex);
-        String rest = s.substring(whitespaceIndex+1);
+        s = s.stripLeading();
+        int whitespaceIndex = firstWhitespaceIndex(s);
+        if (whitespaceIndex == -1) {
+            return Pair.of(s, "");
+        }
 
-        token = token.strip();
-        rest = rest.stripLeading();
+        String token = s.substring(0, whitespaceIndex).strip();
+        String rest = s.substring(whitespaceIndex+1).stripLeading();
+
         return Pair.of(token, rest);
     }
 
@@ -91,8 +96,7 @@ public class Util {
     public static List<Pair<String, String>> allConsecutiveStationPairs(String stationsString, int textLineNumber) {
         stationsString = stationsString.strip();
 
-        String[] stations = stationsString.split(",");
-        stations = Arrays.stream(stations).map(String::strip).toArray(String[]::new); // some day, mapping a collection in Java won't be ugly
+        String[] stations = Arrays.stream(stationsString.split(",")).map(String::strip).toArray(String[]::new);
         if (stations.length < 2) {
             throw new IllegalArgumentException(String.format("(line %d) Line has fewer than two stations when >= 2 were expected.", textLineNumber));
         }
@@ -124,5 +128,32 @@ public class Util {
             }
         }
         return -1;
+    }
+
+    /**
+     * Override of HashMap which throws on .get() with no value present.
+     */
+    public static class ThrowingMap<K, V> extends HashMap<K, V> {
+        public ThrowingMap(int initialCapacity, float loadFactor) {
+            super(initialCapacity, loadFactor);
+        }
+
+        public ThrowingMap(int initialCapacity) {
+            super(initialCapacity);
+        }
+
+        public ThrowingMap() {
+            super();
+        }
+
+        public ThrowingMap(Map<? extends K, ? extends V> m) {
+            super(m);
+        }
+
+        @Override
+        public V get(Object key) {
+            if (!super.containsKey(key)) throw new NoSuchElementException(String.format("Key %s not found in map.", key.toString()));
+            return super.get(key);
+        }
     }
 }
