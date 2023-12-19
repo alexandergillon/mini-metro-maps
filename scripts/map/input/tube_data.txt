@@ -181,11 +181,11 @@ line circle:
 
   curve "Westbourne Park, Royal Oak" up,up-right
   curve "Royal Oak, Paddington (H&C Line)-Underground" up-right,right
-  curve "King's Cross St. Pancras, Farringdon" right,down-right dependson metropolitan
-  curve "Barbican, Moorgate" down-right,right dependson hammersmith-city
-  curve "Liverpool Street, Aldgate" right,down dependson metropolitan
+  curve "King's Cross St. Pancras, Farringdon" right,down-right parallelto metropolitan
+  curve "Barbican, Moorgate" down-right,right parallelto hammersmith-city
+  curve "Liverpool Street, Aldgate" right,down parallelto metropolitan
   curve "Aldgate, Tower Hill" down,left
-  curve "Monument, Cannon Street" left,down-left dependson district
+  curve "Monument, Cannon Street" left,down-left parallelto district
   curve "Blackfriars, Temple" down-left,left
   curve "Gloucester Road, High Street Kensington" left,up
   curve "Bayswater, Paddington" up,up-right
@@ -274,19 +274,19 @@ line district:
   alignment-point "Gunnersbury_TurnhamGreen" 1131 1768
 
   curve "Ealing Broadway, Ealing Common" right,down
-  curve "Ealing Common, Acton Town" down,down-right dependson piccadilly
+  curve "Ealing Common, Acton Town" down,down-right parallelto piccadilly
   curve "Acton Town, Chiswick Park" down-right,right
   curve "Gunnersbury, Turnham Green" special "Gunnersbury, Gunnersbury_TurnhamGreen, Turnham Green" "up-right,up : up,right"
   curve "Earl's Court, Kensington (Olympia)" up-left,up
   curve "Earl's Court, West Brompton" down-left,down
   curve "Earl's Court, High Street Kensington" up-right,up
-  curve "Bayswater, Paddington" up,up-right dependson circle
-  curve "Paddington, Edgware Road (Circle Line)" up-right,right dependson curve "circle: Paddington, Edgware Road (Circle Line) w/ District"
-  curve "Blackfriars, Temple" down-left,left dependson circle
+  curve "Bayswater, Paddington" up,up-right parallelto circle
+  curve "Paddington, Edgware Road (Circle Line)" up-right,right parallelto curve "circle: Paddington, Edgware Road (Circle Line) w/ District"
+  curve "Blackfriars, Temple" down-left,left parallelto circle
   curve "Monument, Cannon Street" left,down-left
   curve "Tower Hill, Aldgate East" special "Tower Hill, TowerHill_AldgateEast, Aldgate East" "right,up : up,up-right"
   curve "Whitechapel, Stepney Green" up-right,right
-  curve "West Ham, Plaistow" right,up-right dependson hammersmith-city
+  curve "West Ham, Plaistow" right,up-right parallelto hammersmith-city
 
   up-right "Richmond, Kew Gardens, Gunnersbury"
   horizontal "Chiswick Park, Turnham Green, Stamford Brook, Ravenscourt Park, Hammersmith (Dist&Picc Line), Barons Court, West Kensington, Earl's Court, Gloucester Road, South Kensington, Sloane Square, Victoria, St. James's Park, Westminster, Embankment, Temple"
@@ -339,12 +339,12 @@ line hammersmith-city:
 
   edges "Hammersmith (H&C Line), Goldhawk Road, Shepherd's Bush Market, Wood Lane, Latimer Road, Ladbroke Grove, Westbourne Park, Royal Oak, Paddington (H&C Line)-Underground, Edgware Road (Circle Line), Baker Street, Great Portland Street, Euston Square, King's Cross St. Pancras, Farringdon, Barbican, Moorgate, Liverpool Street, Aldgate East, Whitechapel, Stepney Green, Mile End, Bow Road, Bromley-by-Bow, West Ham, Plaistow, Upton Park, East Ham, Barking"
 
-  curve "Westbourne Park, Royal Oak" up,up-right dependson circle
-  curve "Royal Oak, Paddington (H&C Line)-Underground" up-right,right dependson circle
-  curve "King's Cross St. Pancras, Farringdon" right,down-right dependson circle
+  curve "Westbourne Park, Royal Oak" up,up-right parallelto circle
+  curve "Royal Oak, Paddington (H&C Line)-Underground" up-right,right parallelto circle
+  curve "King's Cross St. Pancras, Farringdon" right,down-right parallelto circle
   curve "Barbican, Moorgate" down-right,right
   #curve "Liverpool Street, Aldgate East" special todo: fix
-  curve "Whitechapel, Stepney Green" up-right,right dependson district
+  curve "Whitechapel, Stepney Green" up-right,right parallelto district
   curve "West Ham, Plaistow" right,up-right
 
   horizontal "Liverpool Street, Aldgate East" # todo: fix
@@ -462,13 +462,13 @@ line metropolitan:
   curve "Chesham, Chalfont & Latimer" down-right,right
   curve "Chalfont & Latimer, Chorleywood" right,down-right
   curve "Croxley, Moor Park" down,down-right
-  curve "Ruislip, Ruislip Manor" right,down-right dependson piccadilly
+  curve "Ruislip, Ruislip Manor" right,down-right parallelto piccadilly
   curve "Rayners Lane, West Harrow" down-right,right
   curve "North Harrow, Harrow-on-the-Hill" down-right,right
   curve "Preston Road, Wembley Park" right,down-right
   curve "Baker Street, Great Portland Street" down-right,right
   curve "King's Cross St. Pancras, Farringdon" right,down-right
-  curve "Barbican, Moorgate" down-right,right dependson circle
+  curve "Barbican, Moorgate" down-right,right parallelto circle
   curve "Liverpool Street, Aldgate" right,down
 
   horizontal "Amersham, Chalfont & Latimer"
