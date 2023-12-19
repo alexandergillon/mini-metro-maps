@@ -133,9 +133,12 @@ public class MetroLine {
         Station station2 = stations.get(station2Name);
 
         if (!edges.contains(new Edge(station1, station2))) {
-            throw new NoSuchElementException(String.format(
-                    "(line %d) Curve between %s and %s specified, but they are not connected in line %s.",
-                    textLineNumber, station1Name, station2Name, name));
+            // Curves between non-connected stations are fine if one or both are an alignment point.
+            if (!station1.isAlignmentPoint() && !station2.isAlignmentPoint()) {
+                throw new NoSuchElementException(String.format(
+                        "(line %d) Curve between %s and %s specified, but they are not connected in line %s.",
+                        textLineNumber, station1Name, station2Name, name));
+            }
         }
 
         Curve curve = new Curve(station1, station2, curveType, specialCurveInfo, null);

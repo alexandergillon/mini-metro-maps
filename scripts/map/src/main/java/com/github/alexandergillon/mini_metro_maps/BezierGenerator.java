@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -133,19 +134,17 @@ public class BezierGenerator {
     }
 
     /**
-     * Converts a Curve object to its line segments.
-     * @param curve Curve to convert.
+     * Converts a non-special Curve object to its line segments.
+     * @param curve Non-special curve to convert.
      * @return Line segments for that curve.
      */
-    public List<OutputLineSegment> toLineSegments(Curve curve) {
-        if (curve.getType().equals("special")) {
-            return makeSpecialCurve(curve);
-        }
+    public List<OutputLineSegment> toLineSegmentsNonSpecial(Curve curve) {
+        assert !curve.getType().equals("special");
         Curve canonicalCurve = toCanonical(curve);
 
         List<OutputLineSegment> lineSegments =
                 ArrayUtils.contains(CANONICAL_SHARP_CURVE_TYPES, canonicalCurve.getType()) ?
-                toSharpCurve(canonicalCurve) : toWideCurve(canonicalCurve);
+                        toSharpCurve(canonicalCurve) : toWideCurve(canonicalCurve);
 
         // If canonical curve is reversed from input curve, we need to reverse the segments to go in the right direction.
         if (!curve.getType().equals(canonicalCurve.getType())) {
@@ -156,6 +155,23 @@ public class BezierGenerator {
         }
 
         return lineSegments;
+    }
+
+    /**
+     * Converts a special Curve object to its line segments.
+     * @param curve Special curve to convert.
+     * @param curveToOutputEdge Map from Curve to OutputEdge for each curve that has already been processed.
+     * @return Line segments for that curve.
+     */
+    public List<OutputLineSegment> toLineSegmentsSpecial(Curve curve, HashMap<Curve, OutputEdge> curveToOutputEdge) {
+        assert curve.getType().equals("special");
+        assert curve.getSpecialCurveInfo() != null;
+
+        if (curve.getSpecialCurveInfo().isSegmentSequence()) {
+            return makeSegmentSequenceSpecialCurve(curve);
+        } else {
+            return joinCurves(curve, curveToOutputEdge);
+        }
     }
 
     /**
@@ -226,13 +242,14 @@ public class BezierGenerator {
     }
 
     /**
-     * Turns a special curve into line segments. Takes each segment of the special curve, converts it into a dummy curve,
-     * and generates line segments for it. Then, stitches all these parts together to form the overall curve.
+     * Turns a segment sequence special curve into line segments. Takes each segment of the special curve, converts
+     * it into a dummy curve, and generates line segments for it. Then, stitches all these parts together to form
+     * the overall curve.
+     * @param curve A segment sequence special curve.
+     * @return Line segments for that curve.
      */
-    private List<OutputLineSegment> makeSpecialCurve(Curve curve) {
-        assert curve.getSpecialCurveInfo() != null;
-
-        Stream<Curve> dummyCurves = curve.getSpecialCurveInfo().getPointSequence().stream().map(
+    private List<OutputLineSegment> makeSegmentSequenceSpecialCurve(Curve curve) {
+        Stream<Curve> dummyCurves = curve.getSpecialCurveInfo().getSegments().stream().map(
                 dummyCurveInfo -> {
                     Station from = dummyCurveInfo.getLeft();
                     Station to = dummyCurveInfo.getMiddle();
@@ -243,8 +260,22 @@ public class BezierGenerator {
         );
 
         ArrayList<OutputLineSegment> lineSegments = new ArrayList<>();
-        dummyCurves.map(this::toLineSegments).forEach(lineSegments::addAll);
+        dummyCurves.map(this::toLineSegmentsNonSpecial).forEach(lineSegments::addAll);
 
+        return lineSegments;
+    }
+
+    /**
+     * Turns a 'join of curves' special curve into line segments. Takes every constituent curve and joins them together.
+     * @param specialCurve A special curve.
+     * @param curveToOutputEdge Map from Curve to OutputEdge for each curve that has already been processed.
+     * @return Line segments for the joined curve.
+     */
+    private List<OutputLineSegment> joinCurves(Curve specialCurve, HashMap<Curve, OutputEdge> curveToOutputEdge) {
+        ArrayList<OutputLineSegment> lineSegments = new ArrayList<>();
+        specialCurve.getSpecialCurveInfo().getConstituentCurves().forEach(curve ->
+                lineSegments.addAll(curveToOutputEdge.get(curve).getLineSegments())
+        );
         return lineSegments;
     }
 

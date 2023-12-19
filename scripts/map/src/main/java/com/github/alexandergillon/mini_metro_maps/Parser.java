@@ -212,7 +212,7 @@ public class Parser {
         if (stations.length != 2) parseException("(line %d) Curve declaration does not have two stations.", textLineNumber);
 
         Curve.SpecialCurveInfo specialCurveInfo = curveType.equals("special") ?
-                new Curve.SpecialCurveInfo(textRest, currentMetroLine, textLineNumber) : null;
+                Curve.SpecialCurveInfo.fromText(textRest, currentMetroLine, textLineNumber) : null;
         Curve curve = currentMetroLine.addCurve(stations[0], stations[1], curveType, specialCurveInfo, textLineNumber);
 
         if (!textRest.isEmpty()) {

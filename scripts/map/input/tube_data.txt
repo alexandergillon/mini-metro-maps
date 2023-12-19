@@ -184,7 +184,7 @@ line circle:
   curve "King's Cross St. Pancras, Farringdon" right,down-right parallelto metropolitan
   curve "Barbican, Moorgate" down-right,right parallelto hammersmith-city
   curve "Liverpool Street, Aldgate" right,down parallelto metropolitan
-  curve "Aldgate, Tower Hill" down,left
+  curve "Tower Hill, Aldgate" right,up
   curve "Monument, Cannon Street" left,down-left parallelto district
   curve "Blackfriars, Temple" down-left,left
   curve "Gloucester Road, High Street Kensington" left,up
@@ -270,7 +270,8 @@ line district:
   edges "Wimbledon, Wimbledon Park, Southfields, East Putney, Putney Bridge, Parsons Green, Fulham Broadway, West Brompton, Earl's Court, High Street Kensington, Notting Hill Gate, Bayswater, Paddington, Edgware Road (Circle Line)"
   edges "Earl's Court, Kensington (Olympia)"
 
-  alignment-point "TowerHill_AldgateEast" 2672 1507 # todo: align
+  alignment-point "TowerHill_AldgateEast" 2672 1507
+  alignment-point "TowerHill_AldgateEast_FakeStation" 2672 1471
   alignment-point "Gunnersbury_TurnhamGreen" 1131 1768
 
   curve "Ealing Broadway, Ealing Common" right,down
@@ -284,9 +285,13 @@ line district:
   curve "Paddington, Edgware Road (Circle Line)" up-right,right parallelto curve "circle: Paddington, Edgware Road (Circle Line) w/ District"
   curve "Blackfriars, Temple" down-left,left parallelto circle
   curve "Monument, Cannon Street" left,down-left
-  curve "Tower Hill, Aldgate East" special "Tower Hill, TowerHill_AldgateEast, Aldgate East" "right,up : up,up-right"
-  curve "Whitechapel, Stepney Green" up-right,right
+  curve "Tower Hill, TowerHill_AldgateEast" right,up parallelto curve "circle: Tower Hill, Aldgate"
+  curve "TowerHill_AldgateEast, Aldgate East" up,up-right
+  curve "Tower Hill, Aldgate East" special of "Tower Hill, TowerHill_AldgateEast" "TowerHill_AldgateEast, Aldgate East"
+  curve "Whitechapel, Stepney Green" up-right,right 
   curve "West Ham, Plaistow" right,up-right parallelto hammersmith-city
+
+  vertical "TowerHill_AldgateEast, TowerHill_AldgateEast_FakeStation"
 
   up-right "Richmond, Kew Gardens, Gunnersbury"
   horizontal "Chiswick Park, Turnham Green, Stamford Brook, Ravenscourt Park, Hammersmith (Dist&Picc Line), Barons Court, West Kensington, Earl's Court, Gloucester Road, South Kensington, Sloane Square, Victoria, St. James's Park, Westminster, Embankment, Temple"
@@ -826,6 +831,8 @@ multi-line:
   vertical "district: Edgware Road (Circle Line), hammersmith-city: Edgware Road (Circle Line)"
 
   vertical "district: Mile End, central: Mile End"
+
+  same-station "district: TowerHill_AldgateEast_FakeStation" right "circle: Aldgate"
 
   # central line
   

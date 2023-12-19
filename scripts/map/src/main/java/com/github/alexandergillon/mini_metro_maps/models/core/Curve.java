@@ -1,12 +1,14 @@
 package com.github.alexandergillon.mini_metro_maps.models.core;
 
 import com.github.alexandergillon.mini_metro_maps.Util;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -57,27 +59,67 @@ public class Curve {
     }
 
     /**
-     * Class to hold special curve info. A special curve is defined by a number of segments between alignment points,
-     * where each segment is a normal curve.
+     * Class to hold special curve info. A special curve is one of the following two types:
      *
-     * E.g. station1 --> station2 by a special curve of station1 --> alignment1 --> alignment2 --> alignment3 --> station2,
-     * each with their own curve type.
+     *   1. Defined by a number of segments between alignment points, where each segment is a normal curve.
+     *      E.g. station1 --> station2 by a special curve of:
+     *
+     *          station1 --> alignment1 --> alignment2 --> alignment3 --> station2
+     *
+     *      each with their own curve type.
+     *
+     *   2. A join of previously defined curves. This type of curve 'consumes' the curves that were specified.
+     *      E.g. station1 --> aligment1, alignment1 --> alignment2, alignment2 --> station2, which are connected to form:
+     *
+     *          station1 --> alignment1 --> alignment2 --> alignment3 --> station2
+     *
+     *      In this case, curve types are not specified: they were already specified when the underlying curves were
+     *      defined. This second form is needed to have parts of the special curve run parallel to other curves,
+     *      as only normal curves can use 'parallelto'.
      */
     @Getter
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class SpecialCurveInfo {
 
-        /** The special curve segments, as described above, as a tuple (fromStation, toStation, curveType). */
-        private final List<Triple<Station, Station, String>> pointSequence;
+        /** Whether this special curve is a point sequence, or a join of other curves. */
+        private final boolean segmentSequence;
 
         /**
-         * Parses text input into a SpecialCurveInfo.
+         * If this curve is a segment sequence special curve (if isSegmentSequence is true), this contains the curve
+         * segments, as described above, as a tuple (fromStation, toStation, curveType).
+         */
+        private final List<Triple<Station, Station, String>> segments;
+
+        /**
+         * If this curve is a join of previously defined curves (if isSegmentSequence is false), this contains the
+         * curves that this curve is made up of.
+         */
+        private final List<Curve> constituentCurves;
+
+        /**
+         * Parses text input into a SpecialCurveInfo. Delegates depending on whether it is a segment sequence
+         * special curve or join of curves special curve.
+         */
+        public static SpecialCurveInfo fromText(String inputText, MetroLine currentMetroLine, int textLineNumber) {
+            Pair<String, String> firstTokenAndRest = Util.consumeToken(inputText, textLineNumber);
+            String firstToken = firstTokenAndRest.getLeft();
+
+            if (firstToken.equals("of")) {
+                return joinOfCurvesFromText(inputText, currentMetroLine, textLineNumber);
+            } else {
+                return segmentSequenceCurveFromText(inputText, currentMetroLine, textLineNumber);
+            }
+        }
+
+        /**
+         * Parses text input into a SpecialCurveInfo for a segment sequence special curve.
          *
-         * E.g. new SpecialCurveInfo("station1, align1, align2, align3, station2" "type1 : type2 : type3 : type4", ..., ...)
-         *   --> a SpecialCurveInfo with pointSequence = [
+         * E.g. new SpecialCurveInfo("\"station1, align1, align2, align3, station2\" \"type1 : type2 : type3 : type4\"", ..., ...)
+         *   --> a SpecialCurveInfo with segments = [
          *      (station1, align1, type1), (align1, align2, type2), (align2, align3, type3), (align3, station2, type4)
          *   ]
-         * */
-        public SpecialCurveInfo(String inputText, MetroLine currentMetroLine, int textLineNumber) {
+         */
+        private static SpecialCurveInfo segmentSequenceCurveFromText(String inputText, MetroLine currentMetroLine, int textLineNumber) {
             Pair<String, String> doubleQuotedResult1 = Util.consumeDoubleQuoted(inputText, textLineNumber);
             Pair<String, String> doubleQuotedResult2 = Util.consumeDoubleQuoted(doubleQuotedResult1.getRight(), textLineNumber);
 
@@ -89,12 +131,44 @@ public class Curve {
 
             assert stationPairs.size() == curveTypes.length;
 
-            pointSequence = IntStream.range(0, stationPairs.size()).mapToObj(i ->
-                Triple.of(
-                        currentMetroLine.getStation(stationPairs.get(i).getLeft(), textLineNumber),
-                        currentMetroLine.getStation(stationPairs.get(i).getRight(), textLineNumber),
-                        curveTypes[i])
-            ).toList();
+            List<Triple<Station, Station, String>> segmentSequence = IntStream.range(0, stationPairs.size())
+                .mapToObj(i ->
+                    Triple.of(
+                            currentMetroLine.getStation(stationPairs.get(i).getLeft(), textLineNumber),
+                            currentMetroLine.getStation(stationPairs.get(i).getRight(), textLineNumber),
+                            curveTypes[i])
+                ).toList();
+
+            return new SpecialCurveInfo(true, segmentSequence, null);
+        }
+
+        /**
+         * Parses text input into a SpecialCurveInfo for a join of curves special curve.
+         *
+         * E.g. new SpecialCurveInfo("of \"station1, align1\" \"align, station2\"", ..., ...)
+         *   --> a SpecialCurveInfo with constituentCurves = [(station1 --> align), (align --> station2)]
+         */
+        private static SpecialCurveInfo joinOfCurvesFromText(String inputText, MetroLine currentMetroLine, int textLineNumber) {
+            inputText = Util.removePrefix(inputText, "of").strip();
+
+            ArrayList<Curve> constituentCurves = new ArrayList<>();
+            // Read all curves in, which are surrounded by double quotes. Eventually, when there are no more curves left,
+            // Util.consumeDoubleQuoted() will throw an exception, breaking the while loop.
+            try {
+                while (true) {
+                    Pair<String, String> doubleQuotedResult = Util.consumeDoubleQuoted(inputText, textLineNumber);
+                    String[] tokens = Arrays.stream(doubleQuotedResult.getLeft().split(",")).map(String::strip).toArray(String[]::new);
+                    if (tokens.length != 2) throw new IllegalArgumentException(String.format("(line %d) Constituent curve in \"special of\" curve is malformed.", textLineNumber));
+
+                    String station1 = tokens[0];
+                    String station2 = tokens[1];
+
+                    constituentCurves.add(currentMetroLine.getCurve(station1, station2, textLineNumber));
+                    inputText = doubleQuotedResult.getRight();
+                }
+            } catch (IllegalArgumentException ignored) { } // Exception is to break the loop.
+
+            return new SpecialCurveInfo(false, null, constituentCurves);
         }
 
     }
