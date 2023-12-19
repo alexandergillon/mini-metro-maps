@@ -409,9 +409,12 @@ line jubilee:
 
   alignment-point "StJohnsWoodMet" 1859 1212
   alignment-point "StJohnsWoodHC" 1860 1239
+  alignment-point "JubileeMetCurve" 1534 815
 
   vertical "StJohnsWoodMet, St. John's Wood, StJohnsWoodHC"
   equal "StJohnsWoodMet.y + StJohnsWoodHC.y" "St\. John's Wood.y + St\. John's Wood.y"
+  vertical "JubileeMetCurve, Kingsbury"
+  down-right "JubileeMetCurve, Wembley Park"
 
   vertical "Stanmore, Canons Park, Queensbury, Kingsbury"
   down-right "Wembley Park, Neasden, Dollis Hill, Willesden Green, Kilburn, West Hampstead, Finchley Road, Swiss Cottage"
@@ -457,7 +460,7 @@ line metropolitan:
   station "Uxbridge" 630 717
   station "Watford" 942 491
   station "West Harrow" 1118 828
-  station?? "Willesden Green" 1599 951
+  station "Willesden Green" 1599 951
   station "Wembley Park" 1517 869
 
   edges "Chesham, Chalfont & Latimer"
@@ -476,6 +479,10 @@ line metropolitan:
   curve "King's Cross St. Pancras, Farringdon" right,down-right
   curve "Barbican, Moorgate" down-right,right parallelto circle
   curve "Liverpool Street, Aldgate" right,down
+
+  alignment-point "JubileeMetCurve" 1475 829
+  horizontal "JubileeMetCurve, Preston Road"
+  down-right "JubileeMetCurve, Wembley Park"
 
   horizontal "Amersham, Chalfont & Latimer"
   down-right "Chorleywood, Rickmansworth, Moor Park, Northwood, Northwood Hills, Pinner, North Harrow"
@@ -657,7 +664,7 @@ line piccadilly:
   station "South Kensington" 1714 1682
   station "Sudbury Hill" 1035 979
   station "Sudbury Town" 1035 1054
-  station? "Turnham Green" 1191 1683
+  station "Turnham Green" 1191 1683
   station "Turnpike Lane" 2622 743
   station "Uxbridge" 630 728
   station "Wood Green" 2622 701
@@ -859,6 +866,7 @@ multi-line:
   same-station jubilee exact bakerloo "Baker Street"
   same-station jubilee left northern "Waterloo"
   same-station jubilee exact northern "London Bridge"
+  same-station jubilee above-right metropolitan "JubileeMetCurve"
 
   up-left "jubilee: StJohnsWoodMet, metropolitan: Finchley Road"
   horizontal "jubilee: StJohnsWoodHC, hammersmith-city: Great Portland Street"
@@ -873,6 +881,10 @@ multi-line:
   up-right "circle: Moorgate, northern: Moorgate"
 
   same-station northern exact victoria "Stockwell"
+  
+  # victoria line
+
+  equal "victoria: Euston.y + victoria: Euston.y" "northern: EustonBank_KingsX.y + hammersmith-city: King's Cross St\. Pancras.y"
 
   # W&C line
   same-station waterloo-city exact bakerloo "Waterloo"
