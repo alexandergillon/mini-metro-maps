@@ -159,63 +159,60 @@ public class BezierGenerator {
     }
 
     /**
-     * Generates a dependent edge.
-     * @param dependentCurve Curve that this edge is for.
-     * @param dependentOnEdge The edge that the curve depends on.
-     * @return A dependent edge for that curve.
+     * Generates a parallel edge to an already existing edge.
+     * @param parallelCurve Curve that this edge is for.
+     * @param parallelTo The edge that the curve is parallel to.
+     * @return A parallel edge for that curve.
      */
-    public List<OutputLineSegment> makeDependentEdge(Curve dependentCurve, OutputEdge dependentOnEdge) throws IOException, InterruptedException {
+    public List<OutputLineSegment> makeParallelEdge(Curve parallelCurve, OutputEdge parallelTo) throws IOException, InterruptedException {
         ArrayList<OutputLineSegment> lineSegments = new ArrayList<>();
 
         // todo: optimize so this doesn't just keep doubling edges
 
-        // We take every Bezier curve segment from the edge that this curve depends on, and generate a parallel curve.
-        List<OutputLineSegment> bezierCurveSegments = dependentOnEdge.getLineSegments().stream()
+        // We take every Bezier curve segment from the edge that this curve is parallel to, and generate a parallel curve.
+        List<OutputLineSegment> bezierCurveSegments = parallelTo.getLineSegments().stream()
                 .filter(lineSegment -> !lineSegment.isStraightLine()).toList();
         for (OutputLineSegment lineSegment : bezierCurveSegments) {
-            lineSegments.addAll(makeDependentBezierSegment(lineSegment));
+            lineSegments.addAll(makeParallelBezierSegment(lineSegment));
         }
 
         // Then, we check if any of the segments in the edge that this curve is parallel to were truncated.
         // If so, they require special handling.
-        checkForTruncatedCurves(dependentCurve, dependentCurve.getDependentOn(), bezierCurveSegments, lineSegments);
+        checkForTruncatedCurves(parallelCurve, parallelCurve.getParallelTo(), bezierCurveSegments, lineSegments);
         // Finally, we add back any needed straight line segments at the end.
-        extendEndSegments(dependentCurve, lineSegments);
+        extendEndSegments(parallelCurve, lineSegments);
         return lineSegments;
     }
 
     /**
-     * Checks for whether a Bezier line segment that was used to generate a dependent edge was truncated from the model
-     * curve. If so, the endpoint(s) of the dependent curve need to be adjusted so they also perfectly line up with
+     * Checks for whether a Bezier line segment that was used to generate a parallel edge was truncated from the model
+     * curve. If so, the endpoint(s) of the parallel curve need to be adjusted so they also perfectly line up with
      * a station.
-     * @param dependentCurve The dependent curve, that we are generating line segments for.
-     * @param dependentOn The curve that the dependent curve is dependent on.
-     * @param originalBezierSegments The original Bezier segments of the dependentOn curve.
-     * @param generatedBezierSegments The dependent Bezier segments that have been generated.
+     * @param parallelCurve The parallel curve, that we are generating line segments for.
+     * @param parallelTo The curve that the parallel curve is parallel to.
+     * @param bezierSegments The original Bezier segments of the parallelTo curve.
+     * @param parallelSegments The parallel Bezier segments that have been generated.
      */
-    private static void checkForTruncatedCurves(Curve dependentCurve, Curve dependentOn,
-                                         List<OutputLineSegment> originalBezierSegments,
-                                         List<OutputLineSegment> generatedBezierSegments) {
-        Point dependsOnFromStation = Point.fromSolvedStationCoordinates(dependentOn.getFrom());
-        Point dependsOnToStation = Point.fromSolvedStationCoordinates(dependentOn.getTo());
-
-        if (originalBezierSegments.get(0).getP0().equals(dependsOnFromStation)) {
-            generatedBezierSegments.get(0).setP0(Point.fromSolvedStationCoordinates(dependentCurve.getFrom()));
+    private static void checkForTruncatedCurves(Curve parallelCurve, Curve parallelTo,
+                                                List<OutputLineSegment> bezierSegments,
+                                                List<OutputLineSegment> parallelSegments) {
+        if (bezierSegments.get(0).getP0().equals(parallelTo.getFrom().toPoint())) {
+            parallelSegments.get(0).setP0(parallelCurve.getFrom().toPoint());
         }
 
-        if (originalBezierSegments.get(originalBezierSegments.size()-1).getP3().equals(dependsOnToStation)) {
-            generatedBezierSegments.get(generatedBezierSegments.size()-1).setP3(Point.fromSolvedStationCoordinates(dependentCurve.getTo()));
+        if (bezierSegments.get(bezierSegments.size()-1).getP3().equals(parallelTo.getTo().toPoint())) {
+            parallelSegments.get(parallelSegments.size()-1).setP3(parallelCurve.getTo().toPoint());
         }
     }
 
     /**
-     * Extends the end segments of a generated dependent curve with the appropriate straight line segments, if needed.
-     * @param dependentCurve The dependent curve, that we are generating line segments for.
+     * Extends the end segments of a generated parallel curve with the appropriate straight line segments, if needed.
+     * @param parallelCurve The parallel curve, that we are generating line segments for.
      * @param lineSegments The line segments that have been generated for this curve.
      */
-    private static void extendEndSegments(Curve dependentCurve, ArrayList<OutputLineSegment> lineSegments) {
-        Point fromStation = Point.fromSolvedStationCoordinates(dependentCurve.getFrom());
-        Point toStation = Point.fromSolvedStationCoordinates(dependentCurve.getTo());
+    private static void extendEndSegments(Curve parallelCurve, ArrayList<OutputLineSegment> lineSegments) {
+        Point fromStation = parallelCurve.getFrom().toPoint();
+        Point toStation = parallelCurve.getTo().toPoint();
 
         // If the endpoints of the segments that have already been generated are at the stations, then there is nothing
         // to do. Otherwise, we need to fill in the gap(s) with straight line segments.
@@ -262,12 +259,12 @@ public class BezierGenerator {
     }
 
     /**
-     * Makes a dependent Bezier segment from a Bezier OutputLineSegment. Delegates solving for Bezier control points
+     * Makes a parallel Bezier segment from a Bezier OutputLineSegment. Delegates solving for Bezier control points
      * to an R script. TODO: if this is too slow, batch calls to R to avoid process creation overhead.
      * @param lineSegment A Bezier line segment.
      * @return A number of line segments which run parallel to that Bezier line segment, on the outside.
      */
-    private List<OutputLineSegment> makeDependentBezierSegment(OutputLineSegment lineSegment) throws IOException, InterruptedException {
+    private List<OutputLineSegment> makeParallelBezierSegment(OutputLineSegment lineSegment) throws IOException, InterruptedException {
         assert !lineSegment.isStraightLine();
 
         try (BufferedWriter csvFile = new BufferedWriter(new FileWriter(rCsvInPath))) {
@@ -453,9 +450,7 @@ public class BezierGenerator {
      * @return Line segments for a sharp curve that draws the input curve.
      */
     private List<OutputLineSegment> toSharpCurve(Curve curve) {
-        Point station1 = Point.fromSolvedStationCoordinates(curve.getFrom());
-        Point station2 = Point.fromSolvedStationCoordinates(curve.getTo());
-        return toSharpCurve(station1, station2, curve.getType());
+        return toSharpCurve(curve.getFrom().toPoint(), curve.getTo().toPoint(), curve.getType());
     }
 
     /**
@@ -578,9 +573,7 @@ public class BezierGenerator {
      * @return Line segments for a wide curve that draws the input curve.
      */
     private List<OutputLineSegment> toWideCurve(Curve curve) {
-        Point station1 = Point.fromSolvedStationCoordinates(curve.getFrom());
-        Point station2 = Point.fromSolvedStationCoordinates(curve.getTo());
-        return toWideCurve(station1, station2, curve.getType());
+        return toWideCurve(curve.getFrom().toPoint(), curve.getTo().toPoint(), curve.getType());
     }
 
 }

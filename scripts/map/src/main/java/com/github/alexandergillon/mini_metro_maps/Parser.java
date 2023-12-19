@@ -45,10 +45,10 @@ public class Parser {
     private final Set<ZIndexConstraint> zIndexConstraints = new HashSet<>();
 
     /**
-     * List of curves which depend on other curves, the text tokens of which curve they depend on, and the line number
-     * that declared them.
+     * List of curves which are parallel to other curves, the text which describes who they are parallel to, and the
+     * line number that declared them.
      */
-    private final ArrayList<Triple<Curve, String, Integer>> dependentCurves = new ArrayList<>();
+    private final ArrayList<Triple<Curve, String, Integer>> parallelCurves = new ArrayList<>();
 
     /**
      * @param inputPath Path to the input data file.
@@ -173,19 +173,19 @@ public class Parser {
     }
 
     /**
-     * Process a 'dependson' clause in a curve declaration. For now, adds it to the map of depenent curves - these
+     * Process a 'parallelto' clause in a curve declaration. For now, adds it to the map of parallel curves - these
      * dependencies can only be resolved when all curves have been read in.
-     * @param dependsOnText Text that represents a dependson clause.
-     * @param curve The curve that was declared with this 'dependson' clause.
+     * @param inputText Text that represents a parallelto clause.
+     * @param curve The curve that was declared with this 'parallelto' clause.
      */
-    private void processDependsOn(String dependsOnText, Curve curve) {
-        Pair<String, String> dependsOnAndRest = Util.consumeToken(dependsOnText, textLineNumber);
-        String dependsOn = dependsOnAndRest.getLeft();
-        String textRest = dependsOnAndRest.getRight();
+    private void processParallelTo(String inputText, Curve curve) {
+        Pair<String, String> keywordAndRest = Util.consumeToken(inputText, textLineNumber);
+        String keyword = keywordAndRest.getLeft();
+        String textRest = keywordAndRest.getRight();
 
-        if (!dependsOn.equals("dependson")) parseException("(line %d) Unrecognized trailing text on curve declaration.", textLineNumber);
+        if (!keyword.equals("parallelto")) parseException("(line %d) Unrecognized trailing text on curve declaration.", textLineNumber);
 
-        dependentCurves.add(Triple.of(curve, textRest, textLineNumber));
+        parallelCurves.add(Triple.of(curve, textRest, textLineNumber));
     }
 
     /**
@@ -217,9 +217,9 @@ public class Parser {
 
         if (!textRest.isEmpty()) {
             try {
-                processDependsOn(textRest, curve);
+                processParallelTo(textRest, curve);
             } catch (IllegalArgumentException e) {
-                // Curve has trailing text which is not 'dependson'. If the curve is 'special', that is ok.
+                // Curve has trailing text which is not 'parallelto'. If the curve is 'special', that is ok.
                 if (!curveType.equals("special")) {
                     throw e;
                 }
@@ -360,24 +360,22 @@ public class Parser {
         return otherCurve;
     }
 
-    /**
-     * Resolves all curve dependencies (sets the Curve.dependentOn field for all curves appropriately).
-     */
+    /** Resolves all curve dependencies (sets the Curve.parallelTo field for all curves appropriately). */
     private void resolveCurveDependencies() {
-        for (Triple<Curve, String, Integer> dependency : dependentCurves) {
+        for (Triple<Curve, String, Integer> dependency : parallelCurves) {
             Curve curve = dependency.getLeft();
-            String dependsOnText = dependency.getMiddle();
+            String parallelToText = dependency.getMiddle();
             textLineNumber = dependency.getRight();
 
-            Pair<String, String> firstTokenAndRest = Util.consumeToken(dependsOnText, textLineNumber);
+            Pair<String, String> firstTokenAndRest = Util.consumeToken(parallelToText, textLineNumber);
             String firstToken = firstTokenAndRest.getLeft();
             String textRest = firstTokenAndRest.getRight().strip();
 
             // If the first token is 'curve' - read the curve from a double-quoted string. Otherwise, the first
             // token is the line name of a line that has the exact same curve as this (between same stations, same
             // direction, etc.).
-            Curve dependentOn = firstToken.equals("curve") ? resolveCurve(textRest) : resolveCurve(curve, firstToken);
-            curve.setDependentOn(dependentOn);
+            Curve parallelTo = firstToken.equals("curve") ? resolveCurve(textRest) : resolveCurve(curve, firstToken);
+            curve.setParallelTo(parallelTo);
         }
     }
 

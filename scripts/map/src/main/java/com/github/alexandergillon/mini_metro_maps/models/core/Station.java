@@ -1,6 +1,7 @@
 package com.github.alexandergillon.mini_metro_maps.models.core;
 
 import com.github.alexandergillon.mini_metro_maps.GenerateMap;
+import com.github.alexandergillon.mini_metro_maps.models.bezier.Point;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -50,6 +51,15 @@ public class Station {
         this.originalY = y;
 
         this.alignmentPoint = alignmentPoint;
+    }
+
+    /** Converts the solved coordinates in this Station to a Point. */
+    public Point toPoint() {
+        if (solvedX == -1 && solvedY == -1) {
+            throw new IllegalStateException("Station.toPoint() called before coordinates have been solved.");
+        }
+
+        return new Point(solvedX, solvedY);
     }
 
     @Override

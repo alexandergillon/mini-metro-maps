@@ -30,13 +30,13 @@ public class Curve {
     private final SpecialCurveInfo specialCurveInfo;
 
     /**
-     * Curve that this curve depends on, if any (null otherwise). Null as data is initially read in - is set after
+     * Curve that this curve is parallel to, if any (null otherwise). Null as data is initially read in - is set after
      * all curves have been read in and dependencies can be resolved.
      *
-     * Note: no checking is done for cyclic dependencies. Be careful.
+     * Note: it is not guaranteed that cyclic dependencies will be caught. Be careful.
      */
     @Setter
-    private Curve dependentOn;
+    private Curve parallelTo;
 
     @Override
     public boolean equals(Object o) {

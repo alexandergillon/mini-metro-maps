@@ -40,10 +40,10 @@ public class OutputWriter {
     /** Map from metro line name -> MetroLine object for the metro lines in the network. */
     private final Map<String, MetroLine> metroLines;
 
-    /** Set of all dependent curves. */
-    private final HashSet<Curve> dependentCurves = new HashSet<>();
+    /** Set of all parallel curves. */
+    private final HashSet<Curve> parallelCurves = new HashSet<>();
 
-    /** Map from Curve to OutputEdge for each curve that has already been processed. Needed for dependent curves. */
+    /** Map from Curve to OutputEdge for each curve that has already been processed. Needed for parallel curves. */
     private final HashMap<Curve, OutputEdge> curveToOutputEdge = new HashMap<>();
 
     /** Jackson ObjectMapper for JSON parsing. */
@@ -74,7 +74,7 @@ public class OutputWriter {
             outputMetroLines.put(metroLine.getName(), toOutputMetroLine(metroLine));
         }
 
-        processDependentCurves(outputMetroLines);
+        resolveParallelCurves(outputMetroLines);
 
         Pair<Integer, Integer> maxXAndY = getMaxXAndY(metroLines);
         int maxX = maxXAndY.getLeft();
@@ -139,8 +139,8 @@ public class OutputWriter {
 
         // For curves, delegate line segments to bezierGenerator.
         for (Curve curve : metroLine.getCurves()) {
-            if (curve.getDependentOn() != null) {
-                dependentCurves.add(curve); // Dependent curves will be processed later.
+            if (curve.getParallelTo() != null) {
+                parallelCurves.add(curve); // Parallel curves will be processed later.
             } else {
                 OutputEdge outputEdge = new OutputEdge(curve.getFrom().getAmplId(), curve.getTo().getAmplId(), bezierGenerator.toLineSegments(curve));
                 outputEdges.add(outputEdge);
@@ -156,12 +156,9 @@ public class OutputWriter {
                 Station station1 = edge.from();
                 Station station2 = edge.to();
 
-                Point station1Pos = Point.fromSolvedStationCoordinates(station1);
-                Point station2Pos = Point.fromSolvedStationCoordinates(station2);
-
                 validateStraightEdge(station1, station2);
 
-                OutputLineSegment straightLineSegment = OutputLineSegment.fromStraightLine(station1Pos, station2Pos);
+                OutputLineSegment straightLineSegment = OutputLineSegment.fromStraightLine(station1.toPoint(), station2.toPoint());
                 outputEdges.add(new OutputEdge(station1.getAmplId(), station2.getAmplId(), List.of(straightLineSegment)));
             }
         }
@@ -170,40 +167,41 @@ public class OutputWriter {
     }
 
     /**
-     * Processes all dependent curves. Uses curve information from the curves that they are dependent on to
-     * generate line segments for all dependent curves.
-     * @param outputMetroLines Mapping from metro line name --> OutputMetroLine for all lines in the network.
+     * Resolves all parallel curves. Uses curve information from the curves that they are parallel to to
+     * generate line segments for all parallel curves.
+     * @param outputMetroLines Mapping from metro line name --> OutputMetroLine for all lines in the network. Note
+     *                         this is not the usual metro line name --> MetroLine map.
      */
-    private void processDependentCurves(HashMap<String, OutputMetroLine> outputMetroLines) throws IOException, InterruptedException {
-        while (!dependentCurves.isEmpty()) {
+    private void resolveParallelCurves(HashMap<String, OutputMetroLine> outputMetroLines) throws IOException, InterruptedException {
+        while (!parallelCurves.isEmpty()) {
             ArrayList<Curve> processed = new ArrayList<>();
 
-            for (Curve dependentCurve : dependentCurves) {
-                if (curveToOutputEdge.containsKey(dependentCurve.getDependentOn())) {
-                    OutputEdge dependentOnEdge = curveToOutputEdge.get(dependentCurve.getDependentOn());
-                    OutputEdge dependentEdge = new OutputEdge(
-                            dependentCurve.getFrom().getAmplId(), dependentCurve.getTo().getAmplId(),
-                            bezierGenerator.makeDependentEdge(dependentCurve, dependentOnEdge));
+            for (Curve parallelCurve : parallelCurves) {
+                if (curveToOutputEdge.containsKey(parallelCurve.getParallelTo())) {
+                    OutputEdge parallelTo = curveToOutputEdge.get(parallelCurve.getParallelTo());
+                    OutputEdge parallelEdge = new OutputEdge(
+                            parallelCurve.getFrom().getAmplId(), parallelCurve.getTo().getAmplId(),
+                            bezierGenerator.makeParallelEdge(parallelCurve, parallelTo));
 
-                    outputMetroLines.get(dependentCurve.getFrom().getMetroLineName()).getEdges().add(dependentEdge);
-                    curveToOutputEdge.put(dependentCurve, dependentEdge);
-                    processed.add(dependentCurve);
+                    outputMetroLines.get(parallelCurve.getFrom().getMetroLineName()).getEdges().add(parallelEdge);
+                    curveToOutputEdge.put(parallelCurve, parallelEdge);
+                    processed.add(parallelCurve);
                 }
             }
 
             if (processed.isEmpty()) {
-                throw new IllegalStateException("No dependent curves could be processed, but there are still dependent curves remaining. There is likely a cyclic dependency.");
+                throw new IllegalStateException("No parallel curves could be processed, but there are still parallel curves remaining. There is likely a cyclic dependency.");
             }
 
-            processed.forEach(dependentCurves::remove);
+            processed.forEach(parallelCurves::remove);
         }
     }
 
     /** Validates that two stations lie on a cardinal direction/diagonal. */
     private void validateStraightEdge(Station station1, Station station2) {
         // todo: potentially move this to parsing stage
-        Point station1Coords = Point.fromSolvedStationCoordinates(station1);
-        Point station2Coords = Point.fromSolvedStationCoordinates(station2);
+        Point station1Coords = station1.toPoint();
+        Point station2Coords = station2.toPoint();
         if (!(
                 station1Coords.getX() == station2Coords.getX()
                 || station1Coords.getY() == station2Coords.getY()
