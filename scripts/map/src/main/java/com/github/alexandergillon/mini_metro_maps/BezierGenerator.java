@@ -169,33 +169,63 @@ public class BezierGenerator {
 
         // todo: optimize so this doesn't just keep doubling edges
 
-        for (OutputLineSegment lineSegment : dependentOnEdge.getLineSegments()) {
-            if (!lineSegment.isStraightLine()) {
-                lineSegments.addAll(makeDependentBezierSegment(lineSegment));
-            }
+        // We take every Bezier curve segment from the edge that this curve depends on, and generate a parallel curve.
+        List<OutputLineSegment> bezierCurveSegments = dependentOnEdge.getLineSegments().stream()
+                .filter(lineSegment -> !lineSegment.isStraightLine()).toList();
+        for (OutputLineSegment lineSegment : bezierCurveSegments) {
+            lineSegments.addAll(makeDependentBezierSegment(lineSegment));
         }
 
-        assert dependentCurve.getFrom().getSolvedX() == lineSegments.get(0).getP0().getX()
-                || dependentCurve.getFrom().getSolvedY() == lineSegments.get(0).getP0().getY()
-                || (dependentCurve.getFrom().getSolvedX() - lineSegments.get(0).getP0().getX())
-                    == (dependentCurve.getFrom().getSolvedY() - lineSegments.get(0).getP0().getY())
-                || (dependentCurve.getFrom().getSolvedX() - lineSegments.get(0).getP0().getX())
-                    == -(dependentCurve.getFrom().getSolvedY() - lineSegments.get(0).getP0().getY());
-        
-        assert dependentCurve.getTo().getSolvedX() == lineSegments.get(lineSegments.size()-1).getP3().getX()
-                || dependentCurve.getTo().getSolvedY() == lineSegments.get(lineSegments.size()-1).getP3().getY()
-                || (dependentCurve.getTo().getSolvedX() - lineSegments.get(lineSegments.size()-1).getP3().getX())
-                == (dependentCurve.getTo().getSolvedY() - lineSegments.get(lineSegments.size()-1).getP3().getY())
-                || (dependentCurve.getTo().getSolvedX() - lineSegments.get(lineSegments.size()-1).getP3().getX())
-                == -(dependentCurve.getTo().getSolvedY() - lineSegments.get(lineSegments.size()-1).getP3().getY());
+        // Then, we check if any of the segments in the edge that this curve is parallel to were truncated.
+        // If so, they require special handling.
+        checkForTruncatedCurves(dependentCurve, dependentCurve.getDependentOn(), bezierCurveSegments, lineSegments);
+        // Finally, we add back any needed straight line segments at the end.
+        extendEndSegments(dependentCurve, lineSegments);
+        return lineSegments;
+    }
 
+    /**
+     * Checks for whether a Bezier line segment that was used to generate a dependent edge was truncated from the model
+     * curve. If so, the endpoint(s) of the dependent curve need to be adjusted so they also perfectly line up with
+     * a station.
+     * @param dependentCurve The dependent curve, that we are generating line segments for.
+     * @param dependentOn The curve that the dependent curve is dependent on.
+     * @param originalBezierSegments The original Bezier segments of the dependentOn curve.
+     * @param generatedBezierSegments The dependent Bezier segments that have been generated.
+     */
+    private static void checkForTruncatedCurves(Curve dependentCurve, Curve dependentOn,
+                                         List<OutputLineSegment> originalBezierSegments,
+                                         List<OutputLineSegment> generatedBezierSegments) {
+        Point dependsOnFromStation = Point.fromSolvedStationCoordinates(dependentOn.getFrom());
+        Point dependsOnToStation = Point.fromSolvedStationCoordinates(dependentOn.getTo());
+
+        if (originalBezierSegments.get(0).getP0().equals(dependsOnFromStation)) {
+            generatedBezierSegments.get(0).setP0(Point.fromSolvedStationCoordinates(dependentCurve.getFrom()));
+        }
+
+        if (originalBezierSegments.get(originalBezierSegments.size()-1).getP3().equals(dependsOnToStation)) {
+            generatedBezierSegments.get(generatedBezierSegments.size()-1).setP3(Point.fromSolvedStationCoordinates(dependentCurve.getTo()));
+        }
+    }
+
+    /**
+     * Extends the end segments of a generated dependent curve with the appropriate straight line segments, if needed.
+     * @param dependentCurve The dependent curve, that we are generating line segments for.
+     * @param lineSegments The line segments that have been generated for this curve.
+     */
+    private static void extendEndSegments(Curve dependentCurve, ArrayList<OutputLineSegment> lineSegments) {
         Point fromStation = Point.fromSolvedStationCoordinates(dependentCurve.getFrom());
         Point toStation = Point.fromSolvedStationCoordinates(dependentCurve.getTo());
-        lineSegments.add(0, OutputLineSegment.fromStraightLine(fromStation, lineSegments.get(0).getP0()));
-        lineSegments.add(OutputLineSegment.fromStraightLine(lineSegments.get(lineSegments.size()-1).getP3(), toStation));
-        // todo: make sure rounding was ok, alignment etc.
 
-        return lineSegments;
+        // If the endpoints of the segments that have already been generated are at the stations, then there is nothing
+        // to do. Otherwise, we need to fill in the gap(s) with straight line segments.
+        if (!lineSegments.get(0).getP0().equals(fromStation)) {
+            lineSegments.add(0, OutputLineSegment.fromStraightLine(fromStation, lineSegments.get(0).getP0()));
+        }
+
+        if (!lineSegments.get(lineSegments.size()-1).getP3().equals(toStation)) {
+            lineSegments.add(OutputLineSegment.fromStraightLine(lineSegments.get(lineSegments.size()-1).getP3(), toStation));
+        }
     }
 
     /**
@@ -233,7 +263,7 @@ public class BezierGenerator {
 
     /**
      * Makes a dependent Bezier segment from a Bezier OutputLineSegment. Delegates solving for Bezier control points
-     * to an R script.
+     * to an R script. TODO: if this is too slow, batch calls to R to avoid process creation overhead.
      * @param lineSegment A Bezier line segment.
      * @return A number of line segments which run parallel to that Bezier line segment, on the outside.
      */
