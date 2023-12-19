@@ -12,3 +12,4 @@ scripts/map/ampl/temp
 scripts/map/output
 scripts/map/bezier/*.csv
 scripts/map/bezier/*.pdf
+scripts/map/input/tube_data_transformed.txt
