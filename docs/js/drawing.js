@@ -47,8 +47,11 @@ function drawBezierLineSegment(lineSegment, lineWidth, color) {
     paperLineSegment.strokeWidth = lineWidth;
 
     // Covers up gaps between adjacent bezier segments of dependent curves. todo: work with R script to potentially remove
-    const circ = new paper.Path.Circle(new paper.Point(lineSegment.p3.x, lineSegment.p3.y), lineWidth/2);
-    circ.fillColor = color;
+    // Also between truncated Bezier curves and other segments.
+    const circ1 = new paper.Path.Circle(p0, lineWidth/2);
+    circ1.fillColor = color;
+    const circ2 = new paper.Path.Circle(p3, lineWidth/2);
+    circ2.fillColor = color;
 }
 
 /** Draws a line segment. */
