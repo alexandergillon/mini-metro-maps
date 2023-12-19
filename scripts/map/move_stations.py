@@ -5,18 +5,23 @@ import sys
 
 dx = int(sys.argv[1])
 dy = int(sys.argv[2])
-stations = tuple([arg.strip().replace('"', "") for arg in sys.argv[3:]])
+stations = [arg.strip().replace('"', "") for arg in sys.argv[3:]]
+stations_with_trailing_quote = tuple([station + '"' for station in stations])
+seen_stations = set()
 
 with open("input/tube_data.txt", "r") as input_file, open("input/tube_data_transformed.txt", "w") as output_file:
     for original_line in input_file.readlines():
         line = original_line.strip()
 
-        if line.startswith("station"):
-            line = line.removeprefix("station").strip()
+        if line.startswith(("station", "alignment-point")):
+            is_station = line.startswith("station")
+            line = line.removeprefix("station" if is_station else "alignment-point").strip()
             line = line.removeprefix('"')
-            if line.startswith(stations):
+            # Make sure we don't match any station that has this name as a prefix. E.g. don't match "West Hampstead" for "West Ham"
+            if line.startswith(stations_with_trailing_quote):
                 i = line.index('"')
                 station = line[0:i]
+                seen_stations.add(station)
                 line = line.removeprefix(station).removeprefix('"').strip()
 
                 i = line.index(" ")
@@ -32,8 +37,12 @@ with open("input/tube_data.txt", "r") as input_file, open("input/tube_data_trans
                 line = line.removeprefix(y).strip()
                 y = int(y)
 
-                output_file.write(f"  station \"{station}\" {x + dx} {y + dy} {line}\n")
+                output_file.write(f"  {'station' if is_station else 'alignment-point'} \"{station}\" {x + dx} {y + dy} {line}\n")
             else:
                 output_file.write(original_line)
         else:
             output_file.write(original_line)
+
+for station in stations:
+    if station not in seen_stations:
+        print(f"No station {seen_stations}. Output is likely incorrect.")
