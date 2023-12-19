@@ -196,15 +196,12 @@ public class BezierGenerator {
     private static void checkForTruncatedCurves(Curve parallelCurve, Curve parallelTo,
                                                 List<OutputLineSegment> bezierSegments,
                                                 List<OutputLineSegment> parallelSegments) {
-        Point parallelToStation1 = Point.fromSolvedStationCoordinates(parallelTo.getFrom());
-        Point parallelToStation2 = Point.fromSolvedStationCoordinates(parallelTo.getTo());
-
-        if (bezierSegments.get(0).getP0().equals(parallelToStation1)) {
-            parallelSegments.get(0).setP0(Point.fromSolvedStationCoordinates(parallelCurve.getFrom()));
+        if (bezierSegments.get(0).getP0().equals(parallelTo.getFrom().toPoint())) {
+            parallelSegments.get(0).setP0(parallelCurve.getFrom().toPoint());
         }
 
-        if (bezierSegments.get(bezierSegments.size()-1).getP3().equals(parallelToStation2)) {
-            parallelSegments.get(parallelSegments.size()-1).setP3(Point.fromSolvedStationCoordinates(parallelCurve.getTo()));
+        if (bezierSegments.get(bezierSegments.size()-1).getP3().equals(parallelTo.getTo().toPoint())) {
+            parallelSegments.get(parallelSegments.size()-1).setP3(parallelCurve.getTo().toPoint());
         }
     }
 
@@ -214,8 +211,8 @@ public class BezierGenerator {
      * @param lineSegments The line segments that have been generated for this curve.
      */
     private static void extendEndSegments(Curve parallelCurve, ArrayList<OutputLineSegment> lineSegments) {
-        Point fromStation = Point.fromSolvedStationCoordinates(parallelCurve.getFrom());
-        Point toStation = Point.fromSolvedStationCoordinates(parallelCurve.getTo());
+        Point fromStation = parallelCurve.getFrom().toPoint();
+        Point toStation = parallelCurve.getTo().toPoint();
 
         // If the endpoints of the segments that have already been generated are at the stations, then there is nothing
         // to do. Otherwise, we need to fill in the gap(s) with straight line segments.
@@ -453,9 +450,7 @@ public class BezierGenerator {
      * @return Line segments for a sharp curve that draws the input curve.
      */
     private List<OutputLineSegment> toSharpCurve(Curve curve) {
-        Point station1 = Point.fromSolvedStationCoordinates(curve.getFrom());
-        Point station2 = Point.fromSolvedStationCoordinates(curve.getTo());
-        return toSharpCurve(station1, station2, curve.getType());
+        return toSharpCurve(curve.getFrom().toPoint(), curve.getTo().toPoint(), curve.getType());
     }
 
     /**
@@ -578,9 +573,7 @@ public class BezierGenerator {
      * @return Line segments for a wide curve that draws the input curve.
      */
     private List<OutputLineSegment> toWideCurve(Curve curve) {
-        Point station1 = Point.fromSolvedStationCoordinates(curve.getFrom());
-        Point station2 = Point.fromSolvedStationCoordinates(curve.getTo());
-        return toWideCurve(station1, station2, curve.getType());
+        return toWideCurve(curve.getFrom().toPoint(), curve.getTo().toPoint(), curve.getType());
     }
 
 }

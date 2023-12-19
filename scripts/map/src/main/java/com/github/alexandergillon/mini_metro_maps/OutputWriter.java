@@ -156,12 +156,9 @@ public class OutputWriter {
                 Station station1 = edge.from();
                 Station station2 = edge.to();
 
-                Point station1Pos = Point.fromSolvedStationCoordinates(station1);
-                Point station2Pos = Point.fromSolvedStationCoordinates(station2);
-
                 validateStraightEdge(station1, station2);
 
-                OutputLineSegment straightLineSegment = OutputLineSegment.fromStraightLine(station1Pos, station2Pos);
+                OutputLineSegment straightLineSegment = OutputLineSegment.fromStraightLine(station1.toPoint(), station2.toPoint());
                 outputEdges.add(new OutputEdge(station1.getAmplId(), station2.getAmplId(), List.of(straightLineSegment)));
             }
         }
@@ -203,8 +200,8 @@ public class OutputWriter {
     /** Validates that two stations lie on a cardinal direction/diagonal. */
     private void validateStraightEdge(Station station1, Station station2) {
         // todo: potentially move this to parsing stage
-        Point station1Coords = Point.fromSolvedStationCoordinates(station1);
-        Point station2Coords = Point.fromSolvedStationCoordinates(station2);
+        Point station1Coords = station1.toPoint();
+        Point station2Coords = station2.toPoint();
         if (!(
                 station1Coords.getX() == station2Coords.getX()
                 || station1Coords.getY() == station2Coords.getY()
