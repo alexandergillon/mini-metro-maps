@@ -88,6 +88,7 @@ public class OutputWriter {
         OutputNetwork outputNetwork = new OutputNetwork(GenerateMap.METRO_LINE_WIDTH, maxX, maxY,
                 outputMetroLines.values().stream().toList());
 
+        assert checkOutput(outputNetwork);
         System.out.println("Writing output file.");
         Files.createDirectories(Path.of(outputPath).getParent());
         objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(outputPath), outputNetwork);
@@ -247,6 +248,77 @@ public class OutputWriter {
                     "Stations %s and %s on line %s are not aligned, but do not have a curve specified.",
                     station1.getName(), station2.getName(), station1.getMetroLineName()));
         }
+    }
+
+    /** Checks that an output line is well-formed. */
+    private void checkOutputLine(OutputMetroLine metroLine) {
+        assert !metroLine.getStations().isEmpty();
+        assert !metroLine.getEdges().isEmpty();
+
+        HashMap<String, OutputStation> stations = new HashMap<>();
+        metroLine.getStations().forEach(station -> stations.put(station.getId(), station));
+
+        // For each edge, checks that the segments in the edge all line up with each other.
+        // I.e. that the end of one segment is the same as the beginning of the next segment.
+        // Also that the segments at each end line up with the stations of the segment.
+        for (OutputEdge edge : metroLine.getEdges()) {
+            assert !edge.getLineSegments().isEmpty();
+
+            OutputStation station1 = stations.get(edge.getStation1Id());
+            OutputStation station2 = stations.get(edge.getStation2Id());
+            var iterator = edge.getLineSegments().iterator();
+
+            OutputLineSegment current = iterator.next();
+            assert current.getP0().getX() == station1.getX() && current.getP0().getY() == station1.getY();
+
+            while (iterator.hasNext()) {
+                OutputLineSegment next = iterator.next();
+                // Endpoint is p1/p3 depending on of the segment is a straight line / Bezier curve.
+                if (current.isStraightLine()) {
+                    assert current.getP1().getX() == next.getP0().getX() && current.getP1().getY() == next.getP0().getY();
+                } else {
+                    assert current.getP3().getX() == next.getP0().getX() && current.getP3().getY() == next.getP0().getY();
+                }
+                current = next;
+            }
+            // At the end of the loop, `current` is the last line segment in the edge.
+
+            if (current.isStraightLine()) {
+                assert current.getP1().getX() == station2.getX() && current.getP1().getY() == station2.getY();
+            } else {
+                assert current.getP3().getX() == station2.getX() && current.getP3().getY() == station2.getY();
+            }
+        }
+    }
+
+    /**
+     * A number of checks to ensure that the output is well-formed. This function is structured as such (returning bool)
+     * so that it can be used in an assertion in the main code - this means that if assertions are disabled, it has
+     * no overhead.
+     */
+    private boolean checkOutput(OutputNetwork network) {
+        assert network.getMaxX() >= 0;
+        assert network.getMaxY() >= 0;
+
+        HashSet<String> metroLineNames = new HashSet<>();
+        HashSet<Integer> zIndices = new HashSet<>();
+        HashSet<String> stationIds = new HashSet<>();
+        int numStations = 0;
+        for (OutputMetroLine metroLine : network.getMetroLines()) {
+            checkOutputLine(metroLine);
+            metroLineNames.add(metroLine.getName());
+            zIndices.add(metroLine.getZIndex());
+
+            stationIds.addAll(metroLine.getStations().stream().map(OutputStation::getId).toList());
+            numStations += metroLine.getStations().size();
+        }
+
+        // Ensures metro line names, z indices, and station IDs are unique.
+        assert metroLineNames.size() == network.getMetroLines().size();
+        assert zIndices.size() == network.getMetroLines().size();
+        assert stationIds.size() == numStations;
+
+        return true;
     }
 
     /**
