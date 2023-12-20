@@ -6,14 +6,17 @@ import { drawMetroLines } from "./drawing.js";
  */
 const PADDING_SCALE_FACTOR = 20;
 
-let lineWidth;    // line width, in pixels (actually, +1 is used, but this
+let lineWidth;    // line width, in pixels (actually, +1 is used)
+// minStationX and minStationY are assumed to be 0.
 let maxStationX;  // x coordinate of the furthest right station
 let maxStationY;  // y coordinate of the furthest down station
 
-let minPanningX;         // min x that the user can pan to
-let minPanningY;         // min y that the user can pan to
-let maxPanningX;         // max x that the user can pan to
-let maxPanningY;         // max y that the user can pan to
+let minPanningX;  // min x that the user can pan to
+let minPanningY;  // min y that the user can pan to
+let maxPanningX;  // max x that the user can pan to
+let maxPanningY;  // max y that the user can pan to
+
+let metroNetwork; // The metro network, read from the appropriate JSON file.
 
 /**
  * Note: all x and y here are in the underlying coordinate space - they do NOT refer to the x and y positions of pixels
@@ -114,8 +117,8 @@ function registerEventListeners(canvas) {
  * @return {Promise<any>} The JSON file, parsed as a JS object.
  */
 async function fetchMetroNetwork() {
-    const json = await fetch("london.json");
-    return await json.json();
+    const json = await fetch("data/london.json");
+    metroNetwork = await json.json();
 }
 
 /**
@@ -127,7 +130,7 @@ async function setupCanvas() {
     paper.setup(canvas);
     resizeCanvas();
 
-    const metroNetwork = await fetchMetroNetwork();
+    await fetchMetroNetwork();
 
     // We add 1 to the line width given to us, or otherwise there are small gaps between parallel lines (as paper.js
     // doesn't know what to do in the middle of two parallel but non-overlapping lines). This means that every parallel
