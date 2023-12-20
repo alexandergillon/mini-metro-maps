@@ -181,7 +181,7 @@ public class BezierGenerator {
      * @return A parallel edge for that curve.
      */
     public List<OutputLineSegment> makeParallelEdge(Curve parallelCurve, OutputEdge parallelTo) throws IOException, InterruptedException {
-        ArrayList<OutputLineSegment> lineSegments = new ArrayList<>();
+        ArrayList<OutputLineSegment> outputLineSegments = new ArrayList<>();
 
         // todo: optimize so this doesn't just keep doubling edges
 
@@ -189,15 +189,31 @@ public class BezierGenerator {
         List<OutputLineSegment> bezierCurveSegments = parallelTo.getLineSegments().stream()
                 .filter(lineSegment -> !lineSegment.isStraightLine()).toList();
         for (OutputLineSegment lineSegment : bezierCurveSegments) {
-            lineSegments.addAll(makeParallelBezierSegment(lineSegment));
+            List<OutputLineSegment> parallelSegments = makeParallelBezierSegment(lineSegment);
+
+            // Due to small inaccuracies to do with fitting Bezier curves, each set of parallel segments may not line
+            // up with each other. When adding a set of parallel segments, we align them up here by moving the
+            // endpoint of the last set and the start point of this set to somewhere in the middle.
+            if (!outputLineSegments.isEmpty()) {
+                Point endOfPrevious = outputLineSegments.get(outputLineSegments.size()-1).getP3();
+                Point startOfNext = parallelSegments.get(0).getP0();
+
+                Point midpoint = new Point((endOfPrevious.getX() + startOfNext.getX()) / 2,
+                        (endOfPrevious.getY() + startOfNext.getY()) / 2);
+
+                outputLineSegments.get(outputLineSegments.size()-1).setP3(midpoint);
+                parallelSegments.get(0).setP0(midpoint);
+            }
+
+            outputLineSegments.addAll(parallelSegments);
         }
 
         // Then, we check if any of the segments in the edge that this curve is parallel to were truncated.
         // If so, they require special handling.
-        checkForTruncatedCurves(parallelCurve, parallelCurve.getParallelTo(), bezierCurveSegments, lineSegments);
+        checkForTruncatedCurves(parallelCurve, parallelCurve.getParallelTo(), bezierCurveSegments, outputLineSegments);
         // Finally, we add back any needed straight line segments at the end.
-        extendEndSegments(parallelCurve, lineSegments);
-        return lineSegments;
+        extendEndSegments(parallelCurve, outputLineSegments);
+        return outputLineSegments;
     }
 
     /**
