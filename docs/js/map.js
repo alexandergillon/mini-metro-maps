@@ -114,7 +114,7 @@ function registerEventListeners(canvas) {
  * @return {Promise<any>} The JSON file, parsed as a JS object.
  */
 async function fetchMetroNetwork() {
-    const json = await fetch("london.json");
+    const json = await fetch("london/london.json");
     return await json.json();
 }
 
