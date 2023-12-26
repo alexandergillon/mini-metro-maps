@@ -1,4 +1,8 @@
 import { drawMetroLines } from "./drawing.js";
+import { setGetData, updateTrains } from "./trains.js";
+
+/** Time between updates of train data, in seconds. */
+const UPDATE_INTERVAL = 15;
 
 /**
  * Padding around the map is defined as a multiple of line width, to handle padding automatically when the scale of
@@ -110,15 +114,41 @@ function registerEventListeners(canvas) {
     tool.onMouseDrag = pan;
     canvas.addEventListener("wheel", zoom);
     window.addEventListener("resize", resizeCanvas);
+    setInterval(updateTrains, UPDATE_INTERVAL * 1000);
 }
 
 /**
- * Fetches the JSON file which describes the metro network.
- * @return {Promise<any>} The JSON file, parsed as a JS object.
+ * Fetches the JSON file which describes the metro network. Stores the JSON, parsed as a JS object, into the
+ * metroNetwork variable.
+ * @param jsonPath Path to the JSON file which describes the metro network.
  */
-async function fetchMetroNetwork() {
-    const json = await fetch("data/london.json");
-    metroNetwork = await json.json();
+async function fetchMetroNetwork(jsonPath) {
+    const response = await fetch(jsonPath);
+    metroNetwork = await response.json();
+}
+
+/**
+ * Fetches the JS function which gets data from the public transit API. Stores the function in the getData variable.
+ * @param jsPath Path to the JS module which exports the getData() function.
+ */
+async function fetchApiFunction(jsPath) {
+    const module = await import(jsPath);
+    setGetData(module.getData);
+}
+
+/**
+ * Fetches the dependencies required for the map to work. This includes the JSON file which describes the metro network,
+ * and the JS file which fetches data from the appropriate transit API.
+ */
+async function fetchDependencies() {
+    // todo: error handling
+    const urlParameters = new URLSearchParams(window.location.search);
+    const city = urlParameters.get("city"); // todo: validate
+
+    const jsonPath = `data/${city}.json`;
+    const jsPath = `../js/cities/${city}.js`;
+
+    await Promise.all([fetchMetroNetwork(jsonPath), fetchApiFunction(jsPath)]);
 }
 
 /**
@@ -130,7 +160,7 @@ async function setupCanvas() {
     paper.setup(canvas);
     resizeCanvas();
 
-    await fetchMetroNetwork();
+    await fetchDependencies();
 
     // We add 1 to the line width given to us, or otherwise there are small gaps between parallel lines (as paper.js
     // doesn't know what to do in the middle of two parallel but non-overlapping lines). This means that every parallel
