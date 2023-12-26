@@ -6,7 +6,8 @@ import { drawMetroLines } from "./drawing.js";
  */
 const PADDING_SCALE_FACTOR = 20;
 
-let lineWidth;    // line width, in pixels (actually, +1 is used, but this
+let lineWidth;    // line width, in pixels (actually, +1 is used)
+// minStationX and minStationY are assumed to be 0.
 let maxStationX;  // x coordinate of the furthest right station
 let maxStationY;  // y coordinate of the furthest down station
 
