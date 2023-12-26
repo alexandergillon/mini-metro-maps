@@ -1,3 +1,19 @@
+/** POJO to store information about the next arrival for a train. */
+class NextArrivalInfo {
+    /**
+     * @param id ID of the train.
+     * @param line Line name of the train.
+     * @param nextStation Next station ID of the train.
+     * @param timeToStation Time until this train will reach this station, in milliseconds.
+     */
+    constructor(id, line, nextStation, timeToStation) {
+        this.id = id;
+        this.line = line;
+        this.nextStation = nextStation;
+        this.timeToStation = timeToStation;
+    }
+}
+
 /** Function to get train data. Dynamically imported during setup. */
 let getData;
 
@@ -7,9 +23,9 @@ function setGetData(getDataIn) {
 }
 
 /** Callback function to update train data. */
-function updateTrains(event) {
+async function updateTrains(event) {
     // todo: implement
-    getData();
+    console.log(await getData());
 }
 
-export { setGetData, updateTrains };
+export { NextArrivalInfo, setGetData, updateTrains };

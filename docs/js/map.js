@@ -4,6 +4,9 @@ import { setGetData, updateTrains } from "./trains.js";
 /** Time between updates of train data, in seconds. */
 const UPDATE_INTERVAL = 15;
 
+/** JS module for the specific city being displayed. Has functionality to retrieve data from the appropriate transit API. */
+let cityModule;
+
 /**
  * Padding around the map is defined as a multiple of line width, to handle padding automatically when the scale of
  * the map changes.
@@ -132,8 +135,8 @@ async function fetchMetroNetwork(jsonPath) {
  * @param jsPath Path to the JS module which exports the getData() function.
  */
 async function fetchApiFunction(jsPath) {
-    const module = await import(jsPath);
-    setGetData(module.getData);
+    cityModule = await import(jsPath);
+    setGetData(cityModule.getData);
 }
 
 /**
@@ -149,6 +152,9 @@ async function fetchDependencies() {
     const jsPath = `../js/cities/${city}.js`;
 
     await Promise.all([fetchMetroNetwork(jsonPath), fetchApiFunction(jsPath)]);
+
+    const metroLineNames = metroNetwork.metroLines.map(metroLine => metroLine.name);
+    cityModule.setLines(metroLineNames);
 }
 
 /**
