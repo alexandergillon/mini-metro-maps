@@ -72,11 +72,12 @@ function drawEdge(edge, lineWidth, color) {
 function drawMetroLine(metroLine, lineWidth) {
     metroLine.edges.forEach(edge => drawEdge(edge, lineWidth, metroLine.color));
     metroLine.endpointLineSegments.forEach(lineSegment => drawLineSegment(lineSegment, lineWidth, metroLine.color));
-    metroLine.stations.forEach(station => drawStation(station, lineWidth, metroLine.color));
+    Object.values(metroLine.stations).forEach(station => drawStation(station, lineWidth, metroLine.color));
 }
 
 /** Draws all lines in the metro network. */
-function drawMetroLines(metroLines, lineWidth) {
+function drawMetroLines(metroLinesMap, lineWidth) {
+    const metroLines = Object.values(metroLinesMap);
     metroLines.sort((line1, line2) => line1.zIndex - line2.zIndex);
     metroLines.forEach(line => drawMetroLine(line, lineWidth));
 }

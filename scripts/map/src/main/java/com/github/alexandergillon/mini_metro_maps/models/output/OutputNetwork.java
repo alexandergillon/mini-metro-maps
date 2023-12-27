@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Map;
 
 /** Class for the entire metro network, with some parameters, for writing with Jackson. */
 @Getter
@@ -23,7 +23,7 @@ public class OutputNetwork {
     /** Maximum Y value, for drawing purposes (essentially edge of the bounding box). */
     private int maxY;
 
-    /** Metro lines in the network. */
-    private List<OutputMetroLine> metroLines;
+    /** Metro lines in the network, as a mapping from name --> OutputMetroLine. */
+    private Map<String, OutputMetroLine> metroLines;
 
 }
