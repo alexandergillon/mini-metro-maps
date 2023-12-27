@@ -125,7 +125,7 @@ public class OutputWriter {
         HashMap<String, OutputStation> stations = new HashMap<>();
         metroLine.getStations().values().stream()
                 .filter(station -> !station.isAlignmentPoint()) // Exclude alignment points from final output (comment out for debugging)
-                .forEach(station -> stations.put(station.getAmplId(),
+                .forEach(station -> stations.put(station.getId(),
                         new OutputStation(station.getName(), station.getSolvedX(), station.getSolvedY())));
 
         List<OutputEdge> edges = buildOutputEdges(metroLine);
@@ -148,7 +148,7 @@ public class OutputWriter {
                 // Same for special curves, as they may depend on parallel curves, which may depend on unprocessed curves.
                 specialCurves.add(curve);
             } else {
-                OutputEdge outputEdge = new OutputEdge(curve.getFrom().getAmplId(), curve.getTo().getAmplId(),
+                OutputEdge outputEdge = new OutputEdge(curve.getFrom().getId(), curve.getTo().getId(),
                         bezierGenerator.toLineSegmentsNonSpecial(curve));
                 curveToOutputEdge.put(curve, outputEdge);
 
@@ -172,7 +172,7 @@ public class OutputWriter {
                 validateStraightEdge(station1, station2);
 
                 OutputLineSegment straightLineSegment = OutputLineSegment.fromStraightLine(station1.toPoint(), station2.toPoint());
-                outputEdges.add(new OutputEdge(station1.getAmplId(), station2.getAmplId(), List.of(straightLineSegment)));
+                outputEdges.add(new OutputEdge(station1.getId(), station2.getId(), List.of(straightLineSegment)));
             }
         }
 
@@ -193,7 +193,7 @@ public class OutputWriter {
                 if (curveToOutputEdge.containsKey(parallelCurve.getParallelTo())) {
                     OutputEdge parallelTo = curveToOutputEdge.get(parallelCurve.getParallelTo());
                     OutputEdge parallelEdge = new OutputEdge(
-                            parallelCurve.getFrom().getAmplId(), parallelCurve.getTo().getAmplId(),
+                            parallelCurve.getFrom().getId(), parallelCurve.getTo().getId(),
                             bezierGenerator.makeParallelEdge(parallelCurve, parallelTo));
 
                     curveToOutputEdge.put(parallelCurve, parallelEdge);
@@ -224,7 +224,7 @@ public class OutputWriter {
     private void processSpecialCurves(HashMap<String, OutputMetroLine> outputMetroLines) {
         for (Curve curve : specialCurves) {
             assert !curve.getFrom().isAlignmentPoint() && !curve.getTo().isAlignmentPoint() : "Special curves should not go between alignment points.";
-            OutputEdge edge = new OutputEdge(curve.getFrom().getAmplId(), curve.getTo().getAmplId(),
+            OutputEdge edge = new OutputEdge(curve.getFrom().getId(), curve.getTo().getId(),
                     bezierGenerator.toLineSegmentsSpecial(curve, curveToOutputEdge));
             outputMetroLines.get(curve.getFrom().getMetroLineName()).getEdges().add(edge);
         }
