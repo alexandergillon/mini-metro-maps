@@ -1,12 +1,7 @@
 package com.github.alexandergillon.mini_metro_maps;
 
-import com.github.alexandergillon.mini_metro_maps.models.core.MetroLine;
-
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 public class GenerateMap {
 
@@ -17,12 +12,6 @@ public class GenerateMap {
     public static final int METRO_LINE_WIDTH = 10 * SCALE_FACTOR; // must be even or AMPL constraints with be violated
 
     /**
-     * How long of a prefix you need to take from each metro line's name to ensure that all prefixes are unique.
-     * Used to try and compress station AMPL identifiers. A value of -1 means use the entire length of metro line name.
-     */
-    public static final int METRO_LINE_PREFIX_LENGTH = 2;
-
-    /**
      * Weight for alignment points in AMPL (normal stations have weight 1). The idea of this is that we want to weight
      * alignment points less than stations, as they are usually meant to help align things rather than enforce
      * specific positions. However, we need to give them some weight so that AMPL puts them in a sensible place. If
@@ -31,23 +20,6 @@ public class GenerateMap {
      * This value is a string as it is written to an AMPL file - never used in Java code.
      */
     public static final String ALIGNMENT_POINT_WEIGHT = "0.1";
-
-    /**
-     * Ensures that metroLinePrefixLength is set high enough so that all prefixes of metro line names are unique.
-     * @param metroLines Map from metro line name -> MetroLine object for the metro lines in the network.
-     */
-    private static void checkPrefixLength(Map<String, MetroLine> metroLines) {
-        if (METRO_LINE_PREFIX_LENGTH == -1) {
-            return;
-        }
-
-        Set<String> prefixes = new HashSet<>(metroLines.values().stream()
-                .map(line -> line.getName().substring(0, METRO_LINE_PREFIX_LENGTH)).toList());
-        if (prefixes.size() != metroLines.values().size()) {
-            // Prefixes are not unique.
-            throw new IllegalStateException(String.format("Metro line prefixes are not unique with prefix length %d.", METRO_LINE_PREFIX_LENGTH));
-        }
-    }
 
     /**
      * args[0] = input file path
@@ -80,8 +52,6 @@ public class GenerateMap {
         var metroLines = data.getLeft();
         var alignmentConstraints = data.getMiddle();
         var zIndexConstraints = data.getRight();
-
-        checkPrefixLength(metroLines);
 
         AmplDriver amplDriver = new AmplDriver(amplInitialModelPath, SCALE_FACTOR, METRO_LINE_WIDTH, zAmplInitialModelPath);
         amplDriver.writeAmplFiles(amplModPath, amplDatPath, zAmplModPath, alignmentConstraints, zIndexConstraints, metroLines);
