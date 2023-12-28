@@ -40,7 +40,8 @@ function stripData(data) {
             const timeToStation = arrival.timeToStation;
 
             if (!nearestArrival.has(vehicleId) || nearestArrival.get(vehicleId).timeToStation > timeToStation) {
-                const arrivalInfo = new NextArrivalInfo(vehicleId, arrival.lineId, arrival.naptanId, timeToStation);
+                const arrivalInfo = new NextArrivalInfo(vehicleId, arrival.lineId,
+                    `${arrival.lineId}_${arrival.naptanId}`, timeToStation);
                 nearestArrival.set(vehicleId, arrivalInfo);
             }
         }
