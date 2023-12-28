@@ -1,5 +1,6 @@
 import { drawMetroLines } from "./drawing.js";
 import { setGetData, updateTrains } from "./trains.js";
+import { metroNetwork, setMetroNetwork } from "./network.js";
 
 /** Time between updates of train data, in seconds. */
 const UPDATE_INTERVAL = 15;
@@ -13,17 +14,10 @@ let cityModule;
  */
 const PADDING_SCALE_FACTOR = 20;
 
-let lineWidth;    // line width, in pixels (actually, +1 is used)
-// minStationX and minStationY are assumed to be 0.
-let maxStationX;  // x coordinate of the furthest right station
-let maxStationY;  // y coordinate of the furthest down station
-
 let minPanningX;  // min x that the user can pan to
 let minPanningY;  // min y that the user can pan to
 let maxPanningX;  // max x that the user can pan to
 let maxPanningY;  // max y that the user can pan to
-
-let metroNetwork; // The metro network, read from the appropriate JSON file.
 
 /**
  * Note: all x and y here are in the underlying coordinate space - they do NOT refer to the x and y positions of pixels
@@ -46,14 +40,13 @@ function updatePannableArea() {
 
     // 0 in the Math.max() ensures that the bound are at least as big as the underlying map, plus some.
     // canvasWidth-originalMaxX ensures that the bounds are at least as big as what the user can actually see right now, plus some.
-    const horizontalPadding = (Math.max(0, canvasWidth-maxStationX) + PADDING_SCALE_FACTOR * lineWidth) / 2;
-    const verticalPadding = (Math.max(0, canvasHeight-maxStationY) + PADDING_SCALE_FACTOR * lineWidth) / 2;
+    const horizontalPadding = (Math.max(0, canvasWidth-metroNetwork.width) + PADDING_SCALE_FACTOR * metroNetwork.lineWidth) / 2;
+    const verticalPadding = (Math.max(0, canvasHeight-metroNetwork.height) + PADDING_SCALE_FACTOR * metroNetwork.lineWidth) / 2;
 
-    // minStationX = minStationY = 0, which we take as given about the station locations passed to us.
-    minPanningX = -horizontalPadding;
-    minPanningY = -verticalPadding;
-    maxPanningX = maxStationX + horizontalPadding;
-    maxPanningY = maxStationY + verticalPadding;
+    minPanningX = metroNetwork.minX - horizontalPadding;
+    minPanningY = metroNetwork.minY - verticalPadding;
+    maxPanningX = metroNetwork.maxX + horizontalPadding;
+    maxPanningY = metroNetwork.maxY + verticalPadding;
 }
 
 /** Moves the 'camera' back in bounds, if it is out of bounds. */
@@ -127,7 +120,7 @@ function registerEventListeners(canvas) {
  */
 async function fetchMetroNetwork(jsonPath) {
     const response = await fetch(jsonPath);
-    metroNetwork = await response.json();
+    setMetroNetwork(await response.json());
 }
 
 /**
@@ -168,18 +161,12 @@ async function setupCanvas() {
 
     await fetchDependencies();
 
-    // We add 1 to the line width given to us, or otherwise there are small gaps between parallel lines (as paper.js
-    // doesn't know what to do in the middle of two parallel but non-overlapping lines). This means that every parallel
-    // set of lines is now slightly overlapping, but with only 1 pixel this is unnoticeable for fairly large line width.
-    lineWidth = metroNetwork.lineWidth + 1;
-    maxStationX = metroNetwork.maxX;
-    maxStationY = metroNetwork.maxY;
-
     updatePannableArea();
     registerEventListeners(canvas);
-    drawMetroLines(metroNetwork.metroLines, lineWidth);
+    drawMetroLines(metroNetwork.metroLines, metroNetwork.lineWidth);
 
-    paper.view.translate(-maxStationX / 2, -maxStationY / 2); // center the map to start
+    // center the map to start
+    paper.view.translate(- metroNetwork.width / 2, - metroNetwork.height / 2);
     paper.view.draw();
 }
 
