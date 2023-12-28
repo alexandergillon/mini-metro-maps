@@ -3,6 +3,7 @@ __pycache__
 
 # My own notes, during development.
 scripts/map/notes
+docs/notes
 
 # Maven build files
 scripts/map/target

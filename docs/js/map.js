@@ -1,5 +1,6 @@
 import { drawMetroLines } from "./drawing.js";
 import { setGetData, updateTrains } from "./trains.js";
+import { MetroNetwork } from "./network.js";
 
 /** Time between updates of train data, in seconds. */
 const UPDATE_INTERVAL = 15;
@@ -127,7 +128,7 @@ function registerEventListeners(canvas) {
  */
 async function fetchMetroNetwork(jsonPath) {
     const response = await fetch(jsonPath);
-    metroNetwork = await response.json();
+    metroNetwork = new MetroNetwork(await response.json());
 }
 
 /**
