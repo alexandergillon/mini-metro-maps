@@ -1,12 +1,32 @@
+/** The metro network. This object is populated by map.js via setMetroNetwork. */
+let metroNetwork;
+
+/** Constructs the MetroNetwork with the supplied JSON. */
+function setMetroNetwork(json) {
+    metroNetwork = new MetroNetwork(json);
+}
+
 /**
  * Class to hold the metro network. Takes in information about the network from the JSON file,
  * and extends it with additional functionality.
  */
 class MetroNetwork {
     constructor(json) {
-        this.lineWidth = json.lineWidth;
+        // We add 1 to the line width given to us, or otherwise there are small gaps between parallel lines (as
+        // paper.js doesn't know what to do in the middle of two parallel but non-overlapping lines). This means that
+        // every parallel set of lines is now slightly overlapping, but with only 1 pixel this is unnoticeable for
+        // a reasonably large line width.
+        this.lineWidth = json.lineWidth + 1;
+
+        // minX and minY default to 0
+        this.minX = json.minX === undefined ? 0 : json.minX;
+        this.minY = json.minY === undefined ? 0 : json.minY;
         this.maxX = json.maxX;
         this.maxY = json.maxY;
+
+        this.width = this.maxX - this.minX;
+        this.height = this.maxY - this.minY;
+
         this.metroLines = json.metroLines;
         this.edgeMapping = MetroNetwork.buildEdgeMapping(json.metroLines);
     }
@@ -33,4 +53,4 @@ class MetroNetwork {
     }
 }
 
-export { MetroNetwork };
+export { metroNetwork, setMetroNetwork, MetroNetwork };
