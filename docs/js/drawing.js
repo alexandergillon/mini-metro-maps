@@ -1,13 +1,14 @@
+import { metroNetwork } from "./network.js";
 /** Draws a station. */
-function drawStation(station, lineWidth, color) {
+function drawStation(station, color) {
     const center = new paper.Point(station.x, station.y);
-    const circle = new paper.Path.Circle(center, lineWidth * 0.2);
+    const circle = new paper.Path.Circle(center, metroNetwork.lineWidth * 0.2);
     circle.fillColor = "black";
     circle.strokeColor = "white";
 }
 
 /** Draws a straight line segment. */
-function drawStraightLineSegment(lineSegment, lineWidth, color) {
+function drawStraightLineSegment(lineSegment, color) {
     // dx and dy extend all straight line segments by 1 pixel in either direction.
     // Otherwise, it will appear like there are tiny gaps between segments.
     const dx = Math.sign(lineSegment.p1.x - lineSegment.p0.x);
@@ -21,11 +22,11 @@ function drawStraightLineSegment(lineSegment, lineWidth, color) {
     paperLineSegment.add(p1);
 
     paperLineSegment.strokeColor = color;
-    paperLineSegment.strokeWidth = lineWidth;
+    paperLineSegment.strokeWidth = metroNetwork.lineWidth;
 }
 
 /** Draws a Bezier line segment. */
-function drawBezierLineSegment(lineSegment, lineWidth, color) {
+function drawBezierLineSegment(lineSegment, color) {
     // paper.js does not allow you to define cubic Bezier curves directly.
     // You have to instead define each endpoint as a Segment object.
     const p0 = new paper.Point(lineSegment.p0.x, lineSegment.p0.y);
@@ -44,42 +45,42 @@ function drawBezierLineSegment(lineSegment, lineWidth, color) {
     paperLineSegment.add(p3Segment);
 
     paperLineSegment.strokeColor = color;
-    paperLineSegment.strokeWidth = lineWidth;
+    paperLineSegment.strokeWidth = metroNetwork.lineWidth;
 
     // Covers up gaps between adjacent bezier segments of dependent curves. todo: work with R script to potentially remove
     // Also between truncated Bezier curves and other segments.
-    const circ1 = new paper.Path.Circle(p0, lineWidth/2);
+    const circ1 = new paper.Path.Circle(p0, metroNetwork.lineWidth/2);
     circ1.fillColor = color;
-    const circ2 = new paper.Path.Circle(p3, lineWidth/2);
+    const circ2 = new paper.Path.Circle(p3, metroNetwork.lineWidth/2);
     circ2.fillColor = color;
 }
 
 /** Draws a line segment. */
-function drawLineSegment(lineSegment, lineWidth, color) {
+function drawLineSegment(lineSegment, color) {
     if (lineSegment.straightLine) {
-        drawStraightLineSegment(lineSegment, lineWidth, color);
+        drawStraightLineSegment(lineSegment, color);
     } else {
-        drawBezierLineSegment(lineSegment, lineWidth, color);
+        drawBezierLineSegment(lineSegment, color);
     }
 }
 
 /** Draws an edge between two stations. */
-function drawEdge(edge, lineWidth, color) {
-    edge.lineSegments.forEach(lineSegment => drawLineSegment(lineSegment, lineWidth, color));
+function drawEdge(edge, color) {
+    edge.lineSegments.forEach(lineSegment => drawLineSegment(lineSegment, color));
 }
 
 /** Draws a line in the metro network. */
-function drawMetroLine(metroLine, lineWidth) {
-    metroLine.edges.forEach(edge => drawEdge(edge, lineWidth, metroLine.color));
-    metroLine.endpointLineSegments.forEach(lineSegment => drawLineSegment(lineSegment, lineWidth, metroLine.color));
-    Object.values(metroLine.stations).forEach(station => drawStation(station, lineWidth, metroLine.color));
+function drawMetroLine(metroLine) {
+    metroLine.edges.forEach(edge => drawEdge(edge, metroLine.color));
+    metroLine.endpointLineSegments.forEach(lineSegment => drawLineSegment(lineSegment, metroLine.color));
+    Object.values(metroLine.stations).forEach(station => drawStation(station, metroLine.color));
 }
 
 /** Draws all lines in the metro network. */
-function drawMetroLines(metroLinesMap, lineWidth) {
-    const metroLines = Object.values(metroLinesMap);
+function drawMetroLines() {
+    const metroLines = Object.values(metroNetwork.metroLines);
     metroLines.sort((line1, line2) => line1.zIndex - line2.zIndex);
-    metroLines.forEach(line => drawMetroLine(line, lineWidth));
+    metroLines.forEach(line => drawMetroLine(line));
 }
 
 export { drawMetroLines };
