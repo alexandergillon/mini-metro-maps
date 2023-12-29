@@ -1,4 +1,33 @@
 import { metroNetwork } from "./network.js";
+
+/** Width of a train, as a multiple of line width. */
+const TRAIN_WIDTH_SCALE_FACTOR = 2;
+
+/** Length of a train, as a multiple of line width. */
+const TRAIN_LENGTH_SCALE_FACTOR = 3.5;
+
+/**
+ * Creates a train and draws it on the canvas. Returns the created train for further manipulation.
+ * @param x Center of the train, X coordinate.
+ * @param y Center of the train, Y coordinate.
+ * @param color Color of the train, as a hex string.
+ * @param initialRotation Initial rotation of the train, in degrees. Measured clockwise, with 0 degrees
+ * being the train facing upwards.
+ * @returns The newly created train.
+ */
+function createTrain(x, y, color, initialRotation) {
+    const halfWidth = (TRAIN_WIDTH_SCALE_FACTOR * metroNetwork.lineWidth) / 2;
+    const halfLength = (TRAIN_LENGTH_SCALE_FACTOR * metroNetwork.lineWidth) / 2;
+
+    const topLeft = new paper.Point(x - halfWidth, y - halfLength);
+    const bottomRight = new paper.Point(x + halfWidth, y + halfLength);
+
+    const train = new paper.Path.Rectangle(topLeft, bottomRight);
+    train.rotate(initialRotation);
+    train.fillColor = color;
+    return train;
+}
+
 /** Draws a station. */
 function drawStation(station, color) {
     const center = new paper.Point(station.x, station.y);
@@ -83,4 +112,4 @@ function drawMetroLines() {
     metroLines.forEach(line => drawMetroLine(line));
 }
 
-export { drawMetroLines };
+export { createTrain, drawMetroLines };
