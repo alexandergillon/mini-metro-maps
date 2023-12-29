@@ -163,7 +163,7 @@ async function setupCanvas() {
 
     updatePannableArea();
     registerEventListeners(canvas);
-    drawMetroLines(metroNetwork.metroLines, metroNetwork.lineWidth);
+    drawMetroLines();
 
     // center the map to start
     paper.view.translate(- metroNetwork.width / 2, - metroNetwork.height / 2);
