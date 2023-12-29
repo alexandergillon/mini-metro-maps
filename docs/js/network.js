@@ -1,3 +1,5 @@
+import {Bezier} from "./lib/bezierjs/bezier.js";
+
 /** The metro network. This object is populated by map.js via setMetroNetwork. */
 let metroNetwork;
 
@@ -28,7 +30,8 @@ class MetroNetwork {
         this.height = this.maxY - this.minY;
 
         this.metroLines = json.metroLines;
-        this.edgeMapping = MetroNetwork.buildEdgeMapping(json.metroLines);
+        this.edgeMapping = MetroNetwork.buildEdgeMapping(this.metroLines);
+        MetroNetwork.calculateEdgeLengths(this.metroLines);
     }
 
     /** Builds a 2D mapping of edges. I.e. edgeMapping[station1][station2] is the edge between the two stations. */
@@ -51,6 +54,36 @@ class MetroNetwork {
 
         return edgeMapping;
     }
+
+    /** Calculates the Euclidean distance between two points. */
+    static dist(p0, p1) {
+        const dx = p1.x - p0.x;
+        const dy = p1.y - p0.y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    /** Calculates the length of an edge, and sets the edge's `length` property to the value. */
+    static calculateEdgeLength(edge) {
+        let edgeLength = 0;
+        edge.lineSegments.forEach(lineSegment => {
+            if (lineSegment.straightLine) {
+                edgeLength += MetroNetwork.dist(lineSegment.p0, lineSegment.p1);
+            } else {
+                edgeLength += new Bezier(lineSegment.p0, lineSegment.p1, lineSegment.p2, lineSegment.p3).length();
+            }
+        });
+        edge.length = edgeLength;
+    }
+
+    /** Calculates and sets edge lengths for all metro lines. */
+    static calculateEdgeLengths(metroLines) {
+        for (const lineName in metroLines) {
+            for (const edge of metroLines[lineName].edges) {
+                MetroNetwork.calculateEdgeLength(edge);
+            }
+        }
+    }
+
 }
 
 export { metroNetwork, setMetroNetwork, MetroNetwork };
