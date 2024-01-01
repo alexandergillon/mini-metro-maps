@@ -37,13 +37,27 @@ public class NaptanReader {
             case "Euston (Bank branch)": return lineToNameToNaptan.get("northern").get("Euston") + "_B";
             case "Edgware Road (Circle Line) w/ H&C": return lineToNameToNaptan.get("circle").get("Edgware Road (Circle Line)") + "_HC";
             case "Edgware Road (Circle Line) w/ District": return lineToNameToNaptan.get("circle").get("Edgware Road (Circle Line)") + "_D";
-            default:
-                if (!lineToNameToNaptan.containsKey(metroLineName)
-                        || !lineToNameToNaptan.get(metroLineName).containsKey(stationName)) {
-                    throw new NoSuchElementException(String.format("No NAPTAN entry for %s on line %s.", stationName, metroLineName));
-                } else {
-                    return lineToNameToNaptan.get(metroLineName).get(stationName);
+            case "Paddington":
+                // Paddington is a bit of a mess. TFL StopPoints API returns that the Paddington stop on the Bakerloo
+                // line has NAPTAN 940GZZLUPAC, but the TFL Arrivals API gives arrivals at NAPTAN 940GZZLUPAH.
+                // See this thread: https://techforum.tfl.gov.uk/t/confused-by-tube-arrivals-at-paddington/1498/19
+                if (metroLineName.equals("bakerloo")) {
+                    return "940GZZLUPAH";
                 }
+                break; // Else exit switch and do default.
+            case "Neasden":
+                // TFL stop data does not give Neasden as a stop, but arrival data has Neasden not infrequently. Easiest to add a stop.
+                if (metroLineName.equals("metropolitan")) {
+                    return lineToNameToNaptan.get("jubilee").get("Neasden");
+                }
+                break; // Else exit switch and do default.
+        }
+
+        if (!lineToNameToNaptan.containsKey(metroLineName)
+                || !lineToNameToNaptan.get(metroLineName).containsKey(stationName)) {
+            throw new NoSuchElementException(String.format("No NAPTAN entry for %s on line %s.", stationName, metroLineName));
+        } else {
+            return lineToNameToNaptan.get(metroLineName).get(stationName);
         }
     }
 
