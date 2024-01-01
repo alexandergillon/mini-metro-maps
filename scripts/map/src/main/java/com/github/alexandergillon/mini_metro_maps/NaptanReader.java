@@ -44,14 +44,20 @@ public class NaptanReader {
                 if (metroLineName.equals("bakerloo")) {
                     return "940GZZLUPAH";
                 }
-                // Else fall through to default case.
-            default:
-                if (!lineToNameToNaptan.containsKey(metroLineName)
-                        || !lineToNameToNaptan.get(metroLineName).containsKey(stationName)) {
-                    throw new NoSuchElementException(String.format("No NAPTAN entry for %s on line %s.", stationName, metroLineName));
-                } else {
-                    return lineToNameToNaptan.get(metroLineName).get(stationName);
+                break; // Else exit switch and do default.
+            case "Neasden":
+                // TFL stop data does not give Neasden as a stop, but arrival data has Neasden not infrequently. Easiest to add a stop.
+                if (metroLineName.equals("metropolitan")) {
+                    return lineToNameToNaptan.get("jubilee").get("Neasden");
                 }
+                break; // Else exit switch and do default.
+        }
+
+        if (!lineToNameToNaptan.containsKey(metroLineName)
+                || !lineToNameToNaptan.get(metroLineName).containsKey(stationName)) {
+            throw new NoSuchElementException(String.format("No NAPTAN entry for %s on line %s.", stationName, metroLineName));
+        } else {
+            return lineToNameToNaptan.get(metroLineName).get(stationName);
         }
     }
 

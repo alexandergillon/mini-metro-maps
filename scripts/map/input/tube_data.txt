@@ -456,6 +456,8 @@ line metropolitan:
   station "Liverpool Street" 2514 1399
   station "Moorgate" 2444 1400
   station "Moor Park" 963 616
+  # TFL stop data does not give Neasden as a stop, but arrival data has Neasden not infrequently. Easiest to add a stop.
+  station "Neasden" 1529 883 
   station "North Harrow" 1112 764
   station "Northwick Park" 1308 828
   station "Northwood" 1001 654
@@ -475,7 +477,7 @@ line metropolitan:
   edges "Chesham, Chalfont & Latimer"
   edges "Amersham, Chalfont & Latimer, Chorleywood, Rickmansworth, Moor Park"
   edges "Watford, Croxley, Moor Park, Northwood, Northwood Hills, Pinner, North Harrow, Harrow-on-the-Hill"
-  edges "Uxbridge, Hillingdon, Ickenham, Ruislip, Ruislip Manor, Eastcote, Rayners Lane, West Harrow, Harrow-on-the-Hill, Northwick Park, Preston Road, Wembley Park, Willesden Green, Finchley Road, Baker Street, Great Portland Street, Euston Square, King's Cross St. Pancras, Farringdon, Barbican, Moorgate, Liverpool Street, Aldgate"
+  edges "Uxbridge, Hillingdon, Ickenham, Ruislip, Ruislip Manor, Eastcote, Rayners Lane, West Harrow, Harrow-on-the-Hill, Northwick Park, Preston Road, Wembley Park, Neasden, Willesden Green, Finchley Road, Baker Street, Great Portland Street, Euston Square, King's Cross St. Pancras, Farringdon, Barbican, Moorgate, Liverpool Street, Aldgate"
 
   curve "Chesham, Chalfont & Latimer" down-right,right
   curve "Chalfont & Latimer, Chorleywood" right,down-right
@@ -499,7 +501,7 @@ line metropolitan:
   horizontal "Uxbridge, Hillingdon, Ickenham, Ruislip"
   down-right "Ruislip Manor, Eastcote, Rayners Lane"
   horizontal "West Harrow, Harrow-on-the-Hill, Northwick Park, Preston Road"
-  down-right "Wembley Park, Willesden Green, Finchley Road, Baker Street"
+  down-right "Wembley Park, Neasden, Willesden Green, Finchley Road, Baker Street"
   horizontal "Great Portland Street, Euston Square, King's Cross St. Pancras"
   down-right "Farringdon, Barbican"
   horizontal "Moorgate, Liverpool Street"
@@ -850,7 +852,7 @@ multi-line:
   same-station central above-left jubilee "Stratford"
 
   # metropolitan
-  same-station metropolitan below-left jubilee "Wembley Park, Willesden Green, Finchley Road"
+  same-station metropolitan below-left jubilee "Wembley Park, Neasden, Willesden Green, Finchley Road"
   same-station metropolitan exact circle "Baker Street"
   same-station metropolitan below circle "Great Portland Street, Euston Square, King's Cross St. Pancras"
   same-station metropolitan below-left circle "Farringdon, Barbican"
