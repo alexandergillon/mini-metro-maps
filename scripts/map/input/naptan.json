@@ -1,1538 +1,1922 @@
 [
   {
     "name": "Baker Street",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUBST"
   },
   {
     "name": "Charing Cross",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUCHX"
   },
   {
     "name": "Elephant & Castle",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUEAC"
   },
   {
     "name": "Embankment",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUEMB"
   },
   {
     "name": "Edgware Road (Bakerloo)",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUERB"
   },
   {
     "name": "Harrow & Wealdstone",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUHAW"
   },
   {
     "name": "Harlesden",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUHSN"
   },
   {
     "name": "Kenton",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUKEN"
   },
   {
     "name": "Kilburn Park",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUKPK"
   },
   {
     "name": "Kensal Green",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUKSL"
   },
   {
     "name": "Lambeth North",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLULBN"
   },
   {
     "name": "Maida Vale",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUMVL"
   },
   {
     "name": "Marylebone",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUMYB"
   },
   {
     "name": "North Wembley",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUNWY"
   },
   {
     "name": "Oxford Circus",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUOXC"
   },
   {
     "name": "Paddington",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUPAC"
   },
   {
     "name": "Piccadilly Circus",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUPCC"
   },
   {
     "name": "Queen's Park",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUQPS"
   },
   {
     "name": "Regent's Park",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLURGP"
   },
   {
     "name": "Stonebridge Park",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUSGP"
   },
   {
     "name": "South Kenton",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUSKT"
   },
   {
     "name": "Willesden Junction",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUWJN"
   },
   {
     "name": "Warwick Avenue",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUWKA"
   },
   {
     "name": "Waterloo",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUWLO"
   },
   {
     "name": "Wembley Central",
+    "metroLine": "bakerloo",
     "naptanId": "940GZZLUWYC"
   },
   {
     "name": "Barkingside",
+    "metroLine": "central",
     "naptanId": "940GZZLUBKE"
   },
   {
     "name": "Buckhurst Hill",
+    "metroLine": "central",
     "naptanId": "940GZZLUBKH"
   },
   {
     "name": "Bethnal Green",
+    "metroLine": "central",
     "naptanId": "940GZZLUBLG"
   },
   {
     "name": "Bond Street",
+    "metroLine": "central",
     "naptanId": "940GZZLUBND"
   },
   {
     "name": "Bank",
+    "metroLine": "central",
     "naptanId": "940GZZLUBNK"
   },
   {
     "name": "Chancery Lane",
+    "metroLine": "central",
     "naptanId": "940GZZLUCHL"
   },
   {
     "name": "Chigwell",
+    "metroLine": "central",
     "naptanId": "940GZZLUCWL"
   },
   {
     "name": "Debden",
+    "metroLine": "central",
     "naptanId": "940GZZLUDBN"
   },
   {
     "name": "East Acton",
+    "metroLine": "central",
     "naptanId": "940GZZLUEAN"
   },
   {
     "name": "Ealing Broadway",
+    "metroLine": "central",
     "naptanId": "940GZZLUEBY"
   },
   {
     "name": "Epping",
+    "metroLine": "central",
     "naptanId": "940GZZLUEPG"
   },
   {
     "name": "Fairlop",
+    "metroLine": "central",
     "naptanId": "940GZZLUFLP"
   },
   {
     "name": "Greenford",
+    "metroLine": "central",
     "naptanId": "940GZZLUGFD"
   },
   {
     "name": "Grange Hill",
+    "metroLine": "central",
     "naptanId": "940GZZLUGGH"
   },
   {
     "name": "Gants Hill",
+    "metroLine": "central",
     "naptanId": "940GZZLUGTH"
   },
   {
     "name": "Holborn",
+    "metroLine": "central",
     "naptanId": "940GZZLUHBN"
   },
   {
     "name": "Hanger Lane",
+    "metroLine": "central",
     "naptanId": "940GZZLUHGR"
   },
   {
     "name": "Hainault",
+    "metroLine": "central",
     "naptanId": "940GZZLUHLT"
   },
   {
     "name": "Holland Park",
+    "metroLine": "central",
     "naptanId": "940GZZLUHPK"
   },
   {
     "name": "Loughton",
+    "metroLine": "central",
     "naptanId": "940GZZLULGN"
   },
   {
     "name": "Lancaster Gate",
+    "metroLine": "central",
     "naptanId": "940GZZLULGT"
   },
   {
     "name": "Liverpool Street",
+    "metroLine": "central",
     "naptanId": "940GZZLULVT"
   },
   {
     "name": "Leyton",
+    "metroLine": "central",
     "naptanId": "940GZZLULYN"
   },
   {
     "name": "Leytonstone",
+    "metroLine": "central",
     "naptanId": "940GZZLULYS"
   },
   {
     "name": "Marble Arch",
+    "metroLine": "central",
     "naptanId": "940GZZLUMBA"
   },
   {
     "name": "Mile End",
+    "metroLine": "central",
     "naptanId": "940GZZLUMED"
   },
   {
     "name": "North Acton",
+    "metroLine": "central",
     "naptanId": "940GZZLUNAN"
   },
   {
     "name": "Newbury Park",
+    "metroLine": "central",
     "naptanId": "940GZZLUNBP"
   },
   {
     "name": "Notting Hill Gate",
+    "metroLine": "central",
     "naptanId": "940GZZLUNHG"
   },
   {
     "name": "Northolt",
+    "metroLine": "central",
     "naptanId": "940GZZLUNHT"
   },
   {
     "name": "Oxford Circus",
+    "metroLine": "central",
     "naptanId": "940GZZLUOXC"
   },
   {
     "name": "Perivale",
+    "metroLine": "central",
     "naptanId": "940GZZLUPVL"
   },
   {
     "name": "Queensway",
+    "metroLine": "central",
     "naptanId": "940GZZLUQWY"
   },
   {
     "name": "Redbridge",
+    "metroLine": "central",
     "naptanId": "940GZZLURBG"
   },
   {
     "name": "Ruislip Gardens",
+    "metroLine": "central",
     "naptanId": "940GZZLURSG"
   },
   {
     "name": "Roding Valley",
+    "metroLine": "central",
     "naptanId": "940GZZLURVY"
   },
   {
     "name": "Shepherd's Bush (Central)",
+    "metroLine": "central",
     "naptanId": "940GZZLUSBC"
   },
   {
     "name": "Snaresbrook",
+    "metroLine": "central",
     "naptanId": "940GZZLUSNB"
   },
   {
     "name": "St. Paul's",
+    "metroLine": "central",
     "naptanId": "940GZZLUSPU"
   },
   {
     "name": "South Ruislip",
+    "metroLine": "central",
     "naptanId": "940GZZLUSRP"
   },
   {
     "name": "Stratford",
+    "metroLine": "central",
     "naptanId": "940GZZLUSTD"
   },
   {
     "name": "South Woodford",
+    "metroLine": "central",
     "naptanId": "940GZZLUSWF"
   },
   {
     "name": "Tottenham Court Road",
+    "metroLine": "central",
     "naptanId": "940GZZLUTCR"
   },
   {
     "name": "Theydon Bois",
+    "metroLine": "central",
     "naptanId": "940GZZLUTHB"
   },
   {
     "name": "White City",
+    "metroLine": "central",
     "naptanId": "940GZZLUWCY"
   },
   {
     "name": "Woodford",
+    "metroLine": "central",
     "naptanId": "940GZZLUWOF"
   },
   {
     "name": "West Ruislip",
+    "metroLine": "central",
     "naptanId": "940GZZLUWRP"
   },
   {
     "name": "Wanstead",
+    "metroLine": "central",
     "naptanId": "940GZZLUWSD"
   },
   {
     "name": "West Acton",
+    "metroLine": "central",
     "naptanId": "940GZZLUWTA"
   },
   {
     "name": "Aldgate",
+    "metroLine": "circle",
     "naptanId": "940GZZLUALD"
   },
   {
     "name": "Barbican",
+    "metroLine": "circle",
     "naptanId": "940GZZLUBBN"
   },
   {
     "name": "Blackfriars",
+    "metroLine": "circle",
     "naptanId": "940GZZLUBKF"
   },
   {
     "name": "Baker Street",
+    "metroLine": "circle",
     "naptanId": "940GZZLUBST"
   },
   {
     "name": "Bayswater",
+    "metroLine": "circle",
     "naptanId": "940GZZLUBWT"
   },
   {
     "name": "Cannon Street",
+    "metroLine": "circle",
     "naptanId": "940GZZLUCST"
   },
   {
     "name": "Embankment",
+    "metroLine": "circle",
     "naptanId": "940GZZLUEMB"
   },
   {
     "name": "Edgware Road (Circle Line)",
+    "metroLine": "circle",
     "naptanId": "940GZZLUERC"
   },
   {
     "name": "Euston Square",
+    "metroLine": "circle",
     "naptanId": "940GZZLUESQ"
   },
   {
     "name": "Farringdon",
+    "metroLine": "circle",
     "naptanId": "940GZZLUFCN"
   },
   {
     "name": "Goldhawk Road",
+    "metroLine": "circle",
     "naptanId": "940GZZLUGHK"
   },
   {
     "name": "Great Portland Street",
+    "metroLine": "circle",
     "naptanId": "940GZZLUGPS"
   },
   {
     "name": "Gloucester Road",
+    "metroLine": "circle",
     "naptanId": "940GZZLUGTR"
   },
   {
     "name": "Hammersmith (H&C Line)",
+    "metroLine": "circle",
     "naptanId": "940GZZLUHSC"
   },
   {
     "name": "High Street Kensington",
+    "metroLine": "circle",
     "naptanId": "940GZZLUHSK"
   },
   {
     "name": "King's Cross St. Pancras",
+    "metroLine": "circle",
     "naptanId": "940GZZLUKSX"
   },
   {
     "name": "Ladbroke Grove",
+    "metroLine": "circle",
     "naptanId": "940GZZLULAD"
   },
   {
     "name": "Latimer Road",
+    "metroLine": "circle",
     "naptanId": "940GZZLULRD"
   },
   {
     "name": "Liverpool Street",
+    "metroLine": "circle",
     "naptanId": "940GZZLULVT"
   },
   {
     "name": "Moorgate",
+    "metroLine": "circle",
     "naptanId": "940GZZLUMGT"
   },
   {
     "name": "Monument",
+    "metroLine": "circle",
     "naptanId": "940GZZLUMMT"
   },
   {
     "name": "Mansion House",
+    "metroLine": "circle",
     "naptanId": "940GZZLUMSH"
   },
   {
     "name": "Notting Hill Gate",
+    "metroLine": "circle",
     "naptanId": "940GZZLUNHG"
   },
   {
     "name": "Paddington",
+    "metroLine": "circle",
     "naptanId": "940GZZLUPAC"
   },
   {
     "name": "Paddington (H&C Line)-Underground",
+    "metroLine": "circle",
     "naptanId": "940GZZLUPAH"
   },
   {
     "name": "Royal Oak",
+    "metroLine": "circle",
     "naptanId": "940GZZLURYO"
   },
   {
     "name": "Shepherd's Bush Market",
+    "metroLine": "circle",
     "naptanId": "940GZZLUSBM"
   },
   {
     "name": "St. James's Park",
+    "metroLine": "circle",
     "naptanId": "940GZZLUSJP"
   },
   {
     "name": "South Kensington",
+    "metroLine": "circle",
     "naptanId": "940GZZLUSKS"
   },
   {
     "name": "Sloane Square",
+    "metroLine": "circle",
     "naptanId": "940GZZLUSSQ"
   },
   {
     "name": "Temple",
+    "metroLine": "circle",
     "naptanId": "940GZZLUTMP"
   },
   {
     "name": "Tower Hill",
+    "metroLine": "circle",
     "naptanId": "940GZZLUTWH"
   },
   {
     "name": "Victoria",
+    "metroLine": "circle",
     "naptanId": "940GZZLUVIC"
   },
   {
     "name": "Wood Lane",
+    "metroLine": "circle",
     "naptanId": "940GZZLUWLA"
   },
   {
     "name": "Westminster",
+    "metroLine": "circle",
     "naptanId": "940GZZLUWSM"
   },
   {
     "name": "Westbourne Park",
+    "metroLine": "circle",
     "naptanId": "940GZZLUWSP"
   },
   {
     "name": "Acton Town",
+    "metroLine": "district",
     "naptanId": "940GZZLUACT"
   },
   {
     "name": "Aldgate East",
+    "metroLine": "district",
     "naptanId": "940GZZLUADE"
   },
   {
     "name": "Bromley-by-Bow",
+    "metroLine": "district",
     "naptanId": "940GZZLUBBB"
   },
   {
     "name": "Becontree",
+    "metroLine": "district",
     "naptanId": "940GZZLUBEC"
   },
   {
     "name": "Blackfriars",
+    "metroLine": "district",
     "naptanId": "940GZZLUBKF"
   },
   {
     "name": "Barking",
+    "metroLine": "district",
     "naptanId": "940GZZLUBKG"
   },
   {
     "name": "Barons Court",
+    "metroLine": "district",
     "naptanId": "940GZZLUBSC"
   },
   {
     "name": "Bow Road",
+    "metroLine": "district",
     "naptanId": "940GZZLUBWR"
   },
   {
     "name": "Bayswater",
+    "metroLine": "district",
     "naptanId": "940GZZLUBWT"
   },
   {
     "name": "Cannon Street",
+    "metroLine": "district",
     "naptanId": "940GZZLUCST"
   },
   {
     "name": "Chiswick Park",
+    "metroLine": "district",
     "naptanId": "940GZZLUCWP"
   },
   {
     "name": "Dagenham East",
+    "metroLine": "district",
     "naptanId": "940GZZLUDGE"
   },
   {
     "name": "Dagenham Heathway",
+    "metroLine": "district",
     "naptanId": "940GZZLUDGY"
   },
   {
     "name": "Ealing Broadway",
+    "metroLine": "district",
     "naptanId": "940GZZLUEBY"
   },
   {
     "name": "Ealing Common",
+    "metroLine": "district",
     "naptanId": "940GZZLUECM"
   },
   {
     "name": "Earl's Court",
+    "metroLine": "district",
     "naptanId": "940GZZLUECT"
   },
   {
     "name": "East Ham",
+    "metroLine": "district",
     "naptanId": "940GZZLUEHM"
   },
   {
     "name": "Embankment",
+    "metroLine": "district",
     "naptanId": "940GZZLUEMB"
   },
   {
     "name": "Elm Park",
+    "metroLine": "district",
     "naptanId": "940GZZLUEPK"
   },
   {
     "name": "East Putney",
+    "metroLine": "district",
     "naptanId": "940GZZLUEPY"
   },
   {
     "name": "Edgware Road (Circle Line)",
+    "metroLine": "district",
     "naptanId": "940GZZLUERC"
   },
   {
     "name": "Fulham Broadway",
+    "metroLine": "district",
     "naptanId": "940GZZLUFBY"
   },
   {
     "name": "Gunnersbury",
+    "metroLine": "district",
     "naptanId": "940GZZLUGBY"
   },
   {
     "name": "Gloucester Road",
+    "metroLine": "district",
     "naptanId": "940GZZLUGTR"
   },
   {
     "name": "Hornchurch",
+    "metroLine": "district",
     "naptanId": "940GZZLUHCH"
   },
   {
     "name": "Hammersmith (Dist&Picc Line)",
+    "metroLine": "district",
     "naptanId": "940GZZLUHSD"
   },
   {
     "name": "High Street Kensington",
+    "metroLine": "district",
     "naptanId": "940GZZLUHSK"
   },
   {
     "name": "Kensington (Olympia)",
+    "metroLine": "district",
     "naptanId": "940GZZLUKOY"
   },
   {
     "name": "Kew Gardens",
+    "metroLine": "district",
     "naptanId": "940GZZLUKWG"
   },
   {
     "name": "Mile End",
+    "metroLine": "district",
     "naptanId": "940GZZLUMED"
   },
   {
     "name": "Monument",
+    "metroLine": "district",
     "naptanId": "940GZZLUMMT"
   },
   {
     "name": "Mansion House",
+    "metroLine": "district",
     "naptanId": "940GZZLUMSH"
   },
   {
     "name": "Notting Hill Gate",
+    "metroLine": "district",
     "naptanId": "940GZZLUNHG"
   },
   {
     "name": "Paddington",
+    "metroLine": "district",
     "naptanId": "940GZZLUPAC"
   },
   {
     "name": "Plaistow",
+    "metroLine": "district",
     "naptanId": "940GZZLUPLW"
   },
   {
     "name": "Parsons Green",
+    "metroLine": "district",
     "naptanId": "940GZZLUPSG"
   },
   {
     "name": "Putney Bridge",
+    "metroLine": "district",
     "naptanId": "940GZZLUPYB"
   },
   {
     "name": "Richmond",
+    "metroLine": "district",
     "naptanId": "940GZZLURMD"
   },
   {
     "name": "Ravenscourt Park",
+    "metroLine": "district",
     "naptanId": "940GZZLURVP"
   },
   {
     "name": "Stamford Brook",
+    "metroLine": "district",
     "naptanId": "940GZZLUSFB"
   },
   {
     "name": "Southfields",
+    "metroLine": "district",
     "naptanId": "940GZZLUSFS"
   },
   {
     "name": "Stepney Green",
+    "metroLine": "district",
     "naptanId": "940GZZLUSGN"
   },
   {
     "name": "St. James's Park",
+    "metroLine": "district",
     "naptanId": "940GZZLUSJP"
   },
   {
     "name": "South Kensington",
+    "metroLine": "district",
     "naptanId": "940GZZLUSKS"
   },
   {
     "name": "Sloane Square",
+    "metroLine": "district",
     "naptanId": "940GZZLUSSQ"
   },
   {
     "name": "Temple",
+    "metroLine": "district",
     "naptanId": "940GZZLUTMP"
   },
   {
     "name": "Turnham Green",
+    "metroLine": "district",
     "naptanId": "940GZZLUTNG"
   },
   {
     "name": "Tower Hill",
+    "metroLine": "district",
     "naptanId": "940GZZLUTWH"
   },
   {
     "name": "Upminster Bridge",
+    "metroLine": "district",
     "naptanId": "940GZZLUUPB"
   },
   {
     "name": "Upton Park",
+    "metroLine": "district",
     "naptanId": "940GZZLUUPK"
   },
   {
     "name": "Upminster",
+    "metroLine": "district",
     "naptanId": "940GZZLUUPM"
   },
   {
     "name": "Upney",
+    "metroLine": "district",
     "naptanId": "940GZZLUUPY"
   },
   {
     "name": "Victoria",
+    "metroLine": "district",
     "naptanId": "940GZZLUVIC"
   },
   {
     "name": "West Brompton",
+    "metroLine": "district",
     "naptanId": "940GZZLUWBN"
   },
   {
     "name": "West Ham",
+    "metroLine": "district",
     "naptanId": "940GZZLUWHM"
   },
   {
     "name": "Wimbledon",
+    "metroLine": "district",
     "naptanId": "940GZZLUWIM"
   },
   {
     "name": "Wimbledon Park",
+    "metroLine": "district",
     "naptanId": "940GZZLUWIP"
   },
   {
     "name": "West Kensington",
+    "metroLine": "district",
     "naptanId": "940GZZLUWKN"
   },
   {
     "name": "Whitechapel",
+    "metroLine": "district",
     "naptanId": "940GZZLUWPL"
   },
   {
     "name": "Westminster",
+    "metroLine": "district",
     "naptanId": "940GZZLUWSM"
   },
   {
     "name": "Aldgate East",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUADE"
   },
   {
     "name": "Bromley-by-Bow",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUBBB"
   },
   {
     "name": "Barbican",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUBBN"
   },
   {
     "name": "Barking",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUBKG"
   },
   {
     "name": "Baker Street",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUBST"
   },
   {
     "name": "Bow Road",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUBWR"
   },
   {
     "name": "East Ham",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUEHM"
   },
   {
     "name": "Edgware Road (Circle Line)",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUERC"
   },
   {
     "name": "Euston Square",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUESQ"
   },
   {
     "name": "Farringdon",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUFCN"
   },
   {
     "name": "Goldhawk Road",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUGHK"
   },
   {
     "name": "Great Portland Street",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUGPS"
   },
   {
     "name": "Hammersmith (H&C Line)",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUHSC"
   },
   {
     "name": "King's Cross St. Pancras",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUKSX"
   },
   {
     "name": "Ladbroke Grove",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLULAD"
   },
   {
     "name": "Latimer Road",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLULRD"
   },
   {
     "name": "Liverpool Street",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLULVT"
   },
   {
     "name": "Mile End",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUMED"
   },
   {
     "name": "Moorgate",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUMGT"
   },
   {
     "name": "Paddington (H&C Line)-Underground",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUPAH"
   },
   {
     "name": "Plaistow",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUPLW"
   },
   {
     "name": "Royal Oak",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLURYO"
   },
   {
     "name": "Shepherd's Bush Market",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUSBM"
   },
   {
     "name": "Stepney Green",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUSGN"
   },
   {
     "name": "Upton Park",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUUPK"
   },
   {
     "name": "West Ham",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUWHM"
   },
   {
     "name": "Wood Lane",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUWLA"
   },
   {
     "name": "Whitechapel",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUWPL"
   },
   {
     "name": "Westbourne Park",
+    "metroLine": "hammersmith-city",
     "naptanId": "940GZZLUWSP"
   },
   {
     "name": "Bermondsey",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUBMY"
   },
   {
     "name": "Bond Street",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUBND"
   },
   {
     "name": "Baker Street",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUBST"
   },
   {
     "name": "Canning Town",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUCGT"
   },
   {
     "name": "Canons Park",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUCPK"
   },
   {
     "name": "Canada Water",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUCWR"
   },
   {
     "name": "Canary Wharf",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUCYF"
   },
   {
     "name": "Dollis Hill",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUDOH"
   },
   {
     "name": "Finchley Road",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUFYR"
   },
   {
     "name": "Green Park",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUGPK"
   },
   {
     "name": "Kilburn",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUKBN"
   },
   {
     "name": "Kingsbury",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUKBY"
   },
   {
     "name": "London Bridge",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLULNB"
   },
   {
     "name": "Neasden",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUNDN"
   },
   {
     "name": "North Greenwich",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUNGW"
   },
   {
     "name": "Queensbury",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUQBY"
   },
   {
     "name": "St. John's Wood",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUSJW"
   },
   {
     "name": "Stratford",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUSTD"
   },
   {
     "name": "Stanmore",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUSTM"
   },
   {
     "name": "Swiss Cottage",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUSWC"
   },
   {
     "name": "Southwark",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUSWK"
   },
   {
     "name": "West Ham",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUWHM"
   },
   {
     "name": "West Hampstead",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUWHP"
   },
   {
     "name": "Willesden Green",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUWIG"
   },
   {
     "name": "Waterloo",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUWLO"
   },
   {
     "name": "Westminster",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUWSM"
   },
   {
     "name": "Wembley Park",
+    "metroLine": "jubilee",
     "naptanId": "940GZZLUWYP"
   },
   {
     "name": "Aldgate",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUALD"
   },
   {
     "name": "Amersham",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUAMS"
   },
   {
     "name": "Barbican",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUBBN"
   },
   {
     "name": "Baker Street",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUBST"
   },
   {
     "name": "Chalfont & Latimer",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUCAL"
   },
   {
     "name": "Chesham",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUCSM"
   },
   {
     "name": "Croxley",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUCXY"
   },
   {
     "name": "Chorleywood",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUCYD"
   },
   {
     "name": "Eastcote",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUEAE"
   },
   {
     "name": "Euston Square",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUESQ"
   },
   {
     "name": "Farringdon",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUFCN"
   },
   {
     "name": "Finchley Road",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUFYR"
   },
   {
     "name": "Great Portland Street",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUGPS"
   },
   {
     "name": "Hillingdon",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUHGD"
   },
   {
     "name": "Harrow-on-the-Hill",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUHOH"
   },
   {
     "name": "Ickenham",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUICK"
   },
   {
     "name": "King's Cross St. Pancras",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUKSX"
   },
   {
     "name": "Liverpool Street",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLULVT"
   },
   {
     "name": "Moorgate",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUMGT"
   },
   {
     "name": "Moor Park",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUMPK"
   },
   {
     "name": "North Harrow",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUNHA"
   },
   {
     "name": "Northwick Park",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUNKP"
   },
   {
     "name": "Northwood",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUNOW"
   },
   {
     "name": "Northwood Hills",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUNWH"
   },
   {
     "name": "Pinner",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUPNR"
   },
   {
     "name": "Preston Road",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUPRD"
   },
   {
     "name": "Rickmansworth",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLURKW"
   },
   {
     "name": "Ruislip Manor",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLURSM"
   },
   {
     "name": "Ruislip",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLURSP"
   },
   {
     "name": "Rayners Lane",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLURYL"
   },
   {
     "name": "Uxbridge",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUUXB"
   },
   {
     "name": "Watford",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUWAF"
   },
   {
     "name": "West Harrow",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUWHW"
   },
   {
     "name": "Willesden Green",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUWIG"
   },
   {
     "name": "Wembley Park",
+    "metroLine": "metropolitan",
     "naptanId": "940GZZLUWYP"
   },
   {
     "name": "Battersea Power Station",
+    "metroLine": "northern",
     "naptanId": "940GZZBPSUST"
   },
   {
     "name": "Archway",
+    "metroLine": "northern",
     "naptanId": "940GZZLUACY"
   },
   {
     "name": "Angel",
+    "metroLine": "northern",
     "naptanId": "940GZZLUAGL"
   },
   {
     "name": "Balham",
+    "metroLine": "northern",
     "naptanId": "940GZZLUBLM"
   },
   {
     "name": "Bank",
+    "metroLine": "northern",
     "naptanId": "940GZZLUBNK"
   },
   {
     "name": "Borough",
+    "metroLine": "northern",
     "naptanId": "940GZZLUBOR"
   },
   {
     "name": "Burnt Oak",
+    "metroLine": "northern",
     "naptanId": "940GZZLUBTK"
   },
   {
     "name": "Brent Cross",
+    "metroLine": "northern",
     "naptanId": "940GZZLUBTX"
   },
   {
     "name": "Belsize Park",
+    "metroLine": "northern",
     "naptanId": "940GZZLUBZP"
   },
   {
     "name": "Chalk Farm",
+    "metroLine": "northern",
     "naptanId": "940GZZLUCFM"
   },
   {
     "name": "Charing Cross",
+    "metroLine": "northern",
     "naptanId": "940GZZLUCHX"
   },
   {
     "name": "Colindale",
+    "metroLine": "northern",
     "naptanId": "940GZZLUCND"
   },
   {
     "name": "Clapham Common",
+    "metroLine": "northern",
     "naptanId": "940GZZLUCPC"
   },
   {
     "name": "Clapham North",
+    "metroLine": "northern",
     "naptanId": "940GZZLUCPN"
   },
   {
     "name": "Clapham South",
+    "metroLine": "northern",
     "naptanId": "940GZZLUCPS"
   },
   {
     "name": "Colliers Wood",
+    "metroLine": "northern",
     "naptanId": "940GZZLUCSD"
   },
   {
     "name": "Camden Town",
+    "metroLine": "northern",
     "naptanId": "940GZZLUCTN"
   },
   {
     "name": "Elephant & Castle",
+    "metroLine": "northern",
     "naptanId": "940GZZLUEAC"
   },
   {
     "name": "East Finchley",
+    "metroLine": "northern",
     "naptanId": "940GZZLUEFY"
   },
   {
     "name": "Edgware",
+    "metroLine": "northern",
     "naptanId": "940GZZLUEGW"
   },
   {
     "name": "Embankment",
+    "metroLine": "northern",
     "naptanId": "940GZZLUEMB"
   },
   {
     "name": "Euston",
+    "metroLine": "northern",
     "naptanId": "940GZZLUEUS"
   },
   {
     "name": "Finchley Central",
+    "metroLine": "northern",
     "naptanId": "940GZZLUFYC"
   },
   {
     "name": "Goodge Street",
+    "metroLine": "northern",
     "naptanId": "940GZZLUGDG"
   },
   {
     "name": "Golders Green",
+    "metroLine": "northern",
     "naptanId": "940GZZLUGGN"
   },
   {
     "name": "High Barnet",
+    "metroLine": "northern",
     "naptanId": "940GZZLUHBT"
   },
   {
     "name": "Hendon Central",
+    "metroLine": "northern",
     "naptanId": "940GZZLUHCL"
   },
   {
     "name": "Highgate",
+    "metroLine": "northern",
     "naptanId": "940GZZLUHGT"
   },
   {
     "name": "Hampstead",
+    "metroLine": "northern",
     "naptanId": "940GZZLUHTD"
   },
   {
     "name": "Kennington",
+    "metroLine": "northern",
     "naptanId": "940GZZLUKNG"
   },
   {
     "name": "Kentish Town",
+    "metroLine": "northern",
     "naptanId": "940GZZLUKSH"
   },
   {
     "name": "King's Cross St. Pancras",
+    "metroLine": "northern",
     "naptanId": "940GZZLUKSX"
   },
   {
     "name": "London Bridge",
+    "metroLine": "northern",
     "naptanId": "940GZZLULNB"
   },
   {
     "name": "Leicester Square",
+    "metroLine": "northern",
     "naptanId": "940GZZLULSQ"
   },
   {
     "name": "Morden",
+    "metroLine": "northern",
     "naptanId": "940GZZLUMDN"
   },
   {
     "name": "Moorgate",
+    "metroLine": "northern",
     "naptanId": "940GZZLUMGT"
   },
   {
     "name": "Mill Hill East",
+    "metroLine": "northern",
     "naptanId": "940GZZLUMHL"
   },
   {
     "name": "Mornington Crescent",
+    "metroLine": "northern",
     "naptanId": "940GZZLUMTC"
   },
   {
     "name": "Old Street",
+    "metroLine": "northern",
     "naptanId": "940GZZLUODS"
   },
   {
     "name": "Oval",
+    "metroLine": "northern",
     "naptanId": "940GZZLUOVL"
   },
   {
     "name": "Stockwell",
+    "metroLine": "northern",
     "naptanId": "940GZZLUSKW"
   },
   {
     "name": "South Wimbledon",
+    "metroLine": "northern",
     "naptanId": "940GZZLUSWN"
   },
   {
     "name": "Totteridge & Whetstone",
+    "metroLine": "northern",
     "naptanId": "940GZZLUTAW"
   },
   {
     "name": "Tooting Bec",
+    "metroLine": "northern",
     "naptanId": "940GZZLUTBC"
   },
   {
     "name": "Tooting Broadway",
+    "metroLine": "northern",
     "naptanId": "940GZZLUTBY"
   },
   {
     "name": "Tottenham Court Road",
+    "metroLine": "northern",
     "naptanId": "940GZZLUTCR"
   },
   {
     "name": "Tufnell Park",
+    "metroLine": "northern",
     "naptanId": "940GZZLUTFP"
   },
   {
     "name": "West Finchley",
+    "metroLine": "northern",
     "naptanId": "940GZZLUWFN"
   },
   {
     "name": "Waterloo",
+    "metroLine": "northern",
     "naptanId": "940GZZLUWLO"
   },
   {
     "name": "Woodside Park",
+    "metroLine": "northern",
     "naptanId": "940GZZLUWOP"
   },
   {
     "name": "Warren Street",
+    "metroLine": "northern",
     "naptanId": "940GZZLUWRR"
   },
   {
     "name": "Nine Elms",
+    "metroLine": "northern",
     "naptanId": "940GZZNEUGST"
   },
   {
     "name": "Acton Town",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUACT"
   },
   {
     "name": "Alperton",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUALP"
   },
   {
     "name": "Arnos Grove",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUASG"
   },
   {
     "name": "Arsenal",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUASL"
   },
   {
     "name": "Bounds Green",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUBDS"
   },
   {
     "name": "Boston Manor",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUBOS"
   },
   {
     "name": "Barons Court",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUBSC"
   },
   {
     "name": "Caledonian Road",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUCAR"
   },
   {
     "name": "Covent Garden",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUCGN"
   },
   {
     "name": "Cockfosters",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUCKS"
   },
   {
     "name": "Eastcote",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUEAE"
   },
   {
     "name": "Ealing Common",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUECM"
   },
   {
     "name": "Earl's Court",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUECT"
   },
   {
     "name": "Finsbury Park",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUFPK"
   },
   {
     "name": "Green Park",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUGPK"
   },
   {
     "name": "Gloucester Road",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUGTR"
   },
   {
     "name": "Holborn",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUHBN"
   },
   {
     "name": "Hillingdon",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUHGD"
   },
   {
     "name": "Hatton Cross",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUHNX"
   },
   {
     "name": "Hyde Park Corner",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUHPC"
   },
   {
     "name": "Heathrow Terminal 4",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUHR4"
   },
   {
     "name": "Heathrow Terminal 5",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUHR5"
   },
   {
     "name": "Heathrow Terminals 2 & 3",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUHRC"
   },
   {
     "name": "Hammersmith (Dist&Picc Line)",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUHSD"
   },
   {
     "name": "Hounslow Central",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUHWC"
   },
   {
     "name": "Hounslow East",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUHWE"
   },
   {
     "name": "Hounslow West",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUHWT"
   },
   {
     "name": "Holloway Road",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUHWY"
   },
   {
     "name": "Ickenham",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUICK"
   },
   {
     "name": "Knightsbridge",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUKNB"
   },
   {
     "name": "King's Cross St. Pancras",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUKSX"
   },
   {
     "name": "Leicester Square",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLULSQ"
   },
   {
     "name": "Manor House",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUMRH"
   },
   {
     "name": "North Ealing",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUNEN"
   },
   {
     "name": "Northfields",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUNFD"
   },
   {
     "name": "Oakwood",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUOAK"
   },
   {
     "name": "Osterley",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUOSY"
   },
   {
     "name": "Piccadilly Circus",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUPCC"
   },
   {
     "name": "Park Royal",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUPKR"
   },
   {
     "name": "Ruislip Manor",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLURSM"
   },
   {
     "name": "Ruislip",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLURSP"
   },
   {
     "name": "Russell Square",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLURSQ"
   },
   {
     "name": "Rayners Lane",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLURYL"
   },
   {
     "name": "South Ealing",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUSEA"
   },
   {
     "name": "Southgate",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUSGT"
   },
   {
     "name": "South Harrow",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUSHH"
   },
   {
     "name": "South Kensington",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUSKS"
   },
   {
     "name": "Sudbury Hill",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUSUH"
   },
   {
     "name": "Sudbury Town",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUSUT"
   },
   {
     "name": "Turnham Green",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUTNG"
   },
   {
     "name": "Turnpike Lane",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUTPN"
   },
   {
     "name": "Uxbridge",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUUXB"
   },
   {
     "name": "Wood Green",
+    "metroLine": "piccadilly",
     "naptanId": "940GZZLUWOG"
   },
   {
     "name": "Blackhorse Road",
+    "metroLine": "victoria",
     "naptanId": "940GZZLUBLR"
   },
   {
     "name": "Brixton",
+    "metroLine": "victoria",
     "naptanId": "940GZZLUBXN"
   },
   {
     "name": "Euston",
+    "metroLine": "victoria",
     "naptanId": "940GZZLUEUS"
   },
   {
     "name": "Finsbury Park",
+    "metroLine": "victoria",
     "naptanId": "940GZZLUFPK"
   },
   {
     "name": "Green Park",
+    "metroLine": "victoria",
     "naptanId": "940GZZLUGPK"
   },
   {
     "name": "Highbury & Islington",
+    "metroLine": "victoria",
     "naptanId": "940GZZLUHAI"
   },
   {
     "name": "King's Cross St. Pancras",
+    "metroLine": "victoria",
     "naptanId": "940GZZLUKSX"
   },
   {
     "name": "Oxford Circus",
+    "metroLine": "victoria",
     "naptanId": "940GZZLUOXC"
   },
   {
     "name": "Pimlico",
+    "metroLine": "victoria",
     "naptanId": "940GZZLUPCO"
   },
   {
     "name": "Stockwell",
+    "metroLine": "victoria",
     "naptanId": "940GZZLUSKW"
   },
   {
     "name": "Seven Sisters",
+    "metroLine": "victoria",
     "naptanId": "940GZZLUSVS"
   },
   {
     "name": "Tottenham Hale",
+    "metroLine": "victoria",
     "naptanId": "940GZZLUTMH"
   },
   {
     "name": "Victoria",
+    "metroLine": "victoria",
     "naptanId": "940GZZLUVIC"
   },
   {
     "name": "Vauxhall",
+    "metroLine": "victoria",
     "naptanId": "940GZZLUVXL"
   },
   {
     "name": "Warren Street",
+    "metroLine": "victoria",
     "naptanId": "940GZZLUWRR"
   },
   {
     "name": "Walthamstow Central",
+    "metroLine": "victoria",
     "naptanId": "940GZZLUWWL"
   },
   {
     "name": "Bank",
+    "metroLine": "waterloo-city",
     "naptanId": "940GZZLUBNK"
   },
   {
     "name": "Waterloo",
+    "metroLine": "waterloo-city",
     "naptanId": "940GZZLUWLO"
   }
 ]

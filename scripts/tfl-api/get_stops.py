@@ -54,6 +54,7 @@ def get_stops_for_line(line):
 
         json_dict = dict()
         json_dict["name"] = name
+        json_dict["metroLine"] = line
         json_dict["naptanId"] = stop["naptanId"]
         json_array.append(json_dict)
 

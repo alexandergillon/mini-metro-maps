@@ -11,8 +11,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NaptanEntry {
+
     /** Name of the station. */
     private String name;
+
+    /** Name of the station's metro line. */
+    private String metroLine;
 
     /** NAPTAN ID of that station. */
     private String naptanId;

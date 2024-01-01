@@ -132,7 +132,8 @@ public class Parser {
         }
 
         // todo: maybe move ampl id out here
-        String naptan = isAlignmentPoint ? "alignmentpoint_" + stationName : naptanReader.getNaptan(stationName);
+        String naptan = isAlignmentPoint ? "alignmentpoint_" + stationName
+                : naptanReader.getNaptan(currentMetroLine.getName(), stationName);
         Station station = new Station(currentMetroLine.getName(), stationName, naptan, x, y, isAlignmentPoint);
         currentMetroLine.addStation(station);
     }
