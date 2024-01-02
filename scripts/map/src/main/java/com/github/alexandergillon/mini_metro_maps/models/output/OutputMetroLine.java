@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.Map;
 
 /** Class for a metro line in the output file, for writing with Jackson. */
 @Getter
@@ -16,6 +15,9 @@ import java.util.Map;
 @AllArgsConstructor
 public class OutputMetroLine {
 
+    /** Name of the metro line. */
+    private String name;
+
     /** Color of this line, as a hex string. E.g. #E1251B. */
     private String color;
 
@@ -23,8 +25,8 @@ public class OutputMetroLine {
     @JsonProperty("zIndex") // Needed due to Jackson internals - getter is getZIndex, which Jackson interprets as 'zindex' (not 'zIndex')
     private int zIndex;
 
-    /** Stations in the metro line, as a mapping from station ID --> OutputStation. */
-    private Map<String, OutputStation> stations;
+    /** Stations in the metro line. */
+    private List<OutputStation> stations;
 
     /** Edges in the metro line. */
     private List<OutputEdge> edges;

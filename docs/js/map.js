@@ -146,7 +146,7 @@ async function fetchDependencies() {
 
     await Promise.all([fetchMetroNetwork(jsonPath), fetchApiFunction(jsPath)]);
 
-    const metroLineNames = Object.getOwnPropertyNames(metroNetwork.metroLines)
+    const metroLineNames = Array.from(metroNetwork.metroLines, ([id, _]) => id);
     cityModule.setLines(metroLineNames);
 }
 

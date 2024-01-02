@@ -102,12 +102,12 @@ function drawEdge(edge, color) {
 function drawMetroLine(metroLine) {
     metroLine.edges.forEach(edge => drawEdge(edge, metroLine.color));
     metroLine.endpointLineSegments.forEach(lineSegment => drawLineSegment(lineSegment, metroLine.color));
-    Object.values(metroLine.stations).forEach(station => drawStation(station, metroLine.color));
+    metroLine.stations.forEach(station => drawStation(station, metroLine.color));
 }
 
 /** Draws all lines in the metro network. */
 function drawMetroLines() {
-    const metroLines = Object.values(metroNetwork.metroLines);
+    const metroLines = Array.from(metroNetwork.metroLines, ([_, metroLine]) => metroLine);
     metroLines.sort((line1, line2) => line1.zIndex - line2.zIndex);
     metroLines.forEach(line => drawMetroLine(line));
 }
