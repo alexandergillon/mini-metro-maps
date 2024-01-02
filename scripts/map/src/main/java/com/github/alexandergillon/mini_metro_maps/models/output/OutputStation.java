@@ -12,6 +12,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class OutputStation {
 
+    /** Unique identifier for the station. */
+    private String id;
+
     /** Name of the station. */
     private String name;
 

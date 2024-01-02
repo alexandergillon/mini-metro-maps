@@ -85,7 +85,8 @@ public class OutputWriter {
         int maxY = maxXAndY.getRight();
 
 
-        OutputNetwork outputNetwork = new OutputNetwork(GenerateMap.METRO_LINE_WIDTH, maxX, maxY, outputMetroLines);
+        OutputNetwork outputNetwork = new OutputNetwork(GenerateMap.METRO_LINE_WIDTH, maxX, maxY,
+                outputMetroLines.values().stream().toList());
 
         assert checkOutput(outputNetwork);
         System.out.println("Writing output file.");
@@ -122,16 +123,17 @@ public class OutputWriter {
         String color = nameToColor.get(name);
         int zIndex = metroLine.getZIndex();
 
-        HashMap<String, OutputStation> stations = new HashMap<>();
-        metroLine.getStations().values().stream()
+        List<OutputStation> stations = metroLine.getStations().values().stream()
                 .filter(station -> !station.isAlignmentPoint()) // Exclude alignment points from final output (comment out for debugging)
-                .forEach(station -> stations.put(station.getId(),
-                        new OutputStation(station.getName(), station.getSolvedX(), station.getSolvedY())));
+                .map(
+                    station -> new OutputStation(station.getId(), station.getName(),
+                                                 station.getSolvedX(), station.getSolvedY())
+                ).toList();
 
         List<OutputEdge> edges = buildOutputEdges(metroLine);
         List<OutputLineSegment> endpointSegments = metroLine.getEndpoints().stream().map(Endpoint::toLineSegment).toList();
 
-        return new OutputMetroLine(color, zIndex, stations, edges, endpointSegments);
+        return new OutputMetroLine(name, color, zIndex, stations, edges, endpointSegments);
     }
 
     /** Builds the output edges of a metro line. */
@@ -252,14 +254,17 @@ public class OutputWriter {
         assert !metroLine.getStations().isEmpty();
         assert !metroLine.getEdges().isEmpty();
 
+        HashMap<String, OutputStation> stations = new HashMap<>();
+        metroLine.getStations().forEach(station -> stations.put(station.getId(), station));
+
         // For each edge, checks that the segments in the edge all line up with each other.
         // I.e. that the end of one segment is the same as the beginning of the next segment.
         // Also that the segments at each end line up with the stations of the segment.
         for (OutputEdge edge : metroLine.getEdges()) {
             assert !edge.getLineSegments().isEmpty();
 
-            OutputStation station1 = metroLine.getStations().get(edge.getStation1Id());
-            OutputStation station2 = metroLine.getStations().get(edge.getStation2Id());
+            OutputStation station1 = stations.get(edge.getStation1Id());
+            OutputStation station2 = stations.get(edge.getStation2Id());
             var iterator = edge.getLineSegments().iterator();
 
             OutputLineSegment current = iterator.next();
@@ -298,15 +303,12 @@ public class OutputWriter {
         HashSet<Integer> zIndices = new HashSet<>();
         HashSet<String> stationIds = new HashSet<>();
         int numStations = 0;
-        for (var entry : network.getMetroLines().entrySet()) {
-            String metroLineName = entry.getKey();
-            OutputMetroLine metroLine = entry.getValue();
-
+        for (OutputMetroLine metroLine : network.getMetroLines()) {
             checkOutputLine(metroLine);
-            metroLineNames.add(metroLineName);
+            metroLineNames.add(metroLine.getName());
             zIndices.add(metroLine.getZIndex());
 
-            stationIds.addAll(metroLine.getStations().keySet());
+            stationIds.addAll(metroLine.getStations().stream().map(OutputStation::getId).toList());
             numStations += metroLine.getStations().size();
         }
 
