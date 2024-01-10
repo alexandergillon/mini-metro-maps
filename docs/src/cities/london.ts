@@ -1,13 +1,28 @@
 import { NextArrivalInfo } from "../trains.js";
 
-/** TFL API URL for train arrivals. See https://api.tfl.gov.uk/ for response format. */
-let apiUrl;
+/**
+ * TFL API URL for train arrivals. See https://api.tfl.gov.uk/ for full response format.
+ * The parts of the response that we want are defined via TflApiResponseItem and TflApiResponse
+ */
+let apiUrl: string;
+
+/** Interface for an item in the TFL API response, for TypeScript. */
+interface TflApiResponseItem {
+    vehicleId: string;
+    lineId: string;
+    naptanId: string;
+    platformName: string;
+    timeToStation: number;
+}
+
+/** Type for the TFL API response, for TypeScript. */
+type TflApiResponse = TflApiResponseItem[];
 
 /**
  * Sets the metro lines which arrivals should be fetched for.
  * @param metroLines Names of the metro lines, as an array of strings.
  */
-function setLines(metroLines) {
+function setLines(metroLines: string[]) {
     // See https://api.tfl.gov.uk/ for URL format.
     apiUrl = `https://api.tfl.gov.uk/line/${metroLines.join(",")}/arrivals`;
 }
@@ -15,9 +30,9 @@ function setLines(metroLines) {
 /**
  * Gets the next arrival for all trains on lines previously specified by setLines().
  * Each train has only 1 NextArrivalInfo in the return value.
- * @returns {Array<NextArrivalInfo>} The next arrival of each train on the previously configured lines.
+ * @returns The next arrival of each train on the previously configured lines.
  */
-async function getData() {
+async function getData(): Promise<Array<NextArrivalInfo>> {
     // todo: error handling
     console.log("getData"); // todo: remove
     const response = await fetch(apiUrl);
@@ -29,9 +44,9 @@ async function getData() {
  * Strips arrival data down to what we care about. Only keeps the closest arrival for each train, and only information
  * about the arrival that we care about (train ID, line, next station, time until station).
  * @param arrivals The arrival data returned from the TFL API call. See https://api.tfl.gov.uk/ for response format.
- * @returns {Array<NextArrivalInfo>} The next arrival of each train in the response data.
+ * @returns The next arrival of each train in the response data.
  */
-function stripData(arrivals) {
+function stripData(arrivals: TflApiResponse): NextArrivalInfo[] {
     const nearestArrival = new Map();
 
     arrivals.forEach(
@@ -61,7 +76,7 @@ function stripData(arrivals) {
  * @param arrivals All arrivals. Sometimes needed, for disambiguating Edgware Road arrivals.
  * @returns The NAPTAN for that arrival.
  */
-function getNaptan(arrival, arrivals) {
+function getNaptan(arrival: TflApiResponseItem, arrivals: TflApiResponse): string {
     if (arrival.naptanId === "940GZZLUEUS" && arrival.lineId === "northern") {
         return resolveEustonNaptan(arrival);
     } else if (arrival.naptanId === "940GZZLUERC" && arrival.lineId === "circle") {
@@ -81,7 +96,7 @@ function getNaptan(arrival, arrivals) {
  * @param arrival An arrival at Euston on the Northern line.
  * @returns A NAPTAN for that arrival (either Euston on the Charing Cross branch, or Euston on the Bank branch).
  */
-function resolveEustonNaptan(arrival) {
+function resolveEustonNaptan(arrival: TflApiResponseItem): "940GZZLUEUS_CC" | "940GZZLUEUS_B" {
     const platform = arrival.platformName;
     if (/platform 1/i.test(platform) || /platform 2/i.test(platform)) {
         return "940GZZLUEUS_CC";
@@ -127,7 +142,7 @@ const EDGWARE_ROAD_WESTBOUND_HC = new Set(["940GZZLUGPS", "940GZZLUESQ", "940GZZ
  * @param arrivals All arrivals. Needed to find the next destination of the train.
  * @returns A NAPTAN for that arrival (either Edgware Road which also serves H&C, or Edgware Road which also serves District).
  */
-function resolveEdgwareRoadNaptan(arrival, arrivals) {
+function resolveEdgwareRoadNaptan(arrival: TflApiResponseItem, arrivals: TflApiResponse): "940GZZLUERC_D" | "940GZZLUERC_HC" {
     const vehicleId = arrival.vehicleId;
     const timeToStation = arrival.timeToStation
 

@@ -1,5 +1,8 @@
 import { NextArrivalInfo } from "../trains.js";
-/** TFL API URL for train arrivals. See https://api.tfl.gov.uk/ for response format. */
+/**
+ * TFL API URL for train arrivals. See https://api.tfl.gov.uk/ for full response format.
+ * The parts of the response that we want are defined via TflApiResponseItem and TflApiResponse
+ */
 let apiUrl;
 /**
  * Sets the metro lines which arrivals should be fetched for.
@@ -12,7 +15,7 @@ function setLines(metroLines) {
 /**
  * Gets the next arrival for all trains on lines previously specified by setLines().
  * Each train has only 1 NextArrivalInfo in the return value.
- * @returns {Array<NextArrivalInfo>} The next arrival of each train on the previously configured lines.
+ * @returns The next arrival of each train on the previously configured lines.
  */
 async function getData() {
     // todo: error handling
@@ -25,7 +28,7 @@ async function getData() {
  * Strips arrival data down to what we care about. Only keeps the closest arrival for each train, and only information
  * about the arrival that we care about (train ID, line, next station, time until station).
  * @param arrivals The arrival data returned from the TFL API call. See https://api.tfl.gov.uk/ for response format.
- * @returns {Array<NextArrivalInfo>} The next arrival of each train in the response data.
+ * @returns The next arrival of each train in the response data.
  */
 function stripData(arrivals) {
     const nearestArrival = new Map();
