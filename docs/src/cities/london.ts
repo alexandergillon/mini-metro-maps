@@ -1,11 +1,5 @@
 import { NextArrivalInfo } from "../trains.js";
 
-/**
- * TFL API URL for train arrivals. See https://api.tfl.gov.uk/ for full response format.
- * The parts of the response that we want are defined via TflApiResponseItem and TflApiResponse
- */
-let apiUrl: string;
-
 /** Interface for an item in the TFL API response, for TypeScript. */
 interface TflApiResponseItem {
     vehicleId: string;
@@ -17,6 +11,12 @@ interface TflApiResponseItem {
 
 /** Type for the TFL API response, for TypeScript. */
 type TflApiResponse = TflApiResponseItem[];
+
+/**
+ * TFL API URL for train arrivals. See https://api.tfl.gov.uk/ for full response format.
+ * The parts of the response that we want are defined via TflApiResponseItem and TflApiResponse
+ */
+let apiUrl: string;
 
 /**
  * Sets the metro lines which arrivals should be fetched for.
