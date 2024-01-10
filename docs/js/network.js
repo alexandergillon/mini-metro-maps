@@ -1,21 +1,9 @@
 import { Bezier } from "./lib/bezierjs/bezier.js";
-/**
- * The metro network. This object is populated by map.js via setMetroNetwork.
- * @type {MetroNetwork}
- */
+/** The metro network. This object is populated by map.js via setMetroNetwork. */
 let metroNetwork;
 /** Constructs the MetroNetwork with the supplied JSON. */
 function setMetroNetwork(json) {
     metroNetwork = new MetroNetwork(json);
-}
-/** Format of a station in input JSON. This class isn't used - only for type hinting. */
-class Station {
-    constructor() {
-        this.id = "";
-        this.name = "";
-        this.x = -1;
-        this.y = -1;
-    }
 }
 /** Class for a metro line. */
 class MetroLine {
@@ -23,10 +11,6 @@ class MetroLine {
         this.name = json.name;
         this.color = json.color;
         this.zIndex = json.zIndex;
-        /**
-         * Mapping from station ID to Station.
-         * @type {Map<string, Station>}
-         */
         this.stations = new Map();
         json.stations.forEach(station => this.stations.set(station.id, station));
         this.edges = json.edges;
@@ -51,10 +35,6 @@ class MetroNetwork {
         this.maxY = json.maxY;
         this.width = this.maxX - this.minX;
         this.height = this.maxY - this.minY;
-        /**
-         * Mapping from metro line name to MetroLine.
-         * @type {Map<string, MetroLine>}
-         */
         this.metroLines = new Map();
         json.metroLines.forEach(metroLine => this.metroLines.set(metroLine.name, new MetroLine(metroLine)));
         this.edgeMapping = MetroNetwork.buildEdgeMapping(this.metroLines);
@@ -64,7 +44,7 @@ class MetroNetwork {
     static buildEdgeMapping(metroLines) {
         const edgeMapping = new Map();
         for (const lineName in metroLines) {
-            for (const edge of metroLines[lineName].edges) {
+            for (const edge of metroLines.get(lineName).edges) {
                 for (const [station, otherStation] of [[edge.station1Id, edge.station2Id],
                     [edge.station2Id, edge.station1Id]]) {
                     if (edgeMapping.get(station) === undefined) {
@@ -98,7 +78,7 @@ class MetroNetwork {
     /** Calculates and sets edge lengths for all metro lines. */
     static calculateEdgeLengths(metroLines) {
         for (const lineName in metroLines) {
-            for (const edge of metroLines[lineName].edges) {
+            for (const edge of metroLines.get(lineName).edges) {
                 MetroNetwork.calculateEdgeLength(edge);
             }
         }
