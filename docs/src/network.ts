@@ -186,4 +186,4 @@ class MetroNetwork {
 
 }
 
-export { metroNetwork, setMetroNetwork, MetroNetwork };
+export { metroNetwork, setMetroNetwork, StraightLineSegment, BezierLineSegment, LineSegment, Station, Edge, MetroLine, MetroNetwork };
