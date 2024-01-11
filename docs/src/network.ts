@@ -19,6 +19,7 @@ interface StraightLineSegment {
     p0: Point;
     p1: Point;
     straightLine: true;
+    length: number; // Not present on input JSON - added after.
 }
 
 /** Type of a Bezier line segment, for TypeScript. p0-p3 are cubic Bezier control points. */
@@ -28,6 +29,7 @@ interface BezierLineSegment {
     p2: Point;
     p3: Point;
     straightLine: false;
+    length: number; // Not present on input JSON - added after.
 }
 
 /** Type of a line segment, for TypeScript. */
@@ -138,8 +140,8 @@ class MetroNetwork {
     static buildEdgeMapping(metroLines: Map<string, MetroLine>): Map<string, Map<string, Edge>> {
         const edgeMapping: Map<string, Map<string, Edge>> = new Map();
 
-        for (const lineName in metroLines) {
-            for (const edge of metroLines.get(lineName)!.edges) {
+        for (const [_, metroLine] of metroLines.entries()) {
+            for (const edge of metroLine.edges) {
                 for (const [station, otherStation] of [[edge.station1Id, edge.station2Id],
                                                        [edge.station2Id, edge.station1Id]]) {
 
@@ -166,19 +168,18 @@ class MetroNetwork {
     static calculateEdgeLength(edge: Edge) {
         let edgeLength = 0;
         edge.lineSegments.forEach(lineSegment => {
-            if (lineSegment.straightLine) {
-                edgeLength += MetroNetwork.dist(lineSegment.p0, lineSegment.p1);
-            } else {
-                edgeLength += new Bezier(lineSegment.p0, lineSegment.p1, lineSegment.p2, lineSegment.p3).length();
-            }
+            const segmentLength = lineSegment.straightLine ? MetroNetwork.dist(lineSegment.p0, lineSegment.p1)
+                : new Bezier(lineSegment.p0, lineSegment.p1, lineSegment.p2, lineSegment.p3).length();
+            lineSegment.length = segmentLength;
+            edgeLength += segmentLength;
         });
         edge.length = edgeLength;
     }
 
     /** Calculates and sets edge lengths for all metro lines. */
     static calculateEdgeLengths(metroLines: Map<string, MetroLine>) {
-        for (const lineName in metroLines) {
-            for (const edge of metroLines.get(lineName)!.edges) {
+        for (const [_, metroLine] of metroLines) {
+            for (const edge of metroLine.edges) {
                 MetroNetwork.calculateEdgeLength(edge);
             }
         }
