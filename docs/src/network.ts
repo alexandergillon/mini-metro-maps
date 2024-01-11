@@ -55,8 +55,8 @@ interface JsonMetroLine {
 /** Type of a metro network in the input JSON that defines the network, for TypeScript. */
 interface JsonMetroNetwork {
     lineWidth: number;
-    minX: number | undefined;
-    minY: number | undefined;
+    minX?: number;
+    minY?: number;
     maxX: number;
     maxY: number;
     metroLines: JsonMetroLine[];
