@@ -64,7 +64,7 @@ function restoreBounds() {
 function pan(event) {
     const delta = event.point.subtract(event.downPoint);
     paper.view.translate(delta);
-    restoreBounds(maxPanningX, maxPanningY);
+    restoreBounds();
 }
 /**
  * Zooms the canvas in response to a mouse scroll event.
@@ -82,10 +82,10 @@ function zoom(event) {
         paper.view.scale(0.8);
     }
     updatePannableArea();
-    restoreBounds(maxPanningX, maxPanningY);
+    restoreBounds();
 }
 /** Resizes the canvas when the window is resized. */
-function resizeCanvas(event) {
+function resizeCanvas() {
     paper.view.viewSize = new paper.Size(window.innerWidth, window.innerHeight);
 }
 /**
