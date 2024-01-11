@@ -20,7 +20,7 @@ function setGetData(getDataIn) {
     getData = getDataIn;
 }
 /** Callback function to update train data. */
-async function updateTrains(event) {
+async function updateTrains() {
     // todo: implement
     console.log(await getData());
 }

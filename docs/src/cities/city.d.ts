@@ -15,4 +15,7 @@ declare module CityModule {
      * @returns The next arrival of each train on the previously configured lines.
      */
     export function getData(): Promise<Array<NextArrivalInfo>>
+
+    /** Type of getData(), for TypeScript annotations. */
+    export type GetDataFunction = typeof getData;
 }
