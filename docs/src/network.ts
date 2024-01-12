@@ -72,19 +72,6 @@ function setMetroNetwork(json: JsonMetroNetwork) {
     metroNetwork = new MetroNetwork(json);
 }
 
-/** POJO for a movement along a path to a point. finished is true if the entire path has been traversed. */
-class PathMovement {
-    x: number;
-    y: number;
-    finished: boolean;
-
-    constructor(x: number, y: number, finished: boolean) {
-        this.x = x;
-        this.y = y;
-        this.finished = finished;
-    }
-}
-
 /**
  * Class for a path between two stations. A path consists of multiple adjacent edges, and a position somewhere among
  * these edges. The position is determined by an edge index, a segment index, and a parameter value. For example,
@@ -162,35 +149,29 @@ class Path {
         this.length = edges.map(edge => edge.length).reduce((l1, l2) => l1 + l2);
     }
 
-    /**
-     * Samples a point at the current position in the Path. Returns a PathMovement with finished = false.
-     * If the path is finished, the endpoint of the path should be returned, rather than sampling a point.
-     */
-    samplePoint(): PathMovement {
+    /** Samples a point at the current position in the Path. Behavior is unspecified if edge/segment indices are out of bounds. */
+    samplePoint(): Point {
         const segment = this.edges[this.edgeIndex].lineSegments[this.segmentIndex];
         if (segment.straightLine) {
             // Linear interpolation of a straight line.
-            return new PathMovement(
-                segment.p0.x + this.parameterValue * (segment.p1.x - segment.p0.x),
-                segment.p0.y + this.parameterValue * (segment.p1.y - segment.p0.y),
-                false
-            );
+            return {
+                x: segment.p0.x + this.parameterValue * (segment.p1.x - segment.p0.x),
+                y: segment.p0.y + this.parameterValue * (segment.p1.y - segment.p0.y)
+            };
         } else {
             // Sampling Bezier curve at parameter t = this.parameterValue.
             const t = this.parameterValue;
-            return new PathMovement(
-                Math.pow(1-t, 3) * segment.p0.x
-                + 3 * Math.pow(1-t, 2) * t * segment.p1.x
-                + 3 * (1-t) * Math.pow(t, 2) * segment.p2.x
-                + Math.pow(t, 3) * segment.p3.x,
+            return {
+                x: Math.pow(1-t, 3) * segment.p0.x
+                    + 3 * Math.pow(1-t, 2) * t * segment.p1.x
+                    + 3 * (1-t) * Math.pow(t, 2) * segment.p2.x
+                    + Math.pow(t, 3) * segment.p3.x,
 
-                Math.pow(1-t, 3) * segment.p0.y
-                + 3 * Math.pow(1-t, 2) * t * segment.p1.y
-                + 3 * (1-t) * Math.pow(t, 2) * segment.p2.y
-                + Math.pow(t, 3) * segment.p3.y,
-
-                false
-            );
+                y: Math.pow(1-t, 3) * segment.p0.y
+                    + 3 * Math.pow(1-t, 2) * t * segment.p1.y
+                    + 3 * (1-t) * Math.pow(t, 2) * segment.p2.y
+                    + Math.pow(t, 3) * segment.p3.y
+            };
         }
     }
 
@@ -225,9 +206,9 @@ class Path {
      * Moves the position on this Path by a distance.
      * Todo: if this function becomes a bottleneck, consider caching segment and parameter value increment?
      * @param distance Distance to move along the path.
-     * @return The new position on this path.
+     * @return The new position on this path, or null if the end of the path has been reached.
      */
-    move(distance: number): PathMovement {
+    move(distance: number): Point | null {
         // Right now, this isn't exact for Bezier segments. TODO: change
         const segment = this.edges[this.edgeIndex].lineSegments[this.segmentIndex];
         const dParameterValue = distance / segment.length;
@@ -237,11 +218,8 @@ class Path {
             // We have advanced past the end of the current segment.
             const finished = this.advanceSegment();
             if (finished) {
-                // Path is finished - return the end of the path.
-                const lastEdge = this.edges[this.edges.length-1];
-                const lastSegment = lastEdge.lineSegments[lastEdge.lineSegments.length-1];
-                const endpoint = lastSegment.straightLine ? lastSegment.p1 : lastSegment.p3;
-                return new PathMovement(endpoint.x, endpoint.y, true);
+                // Path is finished - return null.
+                return null;
             } else {
                 // Path is not finished - move along the next segment by however much we moved past the end of the current segment.
                 const excess = (this.parameterValue - 1) * segment.length;
