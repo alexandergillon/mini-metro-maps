@@ -7,12 +7,12 @@ const TRAIN_LENGTH_SCALE_FACTOR = 3.5;
  * Creates a train and draws it on the canvas. Returns the created train for further manipulation.
  * @param x Center of the train, X coordinate.
  * @param y Center of the train, Y coordinate.
- * @param color Color of the train, as a hex string.
  * @param initialRotation Initial rotation of the train, in degrees. Measured clockwise, with 0 degrees
  * being the train facing upwards.
+ * @param color Color of the train, as a hex string.
  * @returns The newly created train.
  */
-function createTrain(x, y, color, initialRotation) {
+function createTrain(x, y, initialRotation, color) {
     const halfWidth = (TRAIN_WIDTH_SCALE_FACTOR * metroNetwork.lineWidth) / 2;
     const halfLength = (TRAIN_LENGTH_SCALE_FACTOR * metroNetwork.lineWidth) / 2;
     const topLeft = new paper.Point(x - halfWidth, y - halfLength);
