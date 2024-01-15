@@ -5,19 +5,19 @@ class NextArrivalInfo {
     id: string;
     line: string;
     nextStation: string;
-    timeToStation: number;
+    arrivalTime: number;
 
     /**
      * @param id ID of the train.
      * @param line Line name of the train.
      * @param nextStation Next station ID of the train.
-     * @param timeToStation Time until this train will reach this station, in milliseconds.
+     * @param arrivalTime Time that this train will arrive at the station, in milliseconds from the epoch.
      */
-    constructor(id: string, line: string, nextStation: string, timeToStation: number) {
+    constructor(id: string, line: string, nextStation: string, arrivalTime: number) {
         this.id = id;
         this.line = line;
         this.nextStation = nextStation;
-        this.timeToStation = timeToStation;
+        this.arrivalTime = arrivalTime;
     }
 }
 
