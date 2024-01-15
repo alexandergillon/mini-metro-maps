@@ -48,6 +48,7 @@ async function getData(): Promise<Array<NextArrivalInfo>> {
  */
 function stripData(arrivals: TflApiResponse): NextArrivalInfo[] {
     const nearestArrival = new Map();
+    const time = Date.now();
 
     arrivals.forEach(
         arrival => {
@@ -57,7 +58,7 @@ function stripData(arrivals: TflApiResponse): NextArrivalInfo[] {
             if (!nearestArrival.has(vehicleId) || nearestArrival.get(vehicleId).timeToStation > timeToStation) {
                 const naptan = getNaptan(arrival, arrivals);
                 const nextStationId = `${arrival.lineId}_${naptan}`;
-                const arrivalInfo = new NextArrivalInfo(vehicleId, arrival.lineId, nextStationId, timeToStation * 1000);
+                const arrivalInfo = new NextArrivalInfo(vehicleId, arrival.lineId, nextStationId, time + timeToStation * 1000);
                 nearestArrival.set(vehicleId, arrivalInfo);
             }
         }
