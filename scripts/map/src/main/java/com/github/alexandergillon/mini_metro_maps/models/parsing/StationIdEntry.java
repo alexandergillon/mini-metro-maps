@@ -5,12 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** Class for a NAPTAN entry in naptan.json, for parsing with Jackson. */
+/** Class for a station ID entry in the station ID JSON file, for parsing with Jackson. */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class NaptanEntry {
+public class StationIdEntry {
 
     /** Name of the station. */
     private String name;
@@ -18,6 +18,6 @@ public class NaptanEntry {
     /** Name of the station's metro line. */
     private String metroLine;
 
-    /** NAPTAN ID of that station. */
-    private String naptanId;
+    /** ID of that station. */
+    private String id;
 }
