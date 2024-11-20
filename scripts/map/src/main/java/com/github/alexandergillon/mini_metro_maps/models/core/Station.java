@@ -36,11 +36,11 @@ public class Station {
     /** Whether this station is real, or is an alignment point for special curves. */
     private final boolean alignmentPoint;
 
-    public Station(String metroLineName, String name, String naptan, int x, int y, boolean alignmentPoint) {
+    public Station(String metroLineName, String name, String stationId, int x, int y, boolean alignmentPoint) {
         this.metroLineName = metroLineName;
         this.name = name;
 
-        this.id = String.format("%s_%s", metroLineName, naptan);
+        this.id = String.format("%s_%s", metroLineName, stationId);
 
         this.originalX = x;
         this.originalY = y;

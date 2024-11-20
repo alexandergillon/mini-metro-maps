@@ -12,6 +12,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,8 +33,8 @@ public class Parser {
     /** Path to the input data file. */
     private final String inputPath;
 
-    /** For getting NAPTANs of stations. */
-    private final NaptanReader naptanReader;
+    /** For getting station IDs of stations. */
+    private final StationIdReader stationIdReader;
 
     /** Current metro line active in the input file. */
     MetroLine currentMetroLine = null;
@@ -51,12 +52,24 @@ public class Parser {
     private final ArrayList<Triple<Curve, String, Integer>> parallelCurves = new ArrayList<>();
 
     /**
+     * Constructor which uses the default StationIdReader.
      * @param inputPath Path to the input data file.
-     * @param naptanFilepath Path to naptan.json.
+     * @param stationIdFilepath Path to station ID JSON file.
      */
-    public Parser(String inputPath, String naptanFilepath) throws IOException {
+    public Parser(String inputPath, String stationIdFilepath) throws IOException {
         this.inputPath = inputPath;
-        naptanReader = new NaptanReader(naptanFilepath);
+        stationIdReader = new StationIdReader(stationIdFilepath);
+    }
+
+    /**
+     * Constructor which allows an override on the StationIdReader used.
+     * @param inputPath Path to the input data file.
+     * @param stationIdFilepath Path to station ID JSON file.
+     * @param stationIdReaderClass A class which subclasses StationIdReader to be used in place of StationIdReader.
+     */
+    public Parser(String inputPath, String stationIdFilepath, Class<StationIdReader> stationIdReaderClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        this.inputPath = inputPath;
+        stationIdReader = stationIdReaderClass.getConstructor(String.class).newInstance(stationIdFilepath);
     }
 
     /**
@@ -132,9 +145,9 @@ public class Parser {
         }
 
         // todo: maybe move ampl id out here
-        String naptan = isAlignmentPoint ? "alignmentpoint_" + stationName
-                : naptanReader.getNaptan(currentMetroLine.getName(), stationName);
-        Station station = new Station(currentMetroLine.getName(), stationName, naptan, x, y, isAlignmentPoint);
+        String stationId = isAlignmentPoint ? "alignmentpoint_" + stationName
+                : stationIdReader.getStationId(currentMetroLine.getName(), stationName);
+        Station station = new Station(currentMetroLine.getName(), stationName, stationId, x, y, isAlignmentPoint);
         currentMetroLine.addStation(station);
     }
 

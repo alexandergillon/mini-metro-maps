@@ -8,7 +8,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
+import java.util.Optional;
 
 public class GenerateMap {
 
@@ -49,7 +51,10 @@ public class GenerateMap {
     /** Path to store output file. */
     private static String outputPath;
 
-    public static void main(String[] args) throws IOException, InterruptedException, ParseException {
+    /** Full name of a subclass of StationIdReader, to use instead of StationIdReader when constructing a Parser. */
+    private static Optional<Class<StationIdReader>> stationIdReaderClass;
+
+    public static void main(String[] args) throws InterruptedException, ParseException, IOException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         parseArguments(args);
 
         String amplInitialModelPath = amplDir.resolve("initial_model.mod").toString();
@@ -61,7 +66,8 @@ public class GenerateMap {
         String rCsvInPath = rDir.resolve("bezier_in.csv").toString();
         String rCsvOutPath = rDir.resolve("bezier_out.csv").toString();
 
-        Parser parser = new Parser(networkPath, stationIdPath);
+        Parser parser = stationIdReaderClass.isPresent() ? new Parser(networkPath, stationIdPath, stationIdReaderClass.get())
+                : new Parser(networkPath, stationIdPath);
         var data = parser.parseData();
         var metroLines = data.getLeft();
         var alignmentConstraints = data.getMiddle();
@@ -86,7 +92,7 @@ public class GenerateMap {
      * @param args The arguments, from main().
      * @throws ParseException If commons-cli has a problem with the arguments.
      */
-    private static void parseArguments(String[] args) throws ParseException {
+    private static void parseArguments(String[] args) throws ParseException, ClassNotFoundException {
         Options options = new Options();
 
         options.addOption(Option.builder("bezierdir").argName("bezier").hasArg().required()
@@ -103,6 +109,8 @@ public class GenerateMap {
                 .desc("file describing the colors of lines - see scripts/map/input/README.md for format").build());
         options.addOption(Option.builder("out").argName("network.json").hasArg().required()
                 .desc("path to write the output file").build());
+        options.addOption(Option.builder("idreader").argName("network.json").hasArg()
+                .desc("full name of a class to override StationIdReader").build());
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
@@ -114,5 +122,7 @@ public class GenerateMap {
         stationIdPath = cmd.getOptionValue("ids");
         colorsPath = cmd.getOptionValue("colors");
         outputPath = cmd.getOptionValue("out");
+        stationIdReaderClass = cmd.hasOption("idreader") ?
+                Optional.of(Class.forName(cmd.getOptionValue("idreader")).asSubclass(StationIdReader.class)) : Optional.empty();
     }
 }
