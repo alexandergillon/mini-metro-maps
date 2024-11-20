@@ -1,5 +1,12 @@
 package com.github.alexandergillon.mini_metro_maps;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -21,22 +28,29 @@ public class GenerateMap {
      */
     public static final String ALIGNMENT_POINT_WEIGHT = "0.1";
 
-    /**
-     * args[0] = input file path
-     * args[1] = naptan.json path
-     * args[2] = AMPL directory path
-     * args[3] = bezier.json path
-     * args[4] = colors.json path
-     * args[5] = output path
-     */
-    public static void main(String[] args) throws IOException, InterruptedException {
-        String inputPath = args[0];
-        String naptanPath = args[1];
-        Path amplDir = Path.of(args[2]);
-        String bezierPath = args[3];
-        String colorsPath = args[4];
-        Path rDir = Path.of(args[5]);
-        String outputPath = args[6];
+    /** Path to the directory containing bezier.r, a program which fits parallel curves to Bezier curves. */
+    private static Path rDir;
+
+    /** Directory containing AMPL files. Also used to store temporary AMPL files. */
+    private static Path amplDir;
+
+    /** Path to file containing model Bezier curves. These are transformed to obtain all curves in the network. */
+    private static String bezierPath;
+
+    /** Path to file containing network data. */
+    private static String networkPath;
+
+    /** Path to file linking station names to unique identifiers. */
+    private static String stationIdPath;
+
+    /** Path to file assigning colors to lines. */
+    private static String colorsPath;
+
+    /** Path to store output file. */
+    private static String outputPath;
+
+    public static void main(String[] args) throws IOException, InterruptedException, ParseException {
+        parseArguments(args);
 
         String amplInitialModelPath = amplDir.resolve("initial_model.mod").toString();
         String zAmplInitialModelPath = amplDir.resolve("z_index_initial_model.mod").toString();
@@ -47,7 +61,7 @@ public class GenerateMap {
         String rCsvInPath = rDir.resolve("bezier_in.csv").toString();
         String rCsvOutPath = rDir.resolve("bezier_out.csv").toString();
 
-        Parser parser = new Parser(inputPath, naptanPath);
+        Parser parser = new Parser(networkPath, stationIdPath);
         var data = parser.parseData();
         var metroLines = data.getLeft();
         var alignmentConstraints = data.getMiddle();
@@ -64,5 +78,41 @@ public class GenerateMap {
 
         Runtime.getRuntime().exec("python copy_json.py");
         Runtime.getRuntime().exec("python plot_output.py");
+    }
+
+    /**
+     * Defines and parses the command-line arguments.
+     *
+     * @param args The arguments, from main().
+     * @throws ParseException If commons-cli has a problem with the arguments.
+     */
+    private static void parseArguments(String[] args) throws ParseException {
+        Options options = new Options();
+
+        options.addOption(Option.builder("bezierdir").argName("bezier").hasArg().required()
+                .desc("directory containing bezier.r").build());
+        options.addOption(Option.builder("ampldir").argName("dir").hasArg().required()
+                .desc("directory containing AMPL files").build());
+        options.addOption(Option.builder("bezierjson").argName("bezier.json").hasArg().required()
+                .desc("file describing the shape of curves - see scripts/map/input/README.md for format").build());
+        options.addOption(Option.builder("network").argName("network.txt").hasArg().required()
+                .desc("file describing the network - see scripts/map/input/README.md for format").build());
+        options.addOption(Option.builder("ids").argName("ids.json").hasArg().required()
+                .desc("file describing station IDs - see scripts/map/input/README.md for format").build());
+        options.addOption(Option.builder("colors").argName("colors.json").hasArg().required()
+                .desc("file describing the colors of lines - see scripts/map/input/README.md for format").build());
+        options.addOption(Option.builder("out").argName("network.json").hasArg().required()
+                .desc("path to write the output file").build());
+
+        CommandLineParser parser = new DefaultParser();
+        CommandLine cmd = parser.parse(options, args);
+
+        rDir = Path.of(cmd.getOptionValue("bezierdir"));
+        amplDir = Path.of(cmd.getOptionValue("ampldir"));
+        bezierPath = cmd.getOptionValue("bezierjson");
+        networkPath = cmd.getOptionValue("network");
+        stationIdPath = cmd.getOptionValue("ids");
+        colorsPath = cmd.getOptionValue("colors");
+        outputPath = cmd.getOptionValue("out");
     }
 }
