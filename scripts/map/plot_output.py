@@ -39,7 +39,7 @@ def plot_line(line):
 
 
 def plot_data():
-    json_file = open("output/london.json", "r")
+    json_file = open("output/chicago.json", "r")
     lines = json.load(json_file)["metroLines"]
     json_file.close()
 

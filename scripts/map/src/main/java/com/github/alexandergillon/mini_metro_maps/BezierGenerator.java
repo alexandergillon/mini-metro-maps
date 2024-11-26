@@ -610,6 +610,11 @@ public class BezierGenerator {
                 var downDownRightCurve = toWideCurve(station1, downDownRightStation2, "down,down-right");
                 return MathUtil.reflectX(downDownRightCurve, station1.getX());
             }
+            case "left,left", "right,right", "down,down", "up,up" -> {
+                List<OutputLineSegment> segments = new ArrayList<>();
+                segments.add(OutputLineSegment.fromStraightLine(station1, station2));
+                return segments;
+            }
             default -> throw new IllegalArgumentException(String.format("Invalid curve type %s in toWideCurve.", curveType));
         }
     }

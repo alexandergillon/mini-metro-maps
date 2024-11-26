@@ -1,0 +1,34 @@
+[
+    {
+        "name": "red",
+        "color": "#c60c30"
+    },
+    {
+        "name": "blue",
+        "color": "#00a1de"
+    },
+    {
+        "name": "brown",
+        "color": "#62361b"
+    },
+    {
+        "name": "green",
+        "color": "#009b3a"
+    },
+    {
+        "name": "orange",
+        "color": "#f9461c"
+    },
+    {
+        "name": "purple",
+        "color": "#522398"
+    },
+    {
+        "name": "pink",
+        "color": "#e27ea6"
+    },
+    {
+        "name": "yellow",
+        "color": "#f9e300"
+    }
+]

@@ -1,0 +1,382 @@
+line red:
+  station "Howard" 11600 9804
+  station "Jarvis" 11650 9926
+  station "Morse" 11702 10028
+  station "Loyola" 11744 10126
+  station "Granville" 11792 10227
+  station "Thorndale" 11792 10345
+  station "Bryn Mawr" 11792 10441
+  station "Berwyn" 11792 10608
+  station "Argyle" 11792 10710
+  station "Lawrence" 11792 10825
+  station "Wilson" 11792 10981
+  station "Sheridan" 11890 11218
+  station "Addison" 12002 11349
+  station "Belmont" 12002 11565
+  station "Fullerton" 12002 11952
+  station "North/Clybourn" 12031 12343
+  station "Clark/Division" 12316 12394
+  station "Chicago" 12391 12516
+  station "Grand/State" 12391 12627
+  station "Lake" 12391 12951
+  station "Monroe" 12391 13129
+  station "Jackson/State" 12391 13209
+  station "Harrison" 12391 13584
+  station "Roosevelt" 12382 13670
+  station "Cermak-Chinatown" 12391 13914
+  station "Sox-35th" 12391 14496
+  station "47th" 12391 14931
+  station "Garfield" 12391 15156
+  station "63rd" 12391 15429
+  station "69th" 12381 15588
+  station "79th" 12391 15744
+  station "87th" 12391 15882
+  station "95th/Dan Ryan" 12391 16023
+
+  edges "Howard, Jarvis, Morse, Loyola, Granville, Thorndale, Bryn Mawr, Berwyn, Argyle, Lawrence, Wilson, Sheridan, Addison, Belmont, Fullerton, North/Clybourn, Clark/Division, Chicago, Grand/State, Lake, Monroe, Jackson/State, Harrison, Roosevelt, Cermak-Chinatown, Sox-35th, 47th, Garfield, 63rd, 69th, 79th, 87th, 95th/Dan Ryan"
+
+  curve "Loyola, Granville" down-right,down
+  curve "Wilson, Sheridan" down,right
+  curve "Sheridan, Addison" right,down parallelto curve "purple: Sheridan_Virtual, Addison_Virtual"
+  curve "Fullerton, North/Clybourn" down,down-right
+  curve "North/Clybourn, Clark/Division" down-right,right
+  curve "Clark/Division, Chicago" right,down
+
+  down-right "Howard, Jarvis, Morse, Loyola"
+  vertical "Granville, Thorndale, Bryn Mawr, Berwyn, Argyle, Lawrence, Wilson"
+  vertical "Addison, Belmont, Fullerton"
+  vertical "Chicago, Grand/State, Lake, Monroe, Jackson/State, Harrison, Roosevelt, Cermak-Chinatown, Sox-35th, 47th, Garfield, 63rd, 69th, 79th, 87th, 95th/Dan Ryan"
+
+line green:
+  station "Harlem" 9399 12771
+  station "Oak Park" 9540 12771
+  station "Ridgeland" 9666 12771
+  station "Austin" 9795 12771
+  station "Central" 9927 12771
+  station "Laramie" 10056 12771
+  station "Cicero" 10212 12771
+  station "Pulaski" 10395 12771
+  station "Conservatory" 10563 12771
+  station "Kedzie" 10716 12771
+  station "California" 10887 12771
+  station "Damen" 11247 12771
+  station "Ashland" 11655 12771
+  station "Morgan" 11865 12771
+  station "Clinton" 12012 12771
+  station "Clark/Lake" 12246 12771
+  station "State/Lake" 12395 12771
+  station "Washington/Wabash" 12641 12935
+  station "Adams/Wabash" 12639 13170
+  station "Roosevelt" 12596 13680
+  station "Cermak-McCormick Place" 12598 13912
+  station "35-Bronzeville-IIT" 12523 14497
+  station "Indiana" 12704 14646
+  station "43rd" 12770 14784
+  station "47th" 12764 14920
+  station "51st" 12770 15044
+  station "Garfield" 12760 15172
+  station "King Drive" 12856 15426
+  station "Cottage Grove" 13098 15426
+  station "Halsted/63rd" 11858 15432
+  station "Ashland/63rd" 11756 15428
+
+  edges "Harlem, Oak Park, Ridgeland, Austin, Central, Laramie, Cicero, Pulaski, Conservatory, Kedzie, California, Damen, Ashland, Morgan, Clinton, Clark/Lake, State/Lake, Washington/Wabash, Adams/Wabash, Roosevelt, Cermak-McCormick Place, 35-Bronzeville-IIT, Indiana, 43rd, 47th, 51st, Garfield, King Drive, Cottage Grove"
+  edges "Garfield, Halsted/63rd, Ashland/63rd"
+
+  alignment-point "AdamsWabash_Roosevelt" 12619 13399
+  alignment-point "Garfield_Halsted1" 12447 15285
+  alignment-point "Garfield_Halsted2" 12252 15351
+
+  curve "Washington/Wabash, State/Lake" up,left parallelto pink
+  curve "Adams/Wabash, Roosevelt" special "Adams/Wabash, AdamsWabash_Roosevelt, Roosevelt" "down,down-left : down-left,down"
+  curve "35-Bronzeville-IIT, Indiana" down,right
+  curve "Indiana, 43rd" right,down
+  curve "Garfield, King Drive" down,right
+  curve "Garfield, Halsted/63rd" special "Garfield, Garfield_Halsted1, Garfield_Halsted2, Halsted/63rd" "down,left : left,down : down,left"
+
+  horizontal "Harlem, Oak Park, Ridgeland, Austin, Central, Laramie, Cicero, Pulaski, Conservatory, Kedzie, California, Damen, Ashland, Morgan, Clinton, Clark/Lake, State/Lake"
+  vertical "Washington/Wabash, Adams/Wabash"
+  vertical "Roosevelt, Cermak-McCormick Place, 35-Bronzeville-IIT"
+  vertical "43rd, 47th, 51st, Garfield"
+  vertical "King Drive, Cottage Grove, Halsted/63rd, Ashland/63rd"
+
+line orange:
+  station "Midway" 10233 15408
+  station "Pulaski" 10401 15147
+  station "Kedzie" 10746 14970
+  station "Western" 11058 14961
+  station "35th/Archer" 11316 14403
+  station "Ashland" 11607 14232
+  station "Halsted" 11835 14103
+  station "Roosevelt" 12477 13671
+  station "Adams/Wabash" 12474 13168
+  station "Washington/Wabash" 12474 12930
+  station "State/Lake" 12384 12892
+  station "Clark/Lake" 12246 12900
+  station "Washington/Wells" 12172 13051
+  station "Quincy/Wells" 12171 13225
+  station "LaSalle/Van Buren" 12220 13315
+  station "H.W. Library" 12349 13314
+
+  edges "Midway, Pulaski, Kedzie, Western, 35th/Archer, Ashland, Halsted, Roosevelt, Adams/Wabash, Washington/Wabash, State/Lake, Clark/Lake, Washington/Wells, Quincy/Wells, LaSalle/Van Buren, H.W. Library, Roosevelt"
+
+  alignment-point "Western_35thArcher" 11199 14766
+
+  curve "Midway, Pulaski" up,up-right
+  curve "Pulaski, Kedzie" up-right,right
+  curve "Western, 35th/Archer" special "Western, Western_35thArcher, 35th/Archer" "right,up : up,up-right"
+  curve "Halsted, Roosevelt" up-right,up
+  curve "Washington/Wabash, State/Lake" up,left
+  curve "Clark/Lake, Washington/Wells" left,down
+  curve "Quincy/Wells, LaSalle/Van Buren" down,right
+  curve "H.W. Library, Roosevelt" right,down
+
+  horizontal "Kedzie, Western"
+  up-right "35th/Archer, Ashland, Halsted"
+  vertical "Roosevelt, Adams/Wabash, Washington/Wabash"
+  horizontal "Clark/Lake, State/Lake"
+  vertical "Washington/Wells, Quincy/Wells"
+  horizontal "LaSalle/Van Buren, H.W. Library"
+
+line blue:
+  station "O'Hare" 8716 10766
+  station "Rosemont" 8938 10766
+  station "Cumberland" 9142 10766
+  station "Harlem (O'Hare Branch)" 9396 10766
+  station "Jefferson Park" 10090 10904
+  station "Montrose" 10232 11042
+  station "Irving Park (O'Hare Branch)" 10392 11208
+  station "Addison" 10542 11352
+  station "Belmont (O'Hare Branch)" 10660 11560
+  station "Logan Square" 10766 11800
+  station "California" 10884 11914
+  station "Western (O'Hare Branch)" 11072 12102
+  station "Damen/Milwaukee" 11252 12280
+  station "Division" 11380 12406
+  station "Chicago" 11476 12508
+  station "Grand/Milwaukee" 11630 12648
+  station "Clark/Lake" 12256 12958
+  station "Washington" 12330 13023
+  station "Monroe" 12328 13146
+  station "Jackson/Dearborn" 12325 13261
+  station "LaSalle" 12219 13464
+  station "Clinton" 12021 13455
+  station "UIC-Halsted" 11878 13426
+  station "Racine" 11659 13429
+  station "Illinois Medical District" 11385 13428
+  station "Western (Forest Pk Branch)" 11062 13440
+  station "Kedzie-Homan" 10723 13429
+  station "Pulaski" 10398 13425
+  station "Cicero" 10212 13428
+  station "Austin" 9796 13428
+  station "Oak Park" 9520 13428
+  station "Harlem (Forest Pk Branch)" 9394 13426
+  station "Forest Park" 9180 13429
+
+  edges "O'Hare, Rosemont, Cumberland, Harlem (O'Hare Branch), Jefferson Park, Montrose, Irving Park (O'Hare Branch), Addison, Belmont (O'Hare Branch), Logan Square, California, Western (O'Hare Branch), Damen/Milwaukee, Division, Chicago, Grand/Milwaukee, Clark/Lake, Washington, Monroe, Jackson/Dearborn, LaSalle, Clinton, UIC-Halsted, Racine, Illinois Medical District, Western (Forest Pk Branch), Kedzie-Homan, Pulaski, Cicero, Austin, Oak Park, Harlem (Forest Pk Branch), Forest Park"
+
+  curve "Harlem (O'Hare Branch), Jefferson Park" right,down-right
+  curve "Addison, Belmont (O'Hare Branch)" down-right,down
+  curve "Belmont (O'Hare Branch), Logan Square" down,down-right
+  curve "Grand/Milwaukee, Clark/Lake" down-right,right
+  curve "Clark/Lake, Washington" right,down
+  curve "Jackson/Dearborn, LaSalle" down,left
+
+  horizontal "O'Hare, Rosemont, Cumberland, Harlem (O'Hare Branch)"
+  down-right "Jefferson Park, Montrose, Irving Park (O'Hare Branch), Addison"
+  down-right "Logan Square, California, Western (O'Hare Branch), Damen/Milwaukee, Division, Chicago, Grand/Milwaukee"
+  vertical "Washington, Monroe, Jackson/Dearborn"
+  horizontal "LaSalle, Clinton, UIC-Halsted, Racine, Illinois Medical District, Western (Forest Pk Branch), Kedzie-Homan, Pulaski, Cicero, Austin, Oak Park, Harlem (Forest Pk Branch), Forest Park"
+
+line brown:
+  station "Kimball" 10592 10900
+  station "Kedzie" 10722 10902
+  station "Francisco" 10842 10900
+  station "Rockwell" 10962 10902
+  station "Western" 11072 10902
+  station "Damen" 11248 10902
+  station "Montrose" 11434 11050
+  station "Irving Park" 11432 11208
+  station "Addison" 11440 11354
+  station "Paulina" 11526 11444
+  station "Southport" 11620 11452
+  station "Belmont" 11854 11560
+  station "Wellington" 11854 11672
+  station "Diversey" 11856 11764
+  station "Fullerton" 11856 11952
+  station "Armitage" 11858 12084
+  station "Sedgwick" 12070 12218
+  station "Chicago" 12148 12506
+  station "Merchandise Mart" 12146 12638
+  station "Washington/Wells" 12147 13047
+  station "Quincy/Wells" 12157 13225
+  station "LaSalle/Van Buren" 12228 13347
+  station "H.W. Library" 12369 13344
+  station "Adams/Wabash" 12495 13204
+  station "Washington/Wabash" 12489 13068
+  station "State/Lake" 12412 12883
+  station "Clark/Lake" 12249 12885
+
+  edges "Kimball, Kedzie, Francisco, Rockwell, Western, Damen, Montrose, Irving Park, Addison, Paulina, Southport, Belmont, Wellington, Diversey, Fullerton, Armitage, Sedgwick, Chicago, Merchandise Mart, Washington/Wells, Quincy/Wells, LaSalle/Van Buren, H.W. Library, Adams/Wabash, Washington/Wabash, State/Lake, Clark/Lake, Merchandise Mart"
+
+  curve "Damen, Montrose" right,down
+  curve "Addison, Paulina" down,right
+  curve "Southport, Belmont" right,down
+  curve "Armitage, Sedgwick" down,right
+  curve "Sedgwick, Chicago" right,down
+  curve "Quincy/Wells, LaSalle/Van Buren" down,right
+  curve "H.W. Library, Adams/Wabash" right,up
+  curve "Washington/Wabash, State/Lake" up,left
+  curve "Clark/Lake, Merchandise Mart" left,up
+
+  horizontal "Kimball, Kedzie, Francisco, Rockwell, Western, Damen"
+  vertical "Montrose, Irving Park, Addison"
+  horizontal "Paulina, Southport"
+  vertical "Belmont, Wellington, Diversey, Fullerton, Armitage"
+  vertical "Chicago, Merchandise Mart, Washington/Wells, Quincy/Wells"
+  horizontal "LaSalle/Van Buren, H.W. Library"
+  vertical "Adams/Wabash, Washington/Wabash"
+  horizontal "State/Lake, Clark/Lake"
+
+line pink:
+  station "54th/Cermak" 10018 13886
+  station "Cicero" 10214 13890
+  station "Kostner" 10302 13890
+  station "Pulaski" 10398 13890
+  station "Central Park" 10566 13890
+  station "Kedzie" 10722 13890
+  station "California" 10890 13890
+  station "Western" 11072 13890
+  station "Damen" 11260 13890
+  station "18th" 11552 13696
+  station "Polk" 11552 13578
+  station "Ashland" 11658 12846
+  station "Morgan" 11860 12840
+  station "Clinton" 12019 12844
+  station "Clark/Lake" 12255 12831
+  station "State/Lake" 12414 12840
+  station "Washington/Wabash" 12543 13062
+  station "Adams/Wabash" 12538 13203
+  station "H.W. Library" 12363 13374
+  station "LaSalle/Van Buren" 12216 13368
+  station "Quincy/Wells" 12150 13227
+  station "Washington/Wells" 12135 13039
+
+  edges "54th/Cermak, Cicero, Kostner, Pulaski, Central Park, Kedzie, California, Western, Damen, 18th, Polk, Ashland, Morgan, Clinton, Clark/Lake, State/Lake, Washington/Wabash, Adams/Wabash, H.W. Library, LaSalle/Van Buren, Quincy/Wells, Washington/Wells, Clinton"
+
+  curve "Damen, 18th" right,up
+  curve "Polk, Ashland" up,right
+  curve "Clinton, Washington/Wells" right,down
+  curve "Quincy/Wells, LaSalle/Van Buren" down,right parallelto brown
+  curve "H.W. Library, Adams/Wabash" right,up parallelto brown
+  curve "Washington/Wabash, State/Lake" up,left parallelto brown
+
+  horizontal "54th/Cermak, Cicero, Kostner, Pulaski, Central Park, Kedzie, California, Western, Damen"
+  vertical "Polk, 18th"
+  horizontal "Ashland, Morgan, Clinton, Clark/Lake, State/Lake"
+  vertical "Washington/Wells, Quincy/Wells"
+  horizontal "LaSalle/Van Buren, H.W. Library"
+  vertical "Washington/Wabash, Adams/Wabash"
+
+line purple:
+  station "Linden" 11056 9126
+  station "Central" 11112 9222
+  station "Noyes" 11186 9308
+  station "Foster" 11256 9388
+  station "Davis" 11306 9476
+  station "Dempster" 11374 9570
+  station "Main" 11418 9646
+  station "South Blvd" 11484 9718
+  station "Howard" 11763 9795
+  station "Wilson" 11709 10983
+  station "Belmont" 11931 11562
+  station "Wellington" 11925 11667
+  station "Diversey" 11922 11766
+  station "Fullerton" 11928 11946
+  station "Armitage" 11934 12081
+  station "Sedgwick" 12078 12156
+  station "Chicago" 12216 12504
+  station "Merchandise Mart" 12216 12639
+  station "Washington/Wells" 12170 13048
+  station "Quincy/Wells" 12168 13231
+  station "LaSalle/Van Buren" 12225 13328
+  station "H.W. Library" 12362 13332
+  station "Adams/Wabash" 12472 13204
+  station "Washington/Wabash" 12477 13066
+  station "State/Lake" 12416 12900
+  station "Clark/Lake" 12254 12904
+
+  edges "Linden, Central, Noyes, Foster, Davis, Dempster, Main, South Blvd, Howard, Wilson, Belmont, Wellington, Diversey, Fullerton, Armitage, Sedgwick, Chicago, Merchandise Mart, Washington/Wells, Quincy/Wells, LaSalle/Van Buren, H.W. Library, Adams/Wabash, Washington/Wabash, State/Lake, Clark/Lake, Merchandise Mart"
+
+  alignment-point "Sheridan_Virtual" 11880 11292
+  alignment-point "Addison_Virtual" 11920 11356
+
+  curve "Howard, Wilson" down-right,down
+  curve "Wilson, Sheridan_Virtual" down,right parallelto curve "red: Wilson, Sheridan"
+  curve "Sheridan_Virtual, Addison_Virtual" right,down
+  curve "Addison_Virtual, Belmont" down,down # a hack. todo: fix?
+  curve "Wilson, Belmont" special of "Wilson, Sheridan_Virtual" "Sheridan_Virtual, Addison_Virtual" "Addison_Virtual, Belmont"
+  curve "Armitage, Sedgwick" down,right
+  curve "Sedgwick, Chicago" right,down parallelto brown
+  curve "Quincy/Wells, LaSalle/Van Buren" down,right parallelto orange
+  curve "H.W. Library, Adams/Wabash" right,up
+  curve "Washington/Wabash, State/Lake" up,left parallelto orange
+  curve "Clark/Lake, Merchandise Mart" left,up
+
+  down-right "Linden, Central, Noyes, Foster, Davis, Dempster, Main, South Blvd, Howard"
+  vertical "Belmont, Wellington, Diversey, Fullerton, Armitage"
+  vertical "Chicago, Merchandise Mart, Washington/Wells, Quincy/Wells"
+  horizontal "LaSalle/Van Buren, H.W. Library"
+  vertical "Adams/Wabash, Washington/Wabash"
+  horizontal "State/Lake, Clark/Lake"
+
+line yellow:
+  station "Howard" 11446 9820
+  station "Oakton-Skokie" 10212 9690
+  station "Dempster-Skokie" 10167 9514
+
+  edges "Howard, Oakton-Skokie, Dempster-Skokie"
+
+  curve "Oakton-Skokie, Howard" down-right,right
+
+  up-left "Dempster-Skokie, Oakton-Skokie"
+
+multi-line:
+  # yellow line
+  same-station yellow left purple "Howard"
+
+  # purple line
+  same-station purple left red "Howard, Wilson"
+  same-station purple right brown "Belmont, Wellington, Diversey, Fullerton, Armitage"
+  same-station purple above brown "Sedgwick"
+  same-station purple right brown "Chicago, Merchandise Mart, Washington/Wells, Quincy/Wells"
+  same-station purple above brown "LaSalle/Van Buren, H.W. Library"
+  same-station purple left brown "Adams/Wabash, Washington/Wabash"
+  same-station purple below brown "State/Lake, Clark/Lake"
+
+  # red line
+  same-station red right purple "Belmont, Fullerton"
+  same-station red left orange "Roosevelt"
+
+  # blue line
+  same-station blue below orange "Clark/Lake"
+
+  # pink line
+  same-station pink below green "Ashland, Morgan, Clinton, Clark/Lake, State/Lake"
+  same-station pink left brown "Washington/Wells, Quincy/Wells"
+  same-station pink below brown "LaSalle/Van Buren, H.W. Library"
+  same-station pink right brown "Adams/Wabash, Washington/Wabash"
+  same-station pink above brown "Clark/Lake, State/Lake"
+
+  # green line
+  same-station green right pink "Washington/Wabash, Adams/Wabash"
+  same-station green right orange "Roosevelt"
+
+  # orange line
+  same-station orange below purple "Clark/Lake, State/Lake"
+  same-station orange right purple "Washington/Wells, Quincy/Wells"
+  same-station orange above purple "LaSalle/Van Buren, H.W. Library"
+  same-station orange left purple "Washington/Wabash, Adams/Wabash"
+
+  # brown line
+  # all covered

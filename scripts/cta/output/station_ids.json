@@ -1,0 +1,957 @@
+[
+  {
+    "name": "Cicero",
+    "metroLine": "pink",
+    "id": "40420pink"
+  },
+  {
+    "name": "Central Park",
+    "metroLine": "pink",
+    "id": "40780pink"
+  },
+  {
+    "name": "Halsted/63rd",
+    "metroLine": "green",
+    "id": "40940green"
+  },
+  {
+    "name": "Cumberland",
+    "metroLine": "blue",
+    "id": "40230blue"
+  },
+  {
+    "name": "Racine",
+    "metroLine": "blue",
+    "id": "40470blue"
+  },
+  {
+    "name": "Paulina",
+    "metroLine": "brown",
+    "id": "41310brown"
+  },
+  {
+    "name": "18th",
+    "metroLine": "pink",
+    "id": "40830pink"
+  },
+  {
+    "name": "Clark/Lake",
+    "metroLine": "blue",
+    "id": "40380blue"
+  },
+  {
+    "name": "Jefferson Park",
+    "metroLine": "blue",
+    "id": "41280blue"
+  },
+  {
+    "name": "Diversey",
+    "metroLine": "brown",
+    "id": "40530brown"
+  },
+  {
+    "name": "Diversey",
+    "metroLine": "purple",
+    "id": "40530purple"
+  },
+  {
+    "name": "Montrose",
+    "metroLine": "brown",
+    "id": "41500brown"
+  },
+  {
+    "name": "UIC-Halsted",
+    "metroLine": "blue",
+    "id": "40350blue"
+  },
+  {
+    "name": "35-Bronzeville-IIT",
+    "metroLine": "green",
+    "id": "41120green"
+  },
+  {
+    "name": "Foster",
+    "metroLine": "purple",
+    "id": "40520purple"
+  },
+  {
+    "name": "Quincy/Wells",
+    "metroLine": "brown",
+    "id": "40040brown"
+  },
+  {
+    "name": "Southport",
+    "metroLine": "brown",
+    "id": "40360brown"
+  },
+  {
+    "name": "Loyola",
+    "metroLine": "red",
+    "id": "41300red"
+  },
+  {
+    "name": "47th",
+    "metroLine": "red",
+    "id": "41230red"
+  },
+  {
+    "name": "Bryn Mawr",
+    "metroLine": "red",
+    "id": "41380red"
+  },
+  {
+    "name": "Harlem (Forest Pk Branch)",
+    "metroLine": "blue",
+    "id": "40980blue"
+  },
+  {
+    "name": "Howard",
+    "metroLine": "red",
+    "id": "40900red"
+  },
+  {
+    "name": "Kedzie",
+    "metroLine": "green",
+    "id": "41070green"
+  },
+  {
+    "name": "King Drive",
+    "metroLine": "green",
+    "id": "41140green"
+  },
+  {
+    "name": "Ashland/63rd",
+    "metroLine": "green",
+    "id": "40290green"
+  },
+  {
+    "name": "95th/Dan Ryan",
+    "metroLine": "red",
+    "id": "40450red"
+  },
+  {
+    "name": "Western (O'Hare Branch)",
+    "metroLine": "blue",
+    "id": "40670blue"
+  },
+  {
+    "name": "Armitage",
+    "metroLine": "brown",
+    "id": "40660brown"
+  },
+  {
+    "name": "Armitage",
+    "metroLine": "purple",
+    "id": "40660purple"
+  },
+  {
+    "name": "Roosevelt",
+    "metroLine": "red",
+    "id": "41400red"
+  },
+  {
+    "name": "Belmont",
+    "metroLine": "red",
+    "id": "41320red"
+  },
+  {
+    "name": "54th/Cermak",
+    "metroLine": "pink",
+    "id": "40580pink"
+  },
+  {
+    "name": "Dempster",
+    "metroLine": "purple",
+    "id": "40690purple"
+  },
+  {
+    "name": "Fullerton",
+    "metroLine": "brown",
+    "id": "41220brown"
+  },
+  {
+    "name": "Fullerton",
+    "metroLine": "purple",
+    "id": "41220purple"
+  },
+  {
+    "name": "Lawrence",
+    "metroLine": "red",
+    "id": "40770red"
+  },
+  {
+    "name": "Illinois Medical District",
+    "metroLine": "blue",
+    "id": "40810blue"
+  },
+  {
+    "name": "Lake",
+    "metroLine": "red",
+    "id": "41660red"
+  },
+  {
+    "name": "79th",
+    "metroLine": "red",
+    "id": "40240red"
+  },
+  {
+    "name": "Austin",
+    "metroLine": "green",
+    "id": "41260green"
+  },
+  {
+    "name": "Clinton",
+    "metroLine": "blue",
+    "id": "40430blue"
+  },
+  {
+    "name": "Wellington",
+    "metroLine": "brown",
+    "id": "41210brown"
+  },
+  {
+    "name": "Wellington",
+    "metroLine": "purple",
+    "id": "41210purple"
+  },
+  {
+    "name": "Howard",
+    "metroLine": "purple",
+    "id": "40900purple"
+  },
+  {
+    "name": "Howard",
+    "metroLine": "yellow",
+    "id": "40900yellow"
+  },
+  {
+    "name": "Oak Park",
+    "metroLine": "green",
+    "id": "41350green"
+  },
+  {
+    "name": "Chicago",
+    "metroLine": "red",
+    "id": "41450red"
+  },
+  {
+    "name": "Sedgwick",
+    "metroLine": "brown",
+    "id": "40800brown"
+  },
+  {
+    "name": "Sedgwick",
+    "metroLine": "purple",
+    "id": "40800purple"
+  },
+  {
+    "name": "Addison",
+    "metroLine": "blue",
+    "id": "41240blue"
+  },
+  {
+    "name": "Jackson/Dearborn",
+    "metroLine": "blue",
+    "id": "40070blue"
+  },
+  {
+    "name": "Kedzie",
+    "metroLine": "pink",
+    "id": "41040pink"
+  },
+  {
+    "name": "Monroe",
+    "metroLine": "blue",
+    "id": "40790blue"
+  },
+  {
+    "name": "Rockwell",
+    "metroLine": "brown",
+    "id": "41010brown"
+  },
+  {
+    "name": "Damen",
+    "metroLine": "pink",
+    "id": "40210pink"
+  },
+  {
+    "name": "Pulaski",
+    "metroLine": "blue",
+    "id": "40920blue"
+  },
+  {
+    "name": "Harlem",
+    "metroLine": "green",
+    "id": "40020green"
+  },
+  {
+    "name": "Washington/Wabash",
+    "metroLine": "green",
+    "id": "41700green"
+  },
+  {
+    "name": "Washington/Wabash",
+    "metroLine": "purple",
+    "id": "41700purple"
+  },
+  {
+    "name": "Washington/Wabash",
+    "metroLine": "pink",
+    "id": "41700pink"
+  },
+  {
+    "name": "Washington/Wabash",
+    "metroLine": "orange",
+    "id": "41700orange"
+  },
+  {
+    "name": "California",
+    "metroLine": "green",
+    "id": "41360green"
+  },
+  {
+    "name": "Morse",
+    "metroLine": "red",
+    "id": "40100red"
+  },
+  {
+    "name": "Western",
+    "metroLine": "orange",
+    "id": "40310orange"
+  },
+  {
+    "name": "Grand/Milwaukee",
+    "metroLine": "blue",
+    "id": "40490blue"
+  },
+  {
+    "name": "Division",
+    "metroLine": "blue",
+    "id": "40320blue"
+  },
+  {
+    "name": "Pulaski",
+    "metroLine": "orange",
+    "id": "40960orange"
+  },
+  {
+    "name": "Chicago",
+    "metroLine": "blue",
+    "id": "41410blue"
+  },
+  {
+    "name": "Merchandise Mart",
+    "metroLine": "brown",
+    "id": "40460brown"
+  },
+  {
+    "name": "Merchandise Mart",
+    "metroLine": "purple",
+    "id": "40460purple"
+  },
+  {
+    "name": "O'Hare",
+    "metroLine": "blue",
+    "id": "40890blue"
+  },
+  {
+    "name": "43rd",
+    "metroLine": "green",
+    "id": "41270green"
+  },
+  {
+    "name": "Sox-35th",
+    "metroLine": "red",
+    "id": "40190red"
+  },
+  {
+    "name": "Logan Square",
+    "metroLine": "blue",
+    "id": "41020blue"
+  },
+  {
+    "name": "Damen/Milwaukee",
+    "metroLine": "blue",
+    "id": "40590blue"
+  },
+  {
+    "name": "Ashland",
+    "metroLine": "green",
+    "id": "40170green"
+  },
+  {
+    "name": "Ashland",
+    "metroLine": "pink",
+    "id": "40170pink"
+  },
+  {
+    "name": "Irving Park (O'Hare Branch)",
+    "metroLine": "blue",
+    "id": "40550blue"
+  },
+  {
+    "name": "Wilson",
+    "metroLine": "purple",
+    "id": "40540purple"
+  },
+  {
+    "name": "Cermak-Chinatown",
+    "metroLine": "red",
+    "id": "41000red"
+  },
+  {
+    "name": "LaSalle",
+    "metroLine": "blue",
+    "id": "41340blue"
+  },
+  {
+    "name": "Thorndale",
+    "metroLine": "red",
+    "id": "40880red"
+  },
+  {
+    "name": "Granville",
+    "metroLine": "red",
+    "id": "40760red"
+  },
+  {
+    "name": "Addison",
+    "metroLine": "red",
+    "id": "41420red"
+  },
+  {
+    "name": "Central",
+    "metroLine": "green",
+    "id": "40280green"
+  },
+  {
+    "name": "Conservatory",
+    "metroLine": "green",
+    "id": "41670green"
+  },
+  {
+    "name": "Noyes",
+    "metroLine": "purple",
+    "id": "40400purple"
+  },
+  {
+    "name": "47th",
+    "metroLine": "green",
+    "id": "41080green"
+  },
+  {
+    "name": "Belmont",
+    "metroLine": "brown",
+    "id": "41320brown"
+  },
+  {
+    "name": "Belmont",
+    "metroLine": "purple",
+    "id": "41320purple"
+  },
+  {
+    "name": "Jarvis",
+    "metroLine": "red",
+    "id": "41190red"
+  },
+  {
+    "name": "Halsted",
+    "metroLine": "orange",
+    "id": "41130orange"
+  },
+  {
+    "name": "Davis",
+    "metroLine": "purple",
+    "id": "40050purple"
+  },
+  {
+    "name": "Fullerton",
+    "metroLine": "red",
+    "id": "41220red"
+  },
+  {
+    "name": "Chicago",
+    "metroLine": "brown",
+    "id": "40710brown"
+  },
+  {
+    "name": "Chicago",
+    "metroLine": "purple",
+    "id": "40710purple"
+  },
+  {
+    "name": "Monroe",
+    "metroLine": "red",
+    "id": "41090red"
+  },
+  {
+    "name": "Kedzie",
+    "metroLine": "brown",
+    "id": "41180brown"
+  },
+  {
+    "name": "51st",
+    "metroLine": "green",
+    "id": "40130green"
+  },
+  {
+    "name": "Garfield",
+    "metroLine": "green",
+    "id": "40510green"
+  },
+  {
+    "name": "Ashland",
+    "metroLine": "orange",
+    "id": "41060orange"
+  },
+  {
+    "name": "Grand/State",
+    "metroLine": "red",
+    "id": "40330red"
+  },
+  {
+    "name": "Cermak-McCormick Place",
+    "metroLine": "green",
+    "id": "41690green"
+  },
+  {
+    "name": "Polk",
+    "metroLine": "pink",
+    "id": "41030pink"
+  },
+  {
+    "name": "Damen",
+    "metroLine": "brown",
+    "id": "40090brown"
+  },
+  {
+    "name": "Pulaski",
+    "metroLine": "pink",
+    "id": "40150pink"
+  },
+  {
+    "name": "35th/Archer",
+    "metroLine": "orange",
+    "id": "40120orange"
+  },
+  {
+    "name": "South Blvd",
+    "metroLine": "purple",
+    "id": "40840purple"
+  },
+  {
+    "name": "Main",
+    "metroLine": "purple",
+    "id": "40270purple"
+  },
+  {
+    "name": "Wilson",
+    "metroLine": "red",
+    "id": "40540red"
+  },
+  {
+    "name": "Jackson/State",
+    "metroLine": "red",
+    "id": "40560red"
+  },
+  {
+    "name": "Argyle",
+    "metroLine": "red",
+    "id": "41200red"
+  },
+  {
+    "name": "H.W. Library",
+    "metroLine": "brown",
+    "id": "40850brown"
+  },
+  {
+    "name": "Sheridan",
+    "metroLine": "red",
+    "id": "40080red"
+  },
+  {
+    "name": "Austin",
+    "metroLine": "blue",
+    "id": "40010blue"
+  },
+  {
+    "name": "Washington",
+    "metroLine": "blue",
+    "id": "40370blue"
+  },
+  {
+    "name": "Kedzie-Homan",
+    "metroLine": "blue",
+    "id": "40250blue"
+  },
+  {
+    "name": "63rd",
+    "metroLine": "red",
+    "id": "40910red"
+  },
+  {
+    "name": "H.W. Library",
+    "metroLine": "purple",
+    "id": "40850purple"
+  },
+  {
+    "name": "H.W. Library",
+    "metroLine": "pink",
+    "id": "40850pink"
+  },
+  {
+    "name": "H.W. Library",
+    "metroLine": "orange",
+    "id": "40850orange"
+  },
+  {
+    "name": "Kedzie",
+    "metroLine": "orange",
+    "id": "41150orange"
+  },
+  {
+    "name": "Laramie",
+    "metroLine": "green",
+    "id": "40700green"
+  },
+  {
+    "name": "87th",
+    "metroLine": "red",
+    "id": "41430red"
+  },
+  {
+    "name": "Western (Forest Pk Branch)",
+    "metroLine": "blue",
+    "id": "40220blue"
+  },
+  {
+    "name": "Western",
+    "metroLine": "brown",
+    "id": "41480brown"
+  },
+  {
+    "name": "California",
+    "metroLine": "blue",
+    "id": "40570blue"
+  },
+  {
+    "name": "Forest Park",
+    "metroLine": "blue",
+    "id": "40390blue"
+  },
+  {
+    "name": "Washington/Wabash",
+    "metroLine": "brown",
+    "id": "41700brown"
+  },
+  {
+    "name": "Rosemont",
+    "metroLine": "blue",
+    "id": "40820blue"
+  },
+  {
+    "name": "Adams/Wabash",
+    "metroLine": "green",
+    "id": "40680green"
+  },
+  {
+    "name": "Adams/Wabash",
+    "metroLine": "purple",
+    "id": "40680purple"
+  },
+  {
+    "name": "Adams/Wabash",
+    "metroLine": "pink",
+    "id": "40680pink"
+  },
+  {
+    "name": "Adams/Wabash",
+    "metroLine": "orange",
+    "id": "40680orange"
+  },
+  {
+    "name": "Berwyn",
+    "metroLine": "red",
+    "id": "40340red"
+  },
+  {
+    "name": "Harlem (O'Hare Branch)",
+    "metroLine": "blue",
+    "id": "40750blue"
+  },
+  {
+    "name": "Belmont (O'Hare Branch)",
+    "metroLine": "blue",
+    "id": "40060blue"
+  },
+  {
+    "name": "Clark/Division",
+    "metroLine": "red",
+    "id": "40630red"
+  },
+  {
+    "name": "Indiana",
+    "metroLine": "green",
+    "id": "40300green"
+  },
+  {
+    "name": "Kostner",
+    "metroLine": "pink",
+    "id": "40600pink"
+  },
+  {
+    "name": "Dempster-Skokie",
+    "metroLine": "yellow",
+    "id": "40140yellow"
+  },
+  {
+    "name": "Morgan",
+    "metroLine": "green",
+    "id": "41510green"
+  },
+  {
+    "name": "Morgan",
+    "metroLine": "pink",
+    "id": "41510pink"
+  },
+  {
+    "name": "Cicero",
+    "metroLine": "blue",
+    "id": "40970blue"
+  },
+  {
+    "name": "Oakton-Skokie",
+    "metroLine": "yellow",
+    "id": "41680yellow"
+  },
+  {
+    "name": "Cottage Grove",
+    "metroLine": "green",
+    "id": "40720green"
+  },
+  {
+    "name": "Midway",
+    "metroLine": "orange",
+    "id": "40930orange"
+  },
+  {
+    "name": "Clark/Lake",
+    "metroLine": "green",
+    "id": "40380green"
+  },
+  {
+    "name": "Clark/Lake",
+    "metroLine": "brown",
+    "id": "40380brown"
+  },
+  {
+    "name": "Central",
+    "metroLine": "purple",
+    "id": "41250purple"
+  },
+  {
+    "name": "Pulaski",
+    "metroLine": "green",
+    "id": "40030green"
+  },
+  {
+    "name": "Ridgeland",
+    "metroLine": "green",
+    "id": "40610green"
+  },
+  {
+    "name": "Linden",
+    "metroLine": "purple",
+    "id": "41050purple"
+  },
+  {
+    "name": "Garfield",
+    "metroLine": "red",
+    "id": "41170red"
+  },
+  {
+    "name": "North/Clybourn",
+    "metroLine": "red",
+    "id": "40650red"
+  },
+  {
+    "name": "Oak Park",
+    "metroLine": "blue",
+    "id": "40180blue"
+  },
+  {
+    "name": "Irving Park",
+    "metroLine": "brown",
+    "id": "41460brown"
+  },
+  {
+    "name": "Roosevelt",
+    "metroLine": "green",
+    "id": "41400green"
+  },
+  {
+    "name": "Roosevelt",
+    "metroLine": "orange",
+    "id": "41400orange"
+  },
+  {
+    "name": "Francisco",
+    "metroLine": "brown",
+    "id": "40870brown"
+  },
+  {
+    "name": "LaSalle/Van Buren",
+    "metroLine": "brown",
+    "id": "40160brown"
+  },
+  {
+    "name": "California",
+    "metroLine": "pink",
+    "id": "40440pink"
+  },
+  {
+    "name": "Western",
+    "metroLine": "pink",
+    "id": "40740pink"
+  },
+  {
+    "name": "69th",
+    "metroLine": "red",
+    "id": "40990red"
+  },
+  {
+    "name": "Washington/Wells",
+    "metroLine": "purple",
+    "id": "40730purple"
+  },
+  {
+    "name": "Washington/Wells",
+    "metroLine": "pink",
+    "id": "40730pink"
+  },
+  {
+    "name": "Washington/Wells",
+    "metroLine": "orange",
+    "id": "40730orange"
+  },
+  {
+    "name": "Harrison",
+    "metroLine": "red",
+    "id": "41490red"
+  },
+  {
+    "name": "Clinton",
+    "metroLine": "green",
+    "id": "41160green"
+  },
+  {
+    "name": "Clinton",
+    "metroLine": "pink",
+    "id": "41160pink"
+  },
+  {
+    "name": "Kimball",
+    "metroLine": "brown",
+    "id": "41290brown"
+  },
+  {
+    "name": "Addison",
+    "metroLine": "brown",
+    "id": "41440brown"
+  },
+  {
+    "name": "Adams/Wabash",
+    "metroLine": "brown",
+    "id": "40680brown"
+  },
+  {
+    "name": "Quincy/Wells",
+    "metroLine": "purple",
+    "id": "40040purple"
+  },
+  {
+    "name": "Quincy/Wells",
+    "metroLine": "pink",
+    "id": "40040pink"
+  },
+  {
+    "name": "Quincy/Wells",
+    "metroLine": "orange",
+    "id": "40040orange"
+  },
+  {
+    "name": "State/Lake",
+    "metroLine": "green",
+    "id": "40260green"
+  },
+  {
+    "name": "State/Lake",
+    "metroLine": "brown",
+    "id": "40260brown"
+  },
+  {
+    "name": "Cicero",
+    "metroLine": "green",
+    "id": "40480green"
+  },
+  {
+    "name": "Montrose",
+    "metroLine": "blue",
+    "id": "41330blue"
+  },
+  {
+    "name": "State/Lake",
+    "metroLine": "purple",
+    "id": "40260purple"
+  },
+  {
+    "name": "State/Lake",
+    "metroLine": "pink",
+    "id": "40260pink"
+  },
+  {
+    "name": "State/Lake",
+    "metroLine": "orange",
+    "id": "40260orange"
+  },
+  {
+    "name": "LaSalle/Van Buren",
+    "metroLine": "purple",
+    "id": "40160purple"
+  },
+  {
+    "name": "LaSalle/Van Buren",
+    "metroLine": "pink",
+    "id": "40160pink"
+  },
+  {
+    "name": "LaSalle/Van Buren",
+    "metroLine": "orange",
+    "id": "40160orange"
+  },
+  {
+    "name": "Washington/Wells",
+    "metroLine": "brown",
+    "id": "40730brown"
+  },
+  {
+    "name": "Clark/Lake",
+    "metroLine": "purple",
+    "id": "40380purple"
+  },
+  {
+    "name": "Clark/Lake",
+    "metroLine": "pink",
+    "id": "40380pink"
+  },
+  {
+    "name": "Clark/Lake",
+    "metroLine": "orange",
+    "id": "40380orange"
+  },
+  {
+    "name": "Damen",
+    "metroLine": "green",
+    "id": "41710green"
+  }
+]
