@@ -1,0 +1,147 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Network-Schema",
+    "description": "JSON schema for Mini Metro Maps networks",
+    "type": "object",
+    "properties": {
+        "lineWidth": {
+            "description": "Line width of a metro line, in pixels",
+            "type": "integer"
+        },
+        "maxX": {
+            "description": "Maximum scroll in the X direction",
+            "type": "integer"
+        },
+        "maxY": {
+            "description": "Maximum scroll in the Y direction",
+            "type": "integer"
+        },
+        "metroLines": {
+            "description": "Data describing the metro lines",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "Metro line name",
+                        "type": "string"
+                    },
+                    "color": {
+                        "description": "Metro line color",
+                        "type": "string",
+                        "pattern": "^#[0-9a-fA-F]{6}$"
+                    },
+                    "stations": {
+                        "description": "Data describing the stations on the metro line",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "description": "Station identifier - must be unique across all lines/stations",
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "description": "Human-readable station name",
+                                    "type": "string"
+                                },
+                                "x": {
+                                    "description": "X coordinate",
+                                    "type": "integer"
+                                },
+                                "y": {
+                                    "description": "Y coordinate",
+                                    "type": "integer"
+                                }
+                            },
+                            "required": ["id", "name", "x", "y"]
+                        }
+                    },
+                    "edges": {
+                        "description": "Data describing edges between stations",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "station1Id": {
+                                    "description": "Identifier of first station in edge",
+                                    "type": "string"
+                                },
+                                "station2Id": {
+                                    "description": "Identifier of second station in edge",
+                                    "type": "string"
+                                },
+                                "lineSegments": {
+                                    "description": "Data describing line segments which make up edge",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "p0": {
+                                                "description": "First point of line segment",
+                                                "type": "object",
+                                                "properties": {
+                                                    "x": {
+                                                        "description": "X coordinate",
+                                                        "type": "integer"
+                                                    },
+                                                    "y": {
+                                                        "description": "Y coordinate",
+                                                        "type": "integer"
+                                                    }
+                                                },
+                                                "required": ["x", "y"]
+                                            },
+                                            "p1": {
+                                                "description": "Second point of line segment",
+                                                "$ref": "#/properties/metroLines/items/properties/edges/items/properties/lineSegments/items/properties/p0"
+                                            },
+                                            "p2": {
+                                                "description": "Third point of line segment",
+                                                "type": ["object", "null"],
+                                                "properties": {
+                                                    "x": {
+                                                        "description": "X coordinate",
+                                                        "type": "integer"
+                                                    },
+                                                    "y": {
+                                                        "description": "Y coordinate",
+                                                        "type": "integer"
+                                                    }
+                                                },
+                                                "required": ["x", "y"]
+                                            },
+                                            "p3": {
+                                                "description": "Fourth point of line segment",
+                                                "$ref": "#/properties/metroLines/items/properties/edges/items/properties/lineSegments/items/properties/p2"
+                                            },
+                                            "straightLine": {
+                                                "description": "Whether line segment is a straight line. If true, this segment is a straight line from p0 to p1. If false, this segment is a cubic Bezier curve with control points p0, p1, p2, p3.",
+                                                "type": "boolean"
+                                            }
+                                        },
+                                        "required": ["p0", "p1", "p2", "p3", "straightLine"]
+                                    }
+                                }
+                            },
+                            "required": ["station1Id", "station2Id", "lineSegments"]
+                        }
+                    },
+                    "endpointLineSegments": {
+                        "description": "Data for end of line markers",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/properties/metroLines/items/properties/edges/items/properties/lineSegments/items"
+                        }
+                    },
+                    "zIndex": {
+                        "description": "Z-index for drawing the metro line",
+                        "type": "integer"
+                    }
+                },
+                "required": ["name", "color", "stations", "edges", "endpointLineSegments", "zIndex"]
+            }
+        }
+    },
+    "required": ["lineWidth", "maxX", "maxY", "metroLines"]
+}
