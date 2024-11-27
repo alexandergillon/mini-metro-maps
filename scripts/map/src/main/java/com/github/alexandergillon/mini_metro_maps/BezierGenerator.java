@@ -28,32 +28,6 @@ import java.util.stream.Stream;
 public class BezierGenerator {
 
     /**
-     * Scaling parameter for sharp Bezier curves, relative to the model curve read from bezier.json.
-     * The model curve was likely measured with a different scale than the map, so this factor scales it accordingly.
-     * The value of this parameter was found by trial and error.
-     */
-    private static final double SHARP_CURVE_BEZIER_SCALE_FACTOR = 0.4;
-
-    /**
-     * Scaling parameter for wide Bezier curves, relative to the model curve read from bezier.json.
-     * The model curve was likely measured with a different scale than the map, so this factor scales it accordingly.
-     * The value of this parameter was found by trial and error.
-     */
-    private static final double WIDE_CURVE_BEZIER_SCALE_FACTOR = 5;
-
-    /**
-     * Overall scale factor that needs to be applied to generated sharp Bezier curves: incorporates the map's scale
-     * factor so that if we change SCALE_FACTOR in GenerateMap, this still works.
-     */
-    private static final double SHARP_CURVE_SCALE_FACTOR = GenerateMap.SCALE_FACTOR * SHARP_CURVE_BEZIER_SCALE_FACTOR;
-
-    /**
-     * Overall scale factor that needs to be applied to generated wide Bezier curves: incorporates the map's scale
-     * factor so that if we change SCALE_FACTOR in GenerateMap, this still works.
-     */
-    private static final double WIDE_CURVE_SCALE_FACTOR = GenerateMap.SCALE_FACTOR * WIDE_CURVE_BEZIER_SCALE_FACTOR;
-
-    /**
      * Model Bezier curve for a sharp curve. A sharp curve is a 90 degree curve (going from one horizontal/vertical
      * to another). The model curves were found manually.
      */
@@ -118,8 +92,10 @@ public class BezierGenerator {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode json = objectMapper.readTree(new File(bezierPath));
 
-        modelSharpCurve = objectMapper.treeToValue(json.get("sharp_curve"), ModelBezierCurve.class).scale(SHARP_CURVE_SCALE_FACTOR);
-        modelWideCurve = objectMapper.treeToValue(json.get("wide_curve"), ModelBezierCurve.class).scale(WIDE_CURVE_SCALE_FACTOR);
+        modelSharpCurve = objectMapper.treeToValue(json.get("sharp_curve").get("points"), ModelBezierCurve.class)
+                .scale(GenerateMap.SCALE_FACTOR * json.get("sharp_curve").get("scaleFactor").doubleValue());
+        modelWideCurve = objectMapper.treeToValue(json.get("wide_curve").get("points"), ModelBezierCurve.class)
+                .scale(GenerateMap.SCALE_FACTOR * json.get("wide_curve").get("scaleFactor").doubleValue());
 
         // Ensures model sharp curve is down/right
         assert modelSharpCurve.getP0Offset().getX() < modelSharpCurve.getP3Offset().getX();
