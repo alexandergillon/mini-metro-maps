@@ -1,8 +1,8 @@
 line red:
-  station "Howard" 11600 9804
-  station "Jarvis" 11650 9926
-  station "Morse" 11702 10028
-  station "Loyola" 11744 10126
+  station "Howard" 11450 9854
+  station "Jarvis" 11500 9976
+  station "Morse" 11552 10078
+  station "Loyola" 11594 10176
   station "Granville" 11792 10227
   station "Thorndale" 11792 10345
   station "Bryn Mawr" 11792 10441
@@ -70,13 +70,13 @@ line green:
   station "Roosevelt" 12596 13680
   station "Cermak-McCormick Place" 12598 13912
   station "35-Bronzeville-IIT" 12523 14497
-  station "Indiana" 12704 14646
-  station "43rd" 12770 14784
-  station "47th" 12764 14920
-  station "51st" 12770 15044
-  station "Garfield" 12760 15172
-  station "King Drive" 12856 15426
-  station "Cottage Grove" 13098 15426
+  station "Indiana" 12504 14646
+  station "43rd" 12570 14784
+  station "47th" 12564 14920
+  station "51st" 12570 15044
+  station "Garfield" 12560 15172
+  station "King Drive" 12656 15426
+  station "Cottage Grove" 12898 15426
   station "Halsted/63rd" 11858 15432
   station "Ashland/63rd" 11756 15428
 
@@ -88,7 +88,9 @@ line green:
   alignment-point "Garfield_Halsted2" 12252 15351
 
   curve "Washington/Wabash, State/Lake" up,left parallelto pink
-  curve "Adams/Wabash, Roosevelt" special "Adams/Wabash, AdamsWabash_Roosevelt, Roosevelt" "down,down-left : down-left,down"
+  curve "Adams/Wabash, AdamsWabash_Roosevelt" down,down-left
+  curve "AdamsWabash_Roosevelt, Roosevelt" down-left,down
+  curve "Adams/Wabash, Roosevelt" special of "Adams/Wabash, AdamsWabash_Roosevelt" "AdamsWabash_Roosevelt, Roosevelt"
   curve "35-Bronzeville-IIT, Indiana" down,right
   curve "Indiana, 43rd" right,down
   curve "Garfield, King Drive" down,right
@@ -98,16 +100,16 @@ line green:
   vertical "Washington/Wabash, Adams/Wabash"
   vertical "Roosevelt, Cermak-McCormick Place, 35-Bronzeville-IIT"
   vertical "43rd, 47th, 51st, Garfield"
-  vertical "King Drive, Cottage Grove, Halsted/63rd, Ashland/63rd"
+  horizontal "King Drive, Cottage Grove, Halsted/63rd, Ashland/63rd"
 
 line orange:
-  station "Midway" 10233 15408
-  station "Pulaski" 10401 15147
-  station "Kedzie" 10746 14970
-  station "Western" 11058 14961
-  station "35th/Archer" 11316 14403
-  station "Ashland" 11607 14232
-  station "Halsted" 11835 14103
+  station "Midway" 10233 15708
+  station "Pulaski" 10401 15447
+  station "Kedzie" 10746 15270
+  station "Western" 11058 15261
+  station "35th/Archer" 11316 14703
+  station "Ashland" 11607 14532
+  station "Halsted" 11835 14403
   station "Roosevelt" 12477 13671
   station "Adams/Wabash" 12474 13168
   station "Washington/Wabash" 12474 12930
@@ -120,7 +122,9 @@ line orange:
 
   edges "Midway, Pulaski, Kedzie, Western, 35th/Archer, Ashland, Halsted, Roosevelt, Adams/Wabash, Washington/Wabash, State/Lake, Clark/Lake, Washington/Wells, Quincy/Wells, LaSalle/Van Buren, H.W. Library, Roosevelt"
 
-  alignment-point "Western_35thArcher" 11199 14766
+  alignment-point "Western_35thArcher" 11199 15066
+  alignment-point "AdamsWabash_Roosevelt"  12468 13529
+  alignment-point "HWLibrary_Roosevelt" 12477 13477
 
   curve "Midway, Pulaski" up,up-right
   curve "Pulaski, Kedzie" up-right,right
@@ -129,14 +133,20 @@ line orange:
   curve "Washington/Wabash, State/Lake" up,left
   curve "Clark/Lake, Washington/Wells" left,down
   curve "Quincy/Wells, LaSalle/Van Buren" down,right
-  curve "H.W. Library, Roosevelt" right,down
+  curve "Adams/Wabash, AdamsWabash_Roosevelt" down,down-left
+  curve "AdamsWabash_Roosevelt, Roosevelt" down-left,down parallelto green
+  curve "Adams/Wabash, Roosevelt" special of "Adams/Wabash, AdamsWabash_Roosevelt" "AdamsWabash_Roosevelt, Roosevelt"
+  curve "H.W. Library, HWLibrary_Roosevelt" right,down
+  curve "HWLibrary_Roosevelt, AdamsWabash_Roosevelt" down,down-left
+  curve "H.W. Library, Roosevelt" special of "H.W. Library, HWLibrary_Roosevelt" "HWLibrary_Roosevelt, AdamsWabash_Roosevelt" "AdamsWabash_Roosevelt, Roosevelt"
 
   horizontal "Kedzie, Western"
   up-right "35th/Archer, Ashland, Halsted"
-  vertical "Roosevelt, Adams/Wabash, Washington/Wabash"
+  vertical "Adams/Wabash, Washington/Wabash"
   horizontal "Clark/Lake, State/Lake"
   vertical "Washington/Wells, Quincy/Wells"
   horizontal "LaSalle/Van Buren, H.W. Library"
+  vertical "Adams/Wabash, HWLibrary_Roosevelt"
 
 line blue:
   station "O'Hare" 8716 10766
@@ -222,11 +232,11 @@ line brown:
   curve "Damen, Montrose" right,down
   curve "Addison, Paulina" down,right
   curve "Southport, Belmont" right,down
-  curve "Armitage, Sedgwick" down,right
+  curve "Armitage, Sedgwick" down,right parallelto purple
   curve "Sedgwick, Chicago" right,down
-  curve "Quincy/Wells, LaSalle/Van Buren" down,right
-  curve "H.W. Library, Adams/Wabash" right,up
-  curve "Washington/Wabash, State/Lake" up,left
+  curve "Quincy/Wells, LaSalle/Van Buren" down,right parallelto purple
+  curve "H.W. Library, Adams/Wabash" right,up parallelto purple
+  curve "Washington/Wabash, State/Lake" up,left parallelto purple
   curve "Clark/Lake, Merchandise Mart" left,up
 
   horizontal "Kimball, Kedzie, Francisco, Rockwell, Western, Damen"
@@ -279,15 +289,15 @@ line pink:
   vertical "Washington/Wabash, Adams/Wabash"
 
 line purple:
-  station "Linden" 11056 9126
-  station "Central" 11112 9222
-  station "Noyes" 11186 9308
-  station "Foster" 11256 9388
-  station "Davis" 11306 9476
-  station "Dempster" 11374 9570
-  station "Main" 11418 9646
-  station "South Blvd" 11484 9718
-  station "Howard" 11763 9795
+  station "Linden" 10906 9176
+  station "Central" 10962 9272
+  station "Noyes" 11036 9358
+  station "Foster" 11106 9438
+  station "Davis" 11156 9526
+  station "Dempster" 11224 9620
+  station "Main" 11268 9696
+  station "South Blvd" 11334 9768
+  station "Howard" 11613 9845
   station "Wilson" 11709 10983
   station "Belmont" 11931 11562
   station "Wellington" 11925 11667
@@ -353,10 +363,14 @@ multi-line:
   same-station purple above brown "LaSalle/Van Buren, H.W. Library"
   same-station purple left brown "Adams/Wabash, Washington/Wabash"
   same-station purple below brown "State/Lake, Clark/Lake"
+  same-station "purple: Sheridan_Virtual" below "red: Sheridan"
+  same-station "purple: Addison_Virtual" left "red: Addison"
 
   # red line
   same-station red right purple "Belmont, Fullerton"
   same-station red left orange "Roosevelt"
+
+  equal "red: Sheridan.x + red: Sheridan.x" "red: Addison.x + red: Wilson.x"
 
   # blue line
   same-station blue below orange "Clark/Lake"
@@ -371,6 +385,10 @@ multi-line:
   # green line
   same-station green right pink "Washington/Wabash, Adams/Wabash"
   same-station green right orange "Roosevelt"
+  same-station green below-right orange "AdamsWabash_Roosevelt"
+
+  equal "green: Indiana.x + green: Indiana.x" "green: 35-Bronzeville-IIT.x + green: 43rd.x"
+  equal "green: Garfield_Halsted2.y + green: Garfield_Halsted2.y" "green: Garfield_Halsted1.y + green: Halsted/63rd.y"
 
   # orange line
   same-station orange below purple "Clark/Lake, State/Lake"
@@ -378,5 +396,25 @@ multi-line:
   same-station orange above purple "LaSalle/Van Buren, H.W. Library"
   same-station orange left purple "Washington/Wabash, Adams/Wabash"
 
+  equal "orange: AdamsWabash_Roosevelt.x + orange: AdamsWabash_Roosevelt.x" "orange: Adams/Wabash.x + orange: Roosevelt.x"
+  equal "orange: AdamsWabash_Roosevelt.y + orange: Adams/Wabash.y" "orange: HWLibrary_Roosevelt.y + orange: HWLibrary_Roosevelt.y"
+
   # brown line
   # all covered
+
+  zindex blue below orange
+  zindex blue below purple
+  zindex blue below brown
+  zindex blue below pink
+
+  zindex red below orange
+  zindex red below purple
+  zindex red below brown
+  zindex red below pink
+
+  zindex brown above purple
+  zindex brown above pink
+  zindex brown above green
+
+  zindex purple above pink
+  zindex purple above green

@@ -18,7 +18,7 @@ public class GenerateMap {
     public static final int SCALE_FACTOR = 5;
 
     /** Line width of a metro line on the map, in pixels. */
-    public static final int METRO_LINE_WIDTH = 10 * SCALE_FACTOR; // must be even or AMPL constraints will be violated
+    public static final int METRO_LINE_WIDTH = 20 * SCALE_FACTOR; // must be even or AMPL constraints will be violated
 
     /**
      * Weight for alignment points in AMPL (normal stations have weight 1). The idea of this is that we want to weight
