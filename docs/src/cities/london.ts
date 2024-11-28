@@ -1,4 +1,4 @@
-import { NextArrivalInfo } from "../trains.js";
+import { ArrivalInfo } from "../trains.js";
 
 /** Interface for an item in the TFL API response, for TypeScript. */
 interface TflApiResponseItem {
@@ -29,10 +29,10 @@ function setLines(metroLines: string[]) {
 
 /**
  * Gets the next arrival for all trains on lines previously specified by setLines().
- * Each train has only 1 NextArrivalInfo in the return value.
+ * Each train has only 1 ArrivalInfo in the return value.
  * @returns The next arrival of each train on the previously configured lines.
  */
-async function getData(): Promise<Array<NextArrivalInfo>> {
+async function getData(): Promise<Array<ArrivalInfo>> {
     // todo: error handling
     console.log("getData"); // todo: remove
     const response = await fetch(apiUrl);
@@ -46,20 +46,19 @@ async function getData(): Promise<Array<NextArrivalInfo>> {
  * @param arrivals The arrival data returned from the TFL API call. See https://api.tfl.gov.uk/ for response format.
  * @returns The next arrival of each train in the response data.
  */
-function stripData(arrivals: TflApiResponse): NextArrivalInfo[] {
-    const nearestArrival = new Map();
+function stripData(arrivals: TflApiResponse): ArrivalInfo[] {
+    const nearestArrival: Map<string, ArrivalInfo> = new Map();
     const time = Date.now();
 
     arrivals.forEach(
         arrival => {
             const vehicleId = arrival.vehicleId;
-            const timeToStation = arrival.timeToStation;
+            const arrivalTime = time + arrival.timeToStation * 1000;
 
-            if (!nearestArrival.has(vehicleId) || nearestArrival.get(vehicleId).timeToStation > timeToStation) {
+            if (!nearestArrival.has(vehicleId) || arrivalTime < nearestArrival.get(vehicleId)!.arrivalTime) {
                 const naptan = getNaptan(arrival, arrivals);
                 const nextStationId = `${arrival.lineId}_${naptan}`;
-                const arrivalInfo = new NextArrivalInfo(vehicleId, arrival.lineId, nextStationId, time + timeToStation * 1000);
-                nearestArrival.set(vehicleId, arrivalInfo);
+                nearestArrival.set(vehicleId, new ArrivalInfo(vehicleId, arrival.lineId, nextStationId, arrivalTime));
             }
         }
     )

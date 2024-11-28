@@ -62,6 +62,7 @@ class Path {
         this.segmentIndex = 0;
         this.parameterValue = 0;
         this.length = edges.map(edge => edge.length).reduce((l1, l2) => l1 + l2);
+        this.finished = false;
     }
     /** Samples a point at the current position in the Path. Behavior is unspecified if edge/segment indices are out of bounds. */
     samplePoint() {
@@ -114,22 +115,27 @@ class Path {
         }
     }
     /**
-     * Moves the position on this Path by a distance.
+     * Moves the position on this Path by a non-negative distance.
      * Todo: if this function becomes a bottleneck, consider caching segment and parameter value increment?
-     * @param distance Distance to move along the path.
-     * @return The new position on this path, or null if the end of the path has been reached.
+     * Right now, this isn't exact for Bezier segments. This may introduce inaccuracies in animations. TODO: investigate and change
+     * @param distance Distance to move along the path. Must be non-negative.
+     * @return The new position on this path. If the end of the path is exceeded, continues to return the endpoint.
      */
     move(distance) {
-        // Right now, this isn't exact for Bezier segments. TODO: change
+        if (this.finished)
+            return this.samplePoint(); // Finished, do not increment.
         const segment = this.edges[this.edgeIndex].lineSegments[this.segmentIndex];
         const dParameterValue = distance / segment.length;
         this.parameterValue += dParameterValue;
         if (this.parameterValue > 1) {
             // We have advanced past the end of the current segment.
-            const finished = this.advanceSegment();
-            if (finished) {
-                // Path is finished - return null.
-                return null;
+            this.finished = this.advanceSegment();
+            if (this.finished) {
+                // Entire path is finished. Set position to endpoint.
+                this.edgeIndex = this.edges.length - 1;
+                this.segmentIndex = this.edges[this.edgeIndex].lineSegments.length - 1;
+                this.parameterValue = 1;
+                return this.samplePoint();
             }
             else {
                 // Path is not finished - move along the next segment by however much we moved past the end of the current segment.
@@ -240,4 +246,4 @@ class MetroNetwork {
         return edge;
     }
 }
-export { metroNetwork, setMetroNetwork, MetroLine, MetroNetwork };
+export { metroNetwork, setMetroNetwork, Path, MetroLine, MetroNetwork };

@@ -1,10 +1,10 @@
 import { drawMetroLines } from "./drawing.js";
-import { setGetData, updateTrains } from "./trains.js";
+import { setGetData, fetchTrainData } from "./trains.js";
 import { metroNetwork, setMetroNetwork } from "./network.js";
 import { CityModule } from "./cities/city.js";
 
 /** Time between updates of train data, in seconds. */
-const UPDATE_INTERVAL = 15;
+const FETCH_TRAIN_DATA_INTERVAL = 15;
 
 /** The global paper object, populated by paper.js. */
 declare const paper: any;
@@ -114,7 +114,7 @@ function registerEventListeners(canvas: HTMLCanvasElement) {
     tool.onMouseDrag = pan;
     canvas.addEventListener("wheel", zoom);
     window.addEventListener("resize", resizeCanvas);
-    setInterval(updateTrains, UPDATE_INTERVAL * 1000);
+    setInterval(fetchTrainData, FETCH_TRAIN_DATA_INTERVAL * 1000);
 }
 
 /**
