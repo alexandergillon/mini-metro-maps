@@ -1,16 +1,16 @@
 /** POJO to store information about the next arrival for a train. */
-class NextArrivalInfo {
+class ArrivalInfo {
     /**
-     * @param id ID of the train.
+     * @param trainId ID of the train.
      * @param line Line name of the train.
-     * @param nextStation Next station ID of the train.
-     * @param timeToStation Time until this train will reach this station, in milliseconds.
+     * @param stationId Next station ID of the train.
+     * @param arrivalTime Arrival time of the train, in milliseconds from the epoch.
      */
-    constructor(id, line, nextStation, timeToStation) {
-        this.id = id;
+    constructor(trainId, line, stationId, arrivalTime) {
+        this.trainId = trainId;
         this.line = line;
-        this.nextStation = nextStation;
-        this.timeToStation = timeToStation;
+        this.stationId = stationId;
+        this.arrivalTime = arrivalTime;
     }
 }
 /** Function to get train data. Dynamically imported during setup. */
@@ -20,8 +20,8 @@ function setGetData(getDataIn) {
     getData = getDataIn;
 }
 /** Callback function to update train data. */
-async function updateTrains() {
+async function fetchTrainData() {
     // todo: implement
     console.log(await getData());
 }
-export { NextArrivalInfo, setGetData, updateTrains };
+export { ArrivalInfo, setGetData, fetchTrainData };

@@ -1,22 +1,22 @@
 import { CityModule } from "./cities/city.js";
 
 /** POJO to store information about the next arrival for a train. */
-class NextArrivalInfo {
-    id: string;
-    line: string;
-    nextStation: string;
-    arrivalTime: number;
+class ArrivalInfo {
+    readonly trainId: string;
+    readonly line: string;
+    readonly stationId: string;
+    readonly arrivalTime: number;
 
     /**
-     * @param id ID of the train.
+     * @param trainId ID of the train.
      * @param line Line name of the train.
-     * @param nextStation Next station ID of the train.
-     * @param arrivalTime Time that this train will arrive at the station, in milliseconds from the epoch.
+     * @param stationId Next station ID of the train.
+     * @param arrivalTime Arrival time of the train, in milliseconds from the epoch.
      */
-    constructor(id: string, line: string, nextStation: string, arrivalTime: number) {
-        this.id = id;
+    constructor(trainId: string, line: string, stationId: string, arrivalTime: number) {
+        this.trainId = trainId;
         this.line = line;
-        this.nextStation = nextStation;
+        this.stationId = stationId;
         this.arrivalTime = arrivalTime;
     }
 }
@@ -30,9 +30,9 @@ function setGetData(getDataIn: CityModule.GetDataFunction) {
 }
 
 /** Callback function to update train data. */
-async function updateTrains() {
+async function fetchTrainData() {
     // todo: implement
     console.log(await getData());
 }
 
-export { NextArrivalInfo, setGetData, updateTrains };
+export { ArrivalInfo, setGetData, fetchTrainData };

@@ -1,5 +1,5 @@
 /** This file is an interface for cities to implement. */
-import { NextArrivalInfo } from "../trains.ts";
+import { ArrivalInfo } from "../trains.ts";
 
 declare module CityModule {
     /**
@@ -14,7 +14,7 @@ declare module CityModule {
      * Each train has only 1 NextArrivalInfo in the return value.
      * @returns The next arrival of each train on the previously configured lines.
      */
-    export function getData(): Promise<Array<NextArrivalInfo>>
+    export function getData(): Promise<Array<ArrivalInfo>>;
 
     /** Type of getData(), for TypeScript annotations. */
     export type GetDataFunction = typeof getData;
