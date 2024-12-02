@@ -1,7 +1,7 @@
-import { drawMetroLines } from "./drawing.js";
-import { setGetData, fetchTrainData } from "./trains.js";
-import { metroNetwork, setMetroNetwork } from "./network.js";
-import { CityModule } from "./cities/city.js";
+import {fetchTrainData, setGetData} from "./trains.js";
+import {CityModule} from "./cities/city.js";
+import {MetroNetwork} from "./impl/Types.js";
+import {MetroNetworkImpl} from "./impl/MetroNetworkImpl.js";
 
 /** Time between updates of train data, in seconds. */
 const FETCH_TRAIN_DATA_INTERVAL = 15;
@@ -11,6 +11,9 @@ declare const paper: any;
 
 /** JS module for the specific city being displayed. Has functionality to retrieve data from the appropriate transit API. */
 let cityModule: typeof CityModule;
+
+/** The metro network. */
+let metroNetwork: MetroNetwork;
 
 /**
  * Padding around the map is defined as a multiple of line width, to handle padding automatically when the scale of
@@ -124,7 +127,7 @@ function registerEventListeners(canvas: HTMLCanvasElement) {
  */
 async function fetchMetroNetwork(jsonPath: string) {
     const response = await fetch(jsonPath);
-    setMetroNetwork(await response.json());
+    metroNetwork = new MetroNetworkImpl(await response.json());
 }
 
 /**
@@ -150,7 +153,7 @@ async function fetchDependencies() {
 
     await Promise.all([fetchMetroNetwork(jsonPath), fetchApiFunction(jsPath)]);
 
-    const metroLineNames = Array.from(metroNetwork.metroLines, ([id, _]) => id);
+    const metroLineNames = Array.from(metroNetwork.metroLines).map(metroLine => metroLine.name);
     cityModule.setLines(metroLineNames);
 }
 
@@ -167,7 +170,7 @@ async function setupCanvas() {
 
     updatePannableArea();
     registerEventListeners(canvas);
-    drawMetroLines();
+    metroNetwork.draw();
 
     // center the map to start
     paper.view.translate(- metroNetwork.width / 2, - metroNetwork.height / 2);
