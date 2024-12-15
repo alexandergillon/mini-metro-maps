@@ -1,11 +1,11 @@
 /** @file Metro line implementation. */
 import {BezierLineSegment} from "./BezierLineSegment.js";
 import {EdgeImpl} from "./EdgeImpl.js";
-import {GraphStation} from "../GraphTypes.js";
+import {GraphStation} from "../../GraphTypes.js";
 import {JsonMetroLine} from "./JsonTypes.js";
 import {StationImpl} from "./StationImpl.js";
 import {StraightLineSegment} from "./StraightLineSegment.js";
-import {Edge, LineSegment, MetroLine, Station} from "./Types.js";
+import {Edge, LineSegment, MetroLine, Station} from "../Types.js";
 
 /** Implements a metro line. */
 export class MetroLineImpl implements MetroLine {

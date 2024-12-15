@@ -1,6 +1,6 @@
 /** Straight line segment implementation. */
 import {JsonStraightLineSegment} from "./JsonTypes.js";
-import {LineSegment, Point} from "./Types.js";
+import {LineSegment, Point} from "../Types.js";
 
 /** Implements a line segment which is a straight line. */
 export class StraightLineSegment implements LineSegment {

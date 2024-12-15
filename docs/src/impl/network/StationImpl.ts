@@ -1,6 +1,6 @@
 /** @file Station implementation. */
 import {JsonStation} from "./JsonTypes.js";
-import {MetroLine, Point, Station} from "./Types.js";
+import {MetroLine, Point, Station} from "../Types.js";
 
 /** Implements a station. */
 export class StationImpl implements Station {
