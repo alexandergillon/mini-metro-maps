@@ -23,6 +23,13 @@ export class PaperCanvas {
     private maxPanningY: number;
     /** Padding around the map is defined as a multiple of line width, to handle padding automatically when the scale of the map changes. */
     private static readonly PADDING_SCALE_FACTOR = 20;
+    /** Factor to zoom in the map by on mouse scroll. */
+    private static readonly ZOOM_IN_FACTOR = 1.25;
+    /** Factor to zoom out the map by on mouse scroll. */
+    private static readonly ZOOM_OUT_FACTOR = 0.8;
+    /** Maximum zoom in proportion. E.g. 0.1 ~= can't zoom in to more than 1/10 of the width/height on screen
+     * (not exact due to discrete zoom levels, also may allow zooming in one more level than this boundary). */
+    private static readonly MAX_ZOOM_FACTOR = 0.1;
 
     /**
      * Constructor. Registers event listeners with the browser/paper.js to handle user interaction.
@@ -111,15 +118,24 @@ export class PaperCanvas {
      */
     private zoom(event: WheelEvent) { // todo: zoom in limit
         event.preventDefault();
-        if (event.deltaY < 0) { // scroll up
-            paper.view.scale(1.25); // todo: define constant
-        } else if (event.deltaY > 0) { // scroll down
-            if (paper.view.bounds.width >= this.maxPanningX && paper.view.bounds.height >= this.maxPanningY) {
-                return; // everything is visible - don't allow further zoom out
-            }
 
-            paper.view.scale(0.8);
+        const metroNetworkWidth = this.metroNetwork.width;
+        const metroNetworkHeight = this.metroNetwork.height;
+        // These are more like 'if we are already zoomed in beyond this, don't allow further zoom' rather than 'you can never zoom in closer than this'
+        const minWidth = PaperCanvas.MAX_ZOOM_FACTOR * metroNetworkWidth;
+        const minHeight = PaperCanvas.MAX_ZOOM_FACTOR * metroNetworkHeight;
+        const currentWidth = paper.view.bounds.width;
+        const currentHeight = paper.view.bounds.height;
+
+        // Scroll up - zoom in. Block zoom if too little is visible.
+        if (event.deltaY < 0 && !(currentWidth <= minWidth && currentHeight <= minHeight)) {
+            paper.view.scale(PaperCanvas.ZOOM_IN_FACTOR);
         }
+        // Scroll down - zoom out. Block zoom if everything is already visible.
+        else if (event.deltaY > 0 && !(currentWidth >= metroNetworkWidth && currentHeight >= metroNetworkHeight)) {
+            paper.view.scale(PaperCanvas.ZOOM_OUT_FACTOR);
+        }
+
         this.updatePannableArea();
         this.restoreBounds();
     }
