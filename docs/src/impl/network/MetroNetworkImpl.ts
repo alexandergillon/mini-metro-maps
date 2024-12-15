@@ -1,7 +1,7 @@
 /** @file Metro network implementation. */
 import {JsonMetroNetwork} from "./JsonTypes.js";
 import {MetroLineImpl} from "./MetroLineImpl.js";
-import {MetroLine, MetroNetwork} from "./Types.js";
+import {MetroLine, MetroNetwork} from "../Types.js";
 
 /** Implements a metro network. */
 export class MetroNetworkImpl implements MetroNetwork {

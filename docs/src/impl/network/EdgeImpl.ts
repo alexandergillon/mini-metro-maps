@@ -2,7 +2,7 @@
 import {BezierLineSegment} from "./BezierLineSegment.js";
 import {JsonEdge} from "./JsonTypes.js";
 import {StraightLineSegment} from "./StraightLineSegment.js";
-import {Edge, LineSegment, Station} from "./Types.js";
+import {Edge, LineSegment, Station} from "../Types.js";
 
 /** Implements an edge on a metro line. */
 export class EdgeImpl implements Edge {

@@ -1,7 +1,7 @@
 /** @file Bezier line segment implementation. */
 import {JsonBezierLineSegment} from "./JsonTypes.js";
-import {LineSegment, Point} from "./Types.js";
-import {Bezier} from "../lib/bezierjs/bezier.js";
+import {LineSegment, Point} from "../Types.js";
+import {Bezier} from "../../lib/bezierjs/bezier.js";
 
 /** Implements a line segment which is a cubic Bezier curve. */
 export class BezierLineSegment implements LineSegment {
