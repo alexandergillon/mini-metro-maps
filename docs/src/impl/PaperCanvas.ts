@@ -7,6 +7,7 @@
 
 import {MetroNetwork} from "./Types";
 
+/** The global paper object from paper.js. */
 declare const paper: paper.PaperScope;
 
 /** Class to manage the paper.js canvas. */
@@ -14,13 +15,13 @@ export class PaperCanvas {
     /** The metro network, for width and height information. */
     private readonly metroNetwork: MetroNetwork;
     /** Min X that the user can pan to. */
-    private minPanningX: number;
+    private minPanningX: number = 0;
     /** Min Y that the user can pan to. */
-    private minPanningY: number;
+    private minPanningY: number = 0;
     /** Max X that the user can pan to. */
-    private maxPanningX: number;
+    private maxPanningX: number = 0;
     /** Max Y that the user can pan to. */
-    private maxPanningY: number;
+    private maxPanningY: number = 0;
     /** Padding around the map is defined as a multiple of line width, to handle padding automatically when the scale of the map changes. */
     private static readonly PADDING_SCALE_FACTOR = 20;
     /** Factor to zoom in the map by on mouse scroll. */
@@ -38,7 +39,6 @@ export class PaperCanvas {
      */
     public constructor(metroNetwork: MetroNetwork, canvas: HTMLCanvasElement) {
         this.metroNetwork = metroNetwork;
-        this.minPanningX = this.minPanningY = this.maxPanningX = this.maxPanningY = 0; // will be re-assigned by updatePannableArea()
 
         // register event listeners
         const tool = new paper.Tool();
