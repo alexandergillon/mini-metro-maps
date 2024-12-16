@@ -12,8 +12,15 @@ export class PaperCanvas {
      * @param canvas The canvas to register event listeners on.
      */
     constructor(metroNetwork, canvas) {
+        /** Min X that the user can pan to. */
+        this.minPanningX = 0;
+        /** Min Y that the user can pan to. */
+        this.minPanningY = 0;
+        /** Max X that the user can pan to. */
+        this.maxPanningX = 0;
+        /** Max Y that the user can pan to. */
+        this.maxPanningY = 0;
         this.metroNetwork = metroNetwork;
-        this.minPanningX = this.minPanningY = this.maxPanningX = this.maxPanningY = 0; // will be re-assigned by updatePannableArea()
         // register event listeners
         const tool = new paper.Tool();
         tool.onMouseDrag = this.pan.bind(this);
