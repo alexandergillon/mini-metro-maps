@@ -10,7 +10,7 @@
 export interface GraphStation {
     readonly id: string;
     readonly name: string;
-    neighbors(): GraphStation[];
+    neighbors(): Map<GraphStation, GraphEdge>; // map from neighbor -> edge that connects the station and its neighbor
 }
 
 /** An edge in the network: i.e. two stations that are connected. */

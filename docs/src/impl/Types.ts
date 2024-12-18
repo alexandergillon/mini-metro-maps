@@ -21,7 +21,7 @@ export class Point {
 /** A station in the network. */
 export interface Station extends GraphStation {
     // Re-declarations
-    neighbors(): Station[];
+    neighbors(): Map<Station, Edge>;
 
     // Extensions
     readonly location: Point;

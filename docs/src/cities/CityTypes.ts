@@ -29,7 +29,7 @@ export class ArrivalInfo {
      * @param stationId Next station ID of the train.
      * @param arrivalTime Arrival time of the train, in milliseconds from the epoch.
      */
-    constructor(trainId: string, line: string, stationId: string, arrivalTime: number) {
+    public constructor(trainId: string, line: string, stationId: string, arrivalTime: number) {
         this.trainId = trainId;
         this.line = line;
         this.stationId = stationId;
@@ -39,8 +39,8 @@ export class ArrivalInfo {
 
 /** POJO to store a train's location and next arrival. */
 export class LocationInfo {
-    /** Location of train. */
-    readonly location: GraphStation | GraphEdge;
+    /** Location of train. Either a station, or an edge and a proportion along the edge (between 0 and 1). */
+    readonly location: GraphStation | [GraphEdge, number];
     /** Next arrival of train. */
     readonly nextArrival: ArrivalInfo;
 
@@ -49,7 +49,7 @@ export class LocationInfo {
      * @param location Location of train.
      * @param nextArrival Next arrival of train.
      */
-    constructor(location: GraphStation | GraphEdge, nextArrival: ArrivalInfo) {
+    public constructor(location: GraphStation | [GraphEdge, number], nextArrival: ArrivalInfo) {
         this.location = location;
         this.nextArrival = nextArrival;
     }
