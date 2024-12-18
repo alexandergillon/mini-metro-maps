@@ -1,4 +1,4 @@
-import { ArrivalInfo } from "./CityTypes.js";
+import { ArrivalInfo, LocationInfo } from "./CityTypes.js";
 class LondonApi {
     /**
      * Constructor.
@@ -24,7 +24,19 @@ class LondonApi {
         return this.stripData(json);
     }
     whereAre(trainIds, metroNetwork) {
-        throw new Error("unimplemented");
+        // Max approx. 25 ids per call: https://api.tfl.gov.uk/swagger/ui/index.html?url=/swagger/docs/v1#!/Vehicle/Vehicle_Get
+        const numRequests = Math.ceil(trainIds.length / 20);
+        const promises = [];
+        const locations = new Map();
+        for (let i = 0; i < numRequests; i++) {
+            const thisRequestIds = trainIds.slice(i * 20, (i + 1) * 20);
+            const apiUrl = `https://api.tfl.gov.uk/vehicle/${thisRequestIds.join(",")}/arrivals`;
+            promises.push(fetch(apiUrl)
+                .then(response => response.json())
+                .then(json => this.getLocations(thisRequestIds, json, metroNetwork))
+                .then(newLocations => newLocations.forEach((locationInfo, trainId) => locations.set(trainId, locationInfo))));
+        }
+        return Promise.all(promises).then(_ => locations);
     }
     /**
      * Strips arrival data down to what we care about. Only keeps the closest arrival for each train, and only information
@@ -33,17 +45,18 @@ class LondonApi {
      * @returns The next arrival of each train in the response data.
      */
     stripData(arrivals) {
-        const nearestArrival = new Map();
-        const time = Date.now();
-        arrivals.forEach(arrival => {
-            const vehicleId = arrival.vehicleId;
-            const arrivalTime = time + arrival.timeToStation * 1000;
-            if (!nearestArrival.has(vehicleId) || arrivalTime < nearestArrival.get(vehicleId).arrivalTime) {
-                const naptan = this.getNaptan(arrival, arrivals);
-                const nextStationId = `${arrival.lineId}_${naptan}`;
-                nearestArrival.set(vehicleId, new ArrivalInfo(vehicleId, arrival.lineId, nextStationId, arrivalTime));
-            }
+        // This isn't beautiful, but it avoids a bunch of needless object creation
+        const parsedArrivals = arrivals.map(arrival => {
+            arrival.arrivalTime = Date.parse(arrival.expectedArrival);
+            return arrival;
         });
+        const nearestArrival = new Map();
+        for (const arrival of parsedArrivals) {
+            const vehicleId = arrival.vehicleId;
+            if (!nearestArrival.has(vehicleId) || arrival.arrivalTime < nearestArrival.get(vehicleId).arrivalTime) {
+                nearestArrival.set(vehicleId, this.toArrivalInfo(arrival, parsedArrivals));
+            }
+        }
         return Array.from(nearestArrival.values());
     }
     /**
@@ -102,16 +115,16 @@ class LondonApi {
      */
     resolveEdgwareRoadNaptan(arrival, arrivals) {
         const vehicleId = arrival.vehicleId;
-        const timeToStation = arrival.timeToStation;
+        const arrivalTime = arrival.arrivalTime;
         // Gets all arrivals for the same vehicle which are after this arrival.
-        const laterArrivals = arrivals.filter(a => a.vehicleId === vehicleId && a.timeToStation > timeToStation);
+        const laterArrivals = arrivals.filter(a => a.vehicleId === vehicleId && a.arrivalTime > arrivalTime);
         if (laterArrivals.length === 0) {
             // Train is likely terminating at Edgware Road, and then going out of service. Almost certainly is the
             // Edgware Road which also serves the District line.
             return "940GZZLUERC_D";
         }
         // Gets the next (soonest) arrival after this arrival for the same vehicle.
-        const nextArrival = laterArrivals.reduce((a1, a2) => a1.timeToStation < a2.timeToStation ? a1 : a2);
+        const nextArrival = laterArrivals.reduce((a1, a2) => a1.arrivalTime < a2.arrivalTime ? a1 : a2);
         if (/eastbound/i.test(nextArrival.platformName)) {
             return LondonApi.EDGWARE_ROAD_EASTBOUND_HC.has(nextArrival.naptanId) ? "940GZZLUERC_HC" : "940GZZLUERC_D";
         }
@@ -122,6 +135,101 @@ class LondonApi {
             console.log(`Could not resolve NAPTAN for Edgware Road (${nextArrival.platformName}).`);
             return "940GZZLUERC_D"; // need to return something - right half the time
         }
+    }
+    /**
+     * Gets locations for specified trains in a TFL API response.
+     * @param trainIds The trains to get locations of.
+     * @param arrivals The API response that contains arrivals for those trains.
+     * @param metroNetwork The metro network.
+     * @private
+     */
+    getLocations(trainIds, arrivals, metroNetwork) {
+        // This isn't beautiful, but it avoids a bunch of needless object creation
+        const parsedArrivals = arrivals.map(arrival => {
+            arrival.arrivalTime = Date.parse(arrival.expectedArrival);
+            return arrival;
+        });
+        const locations = new Map();
+        const nearestArrivals = new Map();
+        // Get nearest 2 arrivals for each specified train
+        for (const arrival of parsedArrivals) {
+            const vehicleId = arrival.vehicleId;
+            const arrivalTime = arrival.arrivalTime;
+            if (!nearestArrivals.has(vehicleId)) {
+                nearestArrivals.set(vehicleId, [undefined, undefined]);
+            }
+            const thisNearestArrivals = nearestArrivals.get(vehicleId);
+            if (!thisNearestArrivals[0] || arrivalTime < thisNearestArrivals[0].arrivalTime) {
+                nearestArrivals.set(vehicleId, [this.toArrivalInfo(arrival, parsedArrivals), thisNearestArrivals[0]]);
+            }
+            else if (!thisNearestArrivals[1] || arrivalTime < thisNearestArrivals[1].arrivalTime) {
+                nearestArrivals.set(vehicleId, [thisNearestArrivals[0], this.toArrivalInfo(arrival, parsedArrivals)]);
+            }
+        }
+        // Get locations based on nearest arrivals
+        for (const trainId of trainIds) {
+            const nearestArrivalsForTrain = nearestArrivals.get(trainId);
+            if (!nearestArrivalsForTrain) {
+                locations.set(trainId, null);
+            }
+            else {
+                const [nextArrival, nextNextArrival] = nearestArrivalsForTrain;
+                // If nearestArrivalsForTrain is not undefined, then at least the next arrival is set
+                locations.set(trainId, this.getLocation(nextArrival, nextNextArrival, metroNetwork));
+            }
+        }
+        return locations;
+    }
+    /**
+     * Attemps to determine the location of a train given its next 1-2 arrivals.
+     * @param nextArrival The next arrival of the train.
+     * @param nextNextArrival The next next arrival of the train (can be null).
+     * @param metroNetwork The metro network.
+     * @private
+     */
+    getLocation(nextArrival, nextNextArrival, metroNetwork) {
+        const line = nextArrival.line;
+        const metroLine = metroNetwork.getMetroLine(line);
+        if (!metroLine) {
+            console.error(`Can't determine location of train ${nextArrival.trainId} on non-existent line ${line}`);
+            console.trace();
+            return null;
+        }
+        const nextStation = metroLine.getStation(nextArrival.stationId);
+        if (!nextStation) {
+            console.error(`Can't determine location of train ${nextArrival.trainId} arriving at non-existent next station ${nextArrival.stationId}`);
+            console.trace();
+            return null;
+        }
+        const nextArrivalNeighborsMap = nextStation.neighbors();
+        const nextArrivalNeighbors = Array.from(nextArrivalNeighborsMap.keys());
+        let edge;
+        if (nextArrivalNeighbors.length === 1) {
+            // Station is an endpoint. Train is either going into service there, or arriving from the one connection.
+            // For now, we will just guess it's arriving. TODO: improve
+            edge = nextArrivalNeighborsMap.get(nextArrivalNeighbors[0]);
+        }
+        else {
+            // Otherwise, we'll just guess.
+            const toGuessFrom = nextNextArrival
+                // If the train is going to a station after it's next arrival, it probably isn't at that station right now
+                ? nextArrivalNeighbors.filter(station => station.id !== nextNextArrival.stationId)
+                : nextArrivalNeighbors;
+            const randomIndex = Math.floor(Math.random() * toGuessFrom.length);
+            edge = nextArrivalNeighborsMap.get(toGuessFrom[randomIndex]);
+        }
+        // Random distance because we can't actually tell
+        return new LocationInfo([edge, getRandomArbitrary(0.3, 0.7)], nextArrival);
+    }
+    /**
+     * Converts a ParsedTflApiResponseItem into an ArrivalInfo.
+     * @param arrival The ParsedTflApiResponseItem to be converted.
+     * @param arrivals All arrivals. Sometimes needed, for disambiguating Edgware Road arrivals.
+     */
+    toArrivalInfo(arrival, arrivals) {
+        const naptan = this.getNaptan(arrival, arrivals);
+        const nextStationId = `${arrival.lineId}_${naptan}`;
+        return new ArrivalInfo(arrival.vehicleId, arrival.lineId, nextStationId, arrival.arrivalTime);
     }
 }
 /**
@@ -147,6 +255,10 @@ LondonApi.EDGWARE_ROAD_WESTBOUND_HC = new Set(["940GZZLUGPS", "940GZZLUESQ",
     "940GZZLUMMT", "940GZZLUCST", "940GZZLUMSH", "940GZZLUBKF", "940GZZLUTMP", "940GZZLUEMB", "940GZZLUWSM",
     "940GZZLUSJP", "940GZZLUVIC", "940GZZLUSSQ", "940GZZLUSKS", "940GZZLUGTR", "940GZZLUHSK", "940GZZLUNHG",
     "940GZZLUBWT", "940GZZLUPAC", "940GZZLUERC"]);
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+}
 export function initialize(initialMetroLines) {
     return new LondonApi(initialMetroLines);
 }

@@ -19,7 +19,10 @@ export class StationImpl {
     // Graph methods
     /** Gets neighbors of this station. */
     neighbors() {
-        return this.metroLine.getEdges(this).map(edge => edge.station1 === this ? edge.station2 : edge.station1);
+        const neighbors = new Map();
+        this.metroLine.getEdges(this).forEach(edge => edge.station1 === this
+            ? neighbors.set(edge.station2, edge) : neighbors.set(edge.station1, edge));
+        return neighbors;
     }
     // View methods
     /** Draws this station on-screen. */

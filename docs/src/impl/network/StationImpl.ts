@@ -1,6 +1,6 @@
 /** @file Station implementation. */
 import {JsonStation} from "./JsonTypes.js";
-import {MetroLine, Point, Station} from "../Types.js";
+import {Edge, MetroLine, Point, Station} from "../Types.js";
 
 /** Implements a station. */
 export class StationImpl implements Station {
@@ -39,8 +39,11 @@ export class StationImpl implements Station {
 
     // Graph methods
     /** Gets neighbors of this station. */
-    public neighbors(): Station[] {
-        return this.metroLine.getEdges(this).map(edge => edge.station1 === this ? edge.station2 : edge.station1);
+    public neighbors(): Map<Station, Edge> {
+        const neighbors: Map<Station, Edge> = new Map();
+        this.metroLine.getEdges(this).forEach(edge => edge.station1 === this
+            ? neighbors.set(edge.station2, edge) : neighbors.set(edge.station1, edge));
+        return neighbors;
     }
 
     // View methods
