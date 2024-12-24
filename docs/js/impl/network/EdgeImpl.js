@@ -27,4 +27,22 @@ export class EdgeImpl {
     hide() {
         this.lineSegments.forEach(lineSegment => lineSegment.hide());
     }
+    /**
+     * Samples a point at a distance along this edge.
+     * @param distance The distance along the edge to sample.
+     * @return The sample point.
+     */
+    samplePoint(distance) {
+        if (distance >= this.length) {
+            return this.station2.location;
+        }
+        // TODO: if this becomes a bottleneck, consider precomputing segment mapping
+        let segmentIndex = 0;
+        let prefixLength = 0;
+        while (prefixLength + this.lineSegments[segmentIndex + 1].length < distance) {
+            segmentIndex++;
+            prefixLength += this.lineSegments[segmentIndex + 1].length;
+        }
+        return this.lineSegments[segmentIndex].samplePoint(distance - prefixLength);
+    }
 }

@@ -276,7 +276,7 @@ class LondonApi implements CityApi {
             // Otherwise, we'll just guess.
             const toGuessFrom = nextNextArrival
                 // If the train is going to a station after it's next arrival, it probably isn't at that station right now
-                ? nextArrivalNeighbors.filter(station => station.id != nextNextArrival.stationId)
+                ? nextArrivalNeighbors.filter(station => station.id !== nextNextArrival.stationId)
                 : nextArrivalNeighbors;
             const randomIndex = Math.floor(Math.random() * toGuessFrom.length);
             edge = nextArrivalNeighborsMap.get(toGuessFrom[randomIndex])!;

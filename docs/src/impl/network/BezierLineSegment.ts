@@ -44,6 +44,16 @@ export class BezierLineSegment implements LineSegment {
     }
 
     /**
+     * Samples a point at a distance along this line segment.
+     * @param distance The distance along the line segment to sample.
+     * @return The sample point.
+     */
+    public samplePoint(distance: number): Point {
+        // This is very clearly wrong, but a placeholder. TODO: fix
+        return this.bezier.compute(distance / this.length);
+    }
+
+    /**
      * Initializes the Paper objects that represent this line segment on-screen.
      * @param p0 Bezier control point p0.
      * @param p1 Bezier control point p0.

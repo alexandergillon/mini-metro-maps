@@ -1,3 +1,4 @@
+import { Point } from "../Types.js";
 /** Implements a line segment which is a straight line. */
 export class StraightLineSegment {
     /**
@@ -13,6 +14,7 @@ export class StraightLineSegment {
         const dx = json.p1.x - json.p0.x;
         const dy = json.p1.y - json.p0.y;
         this.length = Math.sqrt(dx * dx + dy * dy);
+        this.unitVector = new Point(dx / this.length, dy / this.length);
         this.layer = layer;
         this.paperPath = this.initializePaperPath(lineWidth, color);
     }
@@ -23,6 +25,16 @@ export class StraightLineSegment {
     /** Hides this segment from the screen. */
     hide() {
         this.paperPath.remove();
+    }
+    /**
+     * Samples a point at a distance along this line segment.
+     * @param distance The distance along the line segment to sample.
+     * @return The sample point.
+     */
+    samplePoint(distance) {
+        const x = this.p0.x + distance * this.unitVector.x;
+        const y = this.p0.y + distance * this.unitVector.y;
+        return new Point(x, y);
     }
     /**
      * Initializes the Paper Path which makes up this line segment on-screen.

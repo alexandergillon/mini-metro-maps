@@ -34,6 +34,7 @@ export interface LineSegment {
     readonly length: number;
     draw(): void;
     hide(): void;
+    samplePoint(distance: number): Point;
 }
 
 /** An edge in the network: two stations that are connected, and the physical representation on-screen. */
@@ -46,6 +47,13 @@ export interface Edge extends GraphEdge {
     readonly length: number;
     draw(): void;
     hide(): void;
+    samplePoint(distance: number): Point;
+}
+
+/** A path between two stations on a metro line, and a position on it. */
+export interface Path {
+    samplePoint(): Point;
+    move(distance: number): [boolean, Point];
 }
 
 /** A metro line in the network. */

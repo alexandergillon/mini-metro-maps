@@ -11,6 +11,8 @@ export class StraightLineSegment implements LineSegment {
     private readonly p0: Point;
     /** Other endpoint of the line. */
     private readonly p1: Point;
+    /** Unit direction vector, for point sampling. */
+    private readonly unitVector: Point;
     /** Paper layer that this line segment is drawn on. */
     private readonly layer: paper.Layer;
     /** Paper Path which constitutes this line segment on-screen. */
@@ -31,6 +33,8 @@ export class StraightLineSegment implements LineSegment {
         const dy = json.p1.y - json.p0.y;
         this.length =  Math.sqrt(dx * dx + dy * dy);
 
+        this.unitVector = new Point(dx / this.length, dy / this.length);
+
         this.layer = layer;
         this.paperPath = this.initializePaperPath(lineWidth, color);
     }
@@ -43,6 +47,17 @@ export class StraightLineSegment implements LineSegment {
     /** Hides this segment from the screen. */
     public hide() {
         this.paperPath.remove();
+    }
+
+    /**
+     * Samples a point at a distance along this line segment.
+     * @param distance The distance along the line segment to sample.
+     * @return The sample point.
+     */
+    public samplePoint(distance: number): Point {
+        const x = this.p0.x + distance * this.unitVector.x;
+        const y = this.p0.y + distance * this.unitVector.y;
+        return new Point(x, y);
     }
 
     /**

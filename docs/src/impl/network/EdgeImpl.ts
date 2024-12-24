@@ -2,7 +2,7 @@
 import {BezierLineSegment} from "./BezierLineSegment.js";
 import {JsonEdge} from "./JsonTypes.js";
 import {StraightLineSegment} from "./StraightLineSegment.js";
-import {Edge, LineSegment, Station} from "../Types.js";
+import {Edge, LineSegment, Point, Station} from "../Types.js";
 
 /** Implements an edge on a metro line. */
 export class EdgeImpl implements Edge {
@@ -45,5 +45,26 @@ export class EdgeImpl implements Edge {
     /** Hides this edge from the screen. */
     public hide() {
         this.lineSegments.forEach(lineSegment => lineSegment.hide());
+    }
+
+    /**
+     * Samples a point at a distance along this edge.
+     * @param distance The distance along the edge to sample.
+     * @return The sample point.
+     */
+    public samplePoint(distance: number): Point {
+        if (distance >= this.length) {
+            return this.station2.location;
+        }
+
+        // TODO: if this becomes a bottleneck, consider precomputing segment mapping
+        let segmentIndex = 0;
+        let prefixLength = 0;
+        while (prefixLength + this.lineSegments[segmentIndex+1].length < distance) {
+            segmentIndex++;
+            prefixLength += this.lineSegments[segmentIndex+1].length;
+        }
+
+        return this.lineSegments[segmentIndex].samplePoint(distance - prefixLength);
     }
 }
