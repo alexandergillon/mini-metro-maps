@@ -1,3 +1,7 @@
-# Include docs folder in language statistics, as this is where website is hosted from. But still exclude libraries.
+# Include docs folder in language statistics, as this is where TS source
+# files are located. Linguist excludes docs by default.
 docs/** -linguist-documentation
-docs/js/lib/** linguist-vendored
+# Exclude JS compiled from TS
+docs/js/** linguist-vendored
+# Exclude JS/TS which is not ours
+docs/src/lib/** linguist-vendored
