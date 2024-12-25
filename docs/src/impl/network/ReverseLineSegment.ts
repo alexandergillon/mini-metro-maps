@@ -18,15 +18,19 @@ export class ReverseLineSegment implements LineSegment {
         return this.lineSegment;
     }
 
-    draw(): void {
+    public draw(): void {
         this.lineSegment.draw();
     }
 
-    hide(): void {
+    public hide(): void {
         this.lineSegment.hide();
     }
 
-    samplePoint(distance: number): Point {
+    public samplePoint(distance: number): Point {
         return this.lineSegment.samplePoint(this.length - distance);
+    }
+
+    public toString() {
+        return `Reverse line segment of ${this.lineSegment}`;
     }
 }

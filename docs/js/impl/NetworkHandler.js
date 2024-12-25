@@ -13,6 +13,9 @@ export class NetworkHandler {
         // todo: implement
         console.log(await this.cityApi.getArrivals());
     }
+    toString() {
+        return `NetworkHandler`;
+    }
 }
 /** Time between updates of train data, in seconds. */
 NetworkHandler.FETCH_TRAIN_DATA_INTERVAL = 15;

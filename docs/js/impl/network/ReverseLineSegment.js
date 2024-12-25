@@ -18,4 +18,7 @@ export class ReverseLineSegment {
     samplePoint(distance) {
         return this.lineSegment.samplePoint(this.length - distance);
     }
+    toString() {
+        return `Reverse line segment of ${this.lineSegment}`;
+    }
 }

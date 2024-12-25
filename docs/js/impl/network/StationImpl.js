@@ -59,4 +59,7 @@ export class StationImpl {
         circle.remove();
         return circle;
     }
+    toString() {
+        return `${this.metroLine.name} station ${this.name} (${this.id})`;
+    }
 }

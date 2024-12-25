@@ -53,4 +53,7 @@ export class MetroNetworkImpl {
     hide() {
         this._metroLines.forEach(metroLine => metroLine.hide());
     }
+    toString() {
+        return `Metro network`;
+    }
 }

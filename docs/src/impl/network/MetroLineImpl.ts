@@ -164,4 +164,8 @@ export class MetroLineImpl implements MetroLine {
 
         return new PathImpl(edges);
     }
+
+    public toString() {
+        return `Metro line ${this.name}`;
+    }
 }

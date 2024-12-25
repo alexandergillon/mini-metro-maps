@@ -113,6 +113,9 @@ export class PaperCanvas {
     resizeCanvas() {
         paper.view.viewSize = new paper.Size(window.innerWidth, window.innerHeight);
     }
+    toString() {
+        return `PaperCanvas`;
+    }
 }
 /** Padding around the map is defined as a multiple of line width, to handle padding automatically when the scale of the map changes. */
 PaperCanvas.PADDING_SCALE_FACTOR = 20;

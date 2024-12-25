@@ -22,4 +22,8 @@ export class NetworkHandler {
         // todo: implement
         console.log(await this.cityApi.getArrivals());
     }
+
+    public toString() {
+        return `NetworkHandler`;
+    }
 }

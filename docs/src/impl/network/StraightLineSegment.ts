@@ -99,4 +99,8 @@ export class StraightLineSegment implements LineSegment {
 
         return paperPath;
     }
+
+    public toString() {
+        return `Straight line segment from ${this.p0} to ${this.p1}`;
+    }
 }

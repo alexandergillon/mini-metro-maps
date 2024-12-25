@@ -138,4 +138,7 @@ export class MetroLineImpl {
         }
         return new PathImpl(edges);
     }
+    toString() {
+        return `Metro line ${this.name}`;
+    }
 }

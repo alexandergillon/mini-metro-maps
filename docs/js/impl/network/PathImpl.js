@@ -108,4 +108,12 @@ export class PathImpl {
             return [false, this.samplePoint()];
         }
     }
+    toString() {
+        const beginning = this.edges[0].station1;
+        const end = this.edges[this.edges.length - 1].station2;
+        const stations = this.edges.map(edge => edge.station1);
+        stations.push(end);
+        const pathStr = stations.join("\n--> ");
+        return `Path from ${beginning} to ${end} via:\n${pathStr}`;
+    }
 }

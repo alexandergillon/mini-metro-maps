@@ -81,6 +81,10 @@ export class EdgeImpl implements Edge {
 
         return this.lineSegments[segmentIndex].samplePoint(distance - prefixLength);
     }
+
+    public toString() {
+        return `EdgeImpl from ${this.station1} to ${this.station2}`;
+    }
 }
 
 /** Class that provides a reversed 'view' of a line segment. */
@@ -108,15 +112,19 @@ class ReverseEdge implements Edge {
         return this.edge.station1;
     }
 
-    draw(): void {
+    public draw(): void {
         this.edge.draw();
     }
 
-    hide(): void {
+    public hide(): void {
         this.edge.hide();
     }
 
-    samplePoint(distance: number): Point {
+    public samplePoint(distance: number): Point {
         return this.edge.samplePoint(this.length - distance);
+    }
+
+    public toString() {
+        return `Reverse edge of ${this.edge}`;
     }
 }

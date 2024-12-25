@@ -83,4 +83,8 @@ export class StationImpl implements Station {
         circle.remove();
         return circle;
     }
+
+    public toString() {
+        return `${this.metroLine.name} station ${this.name} (${this.id})`;
+    }
 }

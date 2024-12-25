@@ -71,4 +71,7 @@ export class StraightLineSegment {
         paperPath.remove();
         return paperPath;
     }
+    toString() {
+        return `Straight line segment from ${this.p0} to ${this.p1}`;
+    }
 }

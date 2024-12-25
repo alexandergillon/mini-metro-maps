@@ -82,4 +82,8 @@ export class MetroNetworkImpl implements MetroNetwork {
     public hide() {
         this._metroLines.forEach(metroLine => metroLine.hide());
     }
+
+    public toString() {
+        return `Metro network`;
+    }
 }

@@ -16,6 +16,10 @@ export class Point {
         this.x = x;
         this.y = y;
     }
+
+    public toString() {
+        return `(${this.x}, ${this.y})`;
+    }
 }
 
 /** A station in the network. */

@@ -110,4 +110,10 @@ export class BezierLineSegment implements LineSegment {
 
         return [paperPath, circ1, circ2];
     }
+
+    public toString() {
+        const start = this.bezier.compute(0);
+        const end = this.bezier.compute(1);
+        return `Bezier line segment from (${start.x}, ${start.y}) to (${end.x}, ${end.y})`;
+    }
 }

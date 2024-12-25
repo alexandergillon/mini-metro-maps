@@ -144,4 +144,8 @@ export class PaperCanvas {
     private resizeCanvas() {
         paper.view.viewSize = new paper.Size(window.innerWidth, window.innerHeight);
     }
+
+    public toString() {
+        return `PaperCanvas`;
+    }
 }
