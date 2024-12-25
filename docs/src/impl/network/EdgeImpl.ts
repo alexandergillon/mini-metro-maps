@@ -19,7 +19,21 @@ export class EdgeImpl implements Edge {
     private readonly lineSegments: LineSegment[];
 
     /**
-     * Constructor: builds an edge from a JsonEdge.
+     * Constructor.
+     * @param station1 First station.
+     * @param station2 Second station.
+     * @param lineSegments Line segments between the two stations, in the direction station1 --> station2.
+     * @private
+     */
+    private constructor(station1: Station, station2: Station, lineSegments: LineSegment[]) {
+        this.station1 = station1;
+        this.station2 = station2;
+        this.length = lineSegments.map(lineSegment => lineSegment.length).reduce((l1, l2) => l1 + l2);
+        this.lineSegments = lineSegments;
+    }
+
+    /**
+     * Builds an edge from a JsonEdge.
      * @param json Input edge data.
      * @param station1 From station (needed as we can't resolve station ID -> Station here).
      * @param station2 To station (needed as we can't resolve station ID -> Station here).
@@ -27,14 +41,11 @@ export class EdgeImpl implements Edge {
      * @param lineWidth Line width.
      * @param color Color.
      */
-    public constructor(json: JsonEdge, station1: Station, station2: Station, layer: paper.Layer, lineWidth: number, color: paper.Color) {
-        this.station1 = station1;
-        this.station2 = station2;
-        this.lineSegments = json.lineSegments.map(lineSegment =>
-            lineSegment.straightLine ? new StraightLineSegment(lineSegment, layer, lineWidth, color)
-                : new BezierLineSegment(lineSegment, layer, lineWidth, color));
-
-        this.length = this.lineSegments.map(lineSegment => lineSegment.length).reduce((l1, l2) => l1 + l2);
+    public static fromJson(json: JsonEdge, station1: Station, station2: Station, layer: paper.Layer, lineWidth: number, color: paper.Color): Edge {
+        const lineSegments = json.lineSegments.map(lineSegment =>
+            lineSegment.straightLine ? StraightLineSegment.fromJson(lineSegment, layer, lineWidth, color)
+                : BezierLineSegment.fromJson(lineSegment, layer, lineWidth, color));
+        return new EdgeImpl(station1, station2, lineSegments);
     }
 
     /** Draws this edge on-screen. */

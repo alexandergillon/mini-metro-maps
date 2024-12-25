@@ -21,20 +21,33 @@ export class StationImpl implements Station {
     private readonly paperCircle: paper.Path.Circle;
 
     /**
-     * Constructor: builds a station from a JsonStation.
+     * Constructor.
+     * @param id Unique identifier.
+     * @param name Human-readable name.
+     * @param location Location.
+     * @param metroLine Metro line of this station.
+     * @param layer Layer to draw this station on.
+     * @param lineWidth Line width of metro lines in the network.
+     * @private
+     */
+    private constructor(id: string, name: string, location: Point, metroLine: MetroLine, layer: paper.Layer, lineWidth: number) {
+        this.id = id;
+        this.name = name;
+        this.location = location;
+        this.metroLine = metroLine;
+        this.layer = layer;
+        this.paperCircle = this.initializePaperCircle(lineWidth);
+    }
+
+    /**
+     * Builds a station from a JsonStation.
      * @param json Input station data.
      * @param metroLine Metro line that this station is a part of.
      * @param layer Layer to draw this station on.
      * @param lineWidth Line width of metro lines in the network.
      */
-    public constructor(json: JsonStation, metroLine: MetroLine, layer: paper.Layer, lineWidth: number) {
-        this.id = json.id;
-        this.name = json.name;
-        this.location = new Point(json.x, json.y);
-        this.metroLine = metroLine;
-
-        this.layer = layer;
-        this.paperCircle = this.initializePaperCircle(lineWidth);
+    public static fromJson(json: JsonStation, metroLine: MetroLine, layer: paper.Layer, lineWidth: number): Station {
+        return new StationImpl(json.id, json.name, new Point(json.x, json.y), metroLine, layer, lineWidth);
     }
 
     // Graph methods

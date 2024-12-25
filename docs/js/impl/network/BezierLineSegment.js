@@ -2,17 +2,31 @@ import { Bezier } from "../../lib/bezierjs/bezier.js";
 /** Implements a line segment which is a cubic Bezier curve. */
 export class BezierLineSegment {
     /**
-     * Constructor: builds a BezierLineSegment from a JsonBezierLineSegment.
+     * Constructor.
+     * @param p0 Bezier control point.
+     * @param p1 Bezier control point.
+     * @param p2 Bezier control point.
+     * @param p3 Bezier control point.
+     * @param layer Layer to draw this line segment on.
+     * @param lineWidth Line width.
+     * @param color Color.
+     * @private
+     */
+    constructor(p0, p1, p2, p3, layer, lineWidth, color) {
+        this.bezier = new Bezier(p0, p1, p2, p3);
+        this.length = this.bezier.length();
+        this.layer = layer;
+        this.paperPaths = this.initializePaperPaths(p0, p1, p2, p3, lineWidth, color);
+    }
+    /**
+     * Builds a BezierLineSegment from a JsonBezierLineSegment.
      * @param json Input control point data.
      * @param layer Layer to draw this line segment on.
      * @param lineWidth Line width.
      * @param color Color.
      */
-    constructor(json, layer, lineWidth, color) {
-        this.bezier = new Bezier(json.p0, json.p1, json.p2, json.p3);
-        this.length = this.bezier.length();
-        this.layer = layer;
-        this.paperPaths = this.initializePaperPaths(json.p0, json.p1, json.p2, json.p3, lineWidth, color);
+    static fromJson(json, layer, lineWidth, color) {
+        return new BezierLineSegment(json.p0, json.p1, json.p2, json.p3, layer, lineWidth, color);
     }
     /** Draws this segment on-screen. */
     draw() {

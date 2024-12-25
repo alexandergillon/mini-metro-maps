@@ -26,21 +26,38 @@ export class MetroNetworkImpl implements MetroNetwork {
     public readonly lineWidth: number;
 
     /**
-     * Constructor: build a metro network from the input JSON (JsonMetroNetwork).
-     * @param json Input metro network data.
+     * Constructor.
+     * @param metroLines Metro lines in the network.
+     * @param minX Minimum X coordinate in the network.
+     * @param minY Minimum Y coordinate in the network.
+     * @param maxX Maximum X coordinate in the network.
+     * @param maxY Maximum Y coordinate in the network.
+     * @param lineWidth Line width.
+     * @private
      */
-    public constructor(json: JsonMetroNetwork) {
-        const metroLines = json.metroLines.sort((line1, line2) => line1.zIndex - line2.zIndex) // sorts in increasing order
-            .map(line => new MetroLineImpl(line, json.lineWidth));
+    private constructor(metroLines: MetroLine[], minX: number, minY: number, maxX: number, maxY: number, lineWidth: number) {
         this._metroLines = new Map(metroLines.map(metroLine => [metroLine.name, metroLine]));
-
-        this.minX = json.minX === undefined ? 0 : json.minX;
-        this.minY = json.minY === undefined ? 0 : json.minY;
-        this.maxX = json.maxX;
-        this.maxY = json.maxY;
+        this.minX = minX;
+        this.minY = minY;
+        this.maxX = maxX;
+        this.maxY = maxY;
         this.width = this.maxX - this.minX;
         this.height = this.maxY - this.minY;
-        this.lineWidth = json.lineWidth;
+        this.lineWidth = lineWidth;
+    }
+
+    /**
+     * Build a metro network from the input JSON (JsonMetroNetwork).
+     * @param json Input metro network data.
+     */
+    public static fromJson(json: JsonMetroNetwork): MetroNetwork {
+        const metroLines = json.metroLines.sort((line1, line2) => line1.zIndex - line2.zIndex) // sorts in increasing order
+            .map(line => new MetroLineImpl(line, json.lineWidth));
+        const minX = json.minX === undefined ? 0 : json.minX;
+        const minY = json.minY === undefined ? 0 : json.minY;
+        const maxX = json.maxX;
+        const maxY = json.maxY;
+        return new MetroNetworkImpl(metroLines, minX, minY, maxX, maxY, json.lineWidth);
     }
 
     // Graph methods

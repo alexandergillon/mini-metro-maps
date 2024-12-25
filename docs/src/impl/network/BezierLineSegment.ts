@@ -15,18 +15,32 @@ export class BezierLineSegment implements LineSegment {
     private readonly paperPaths: paper.Path[];
 
     /**
-     * Constructor: builds a BezierLineSegment from a JsonBezierLineSegment.
+     * Constructor.
+     * @param p0 Bezier control point.
+     * @param p1 Bezier control point.
+     * @param p2 Bezier control point.
+     * @param p3 Bezier control point.
+     * @param layer Layer to draw this line segment on.
+     * @param lineWidth Line width.
+     * @param color Color.
+     * @private
+     */
+    private constructor(p0: Point, p1: Point, p2: Point, p3: Point, layer: paper.Layer, lineWidth: number, color: paper.Color) {
+        this.bezier = new Bezier(p0, p1, p2, p3);
+        this.length = this.bezier.length();
+        this.layer = layer;
+        this.paperPaths = this.initializePaperPaths(p0, p1, p2, p3, lineWidth, color);
+    }
+
+    /**
+     * Builds a BezierLineSegment from a JsonBezierLineSegment.
      * @param json Input control point data.
      * @param layer Layer to draw this line segment on.
      * @param lineWidth Line width.
      * @param color Color.
      */
-    public constructor(json: JsonBezierLineSegment, layer: paper.Layer, lineWidth: number, color: paper.Color) {
-        this.bezier = new Bezier(json.p0, json.p1, json.p2, json.p3);
-        this.length = this.bezier.length();
-
-        this.layer = layer;
-        this.paperPaths = this.initializePaperPaths(json.p0, json.p1, json.p2, json.p3, lineWidth, color);
+    public static fromJson(json: JsonBezierLineSegment, layer: paper.Layer, lineWidth: number, color: paper.Color): LineSegment {
+        return new BezierLineSegment(json.p0, json.p1, json.p2, json.p3, layer, lineWidth, color);
     }
 
     /** Draws this segment on-screen. */

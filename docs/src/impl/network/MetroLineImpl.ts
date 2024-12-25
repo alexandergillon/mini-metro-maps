@@ -24,7 +24,8 @@ export class MetroLineImpl implements MetroLine {
     private readonly endpointLineSegments: LineSegment[];
 
     /**
-     * Constructor: builds a metro line from a JsonMetroLine.
+     * Constructor: builds a metro line from a JsonMetroLine. This class has no fromJson due to the need to pass
+     * 'this' to StationImpl.fromJson().
      * @param json Input metro line data.
      * @param lineWidth Line width.
      */
@@ -35,7 +36,7 @@ export class MetroLineImpl implements MetroLine {
 
         this.name = json.name;
 
-        const stations = json.stations.map(station => new StationImpl(station, this, stationLayer, lineWidth));
+        const stations = json.stations.map(station => StationImpl.fromJson(station, this, stationLayer, lineWidth));
         this._stations = new Map(stations.map(station => [station.id, station]));
 
         const edges = json.edges.map(edge => {
@@ -43,14 +44,14 @@ export class MetroLineImpl implements MetroLine {
             if (!station1) throw new Error(`Unknown station ${edge.station1Id} in edge (${edge.station1Id}, ${edge.station2Id}) on line ${json.name}`);
             const station2 = this._stations.get(edge.station2Id);
             if (!station2) throw new Error(`Unknown station ${edge.station2Id} in edge (${edge.station1Id}, ${edge.station2Id}) on line ${json.name}`);
-            return new EdgeImpl(edge, station1, station2, lineLayer, lineWidth, color);
+            return EdgeImpl.fromJson(edge, station1, station2, lineLayer, lineWidth, color);
         });
         this.edges = edges;
         this._edges = MetroLineImpl.buildEdgeMapping(edges);
 
         this.endpointLineSegments = json.endpointLineSegments.map(lineSegment =>
-            lineSegment.straightLine ? new StraightLineSegment(lineSegment, lineLayer, lineWidth, color)
-                : new BezierLineSegment(lineSegment, lineLayer, lineWidth, color));
+            lineSegment.straightLine ? StraightLineSegment.fromJson(lineSegment, lineLayer, lineWidth, color)
+                : BezierLineSegment.fromJson(lineSegment, lineLayer, lineWidth, color));
     }
 
     // Graph methods

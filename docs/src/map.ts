@@ -24,7 +24,7 @@ async function bootstrap() {
     const cityModule: Promise<CityModule> = import(jsPath);
 
     // Use them to instantiate necessary map objects
-    const metroNetwork: MetroNetwork = new MetroNetworkImpl(await (await metroNetworkResponse).json());
+    const metroNetwork: MetroNetwork = MetroNetworkImpl.fromJson(await (await metroNetworkResponse).json());
     const metroLineNames = Array.from(metroNetwork.metroLines).map(metroLine => metroLine.name);
     const cityApi: CityApi = (await cityModule).initialize(metroLineNames);
     const networkHandler = new NetworkHandler(cityApi);

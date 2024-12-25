@@ -2,19 +2,32 @@ import { Point } from "../Types.js";
 /** Implements a station. */
 export class StationImpl {
     /**
-     * Constructor: builds a station from a JsonStation.
+     * Constructor.
+     * @param id Unique identifier.
+     * @param name Human-readable name.
+     * @param location Location.
+     * @param metroLine Metro line of this station.
+     * @param layer Layer to draw this station on.
+     * @param lineWidth Line width of metro lines in the network.
+     * @private
+     */
+    constructor(id, name, location, metroLine, layer, lineWidth) {
+        this.id = id;
+        this.name = name;
+        this.location = location;
+        this.metroLine = metroLine;
+        this.layer = layer;
+        this.paperCircle = this.initializePaperCircle(lineWidth);
+    }
+    /**
+     * Builds a station from a JsonStation.
      * @param json Input station data.
      * @param metroLine Metro line that this station is a part of.
      * @param layer Layer to draw this station on.
      * @param lineWidth Line width of metro lines in the network.
      */
-    constructor(json, metroLine, layer, lineWidth) {
-        this.id = json.id;
-        this.name = json.name;
-        this.location = new Point(json.x, json.y);
-        this.metroLine = metroLine;
-        this.layer = layer;
-        this.paperCircle = this.initializePaperCircle(lineWidth);
+    static fromJson(json, metroLine, layer, lineWidth) {
+        return new StationImpl(json.id, json.name, new Point(json.x, json.y), metroLine, layer, lineWidth);
     }
     // Graph methods
     /** Gets neighbors of this station. */

@@ -2,21 +2,33 @@ import { Point } from "../Types.js";
 /** Implements a line segment which is a straight line. */
 export class StraightLineSegment {
     /**
-     * Constructor: builds a StraightLineSegment from a JsonStraightLineSegment.
+     * Constructor.
+     * @param p0 First endpoint.
+     * @param p1 Second endpoint.
+     * @param layer Layer to draw this line segment on.
+     * @param lineWidth Line width.
+     * @param color Color.
+     * @private
+     */
+    constructor(p0, p1, layer, lineWidth, color) {
+        this.p0 = p0;
+        this.p1 = p1;
+        const dx = p1.x - p0.x;
+        const dy = p1.y - p0.y;
+        this.length = Math.sqrt(dx * dx + dy * dy);
+        this.unitVector = new Point(dx / this.length, dy / this.length);
+        this.layer = layer;
+        this.paperPath = this.initializePaperPath(lineWidth, color);
+    }
+    /**
+     * Builds a StraightLineSegment from a JsonStraightLineSegment.
      * @param json Input endpoint data.
      * @param layer Layer to draw this line segment on.
      * @param lineWidth Line width.
      * @param color Color.
      */
-    constructor(json, layer, lineWidth, color) {
-        this.p0 = json.p0;
-        this.p1 = json.p1;
-        const dx = json.p1.x - json.p0.x;
-        const dy = json.p1.y - json.p0.y;
-        this.length = Math.sqrt(dx * dx + dy * dy);
-        this.unitVector = new Point(dx / this.length, dy / this.length);
-        this.layer = layer;
-        this.paperPath = this.initializePaperPath(lineWidth, color);
+    static fromJson(json, layer, lineWidth, color) {
+        return new StraightLineSegment(json.p0, json.p1, layer, lineWidth, color);
     }
     /** Draws this segment on-screen. */
     draw() {
