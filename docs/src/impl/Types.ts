@@ -66,6 +66,7 @@ export interface MetroLine extends GraphMetroLine {
     getEdges(station: GraphStation): Edge[];
 
     // Extensions
+    pathfind(station1: Station, station2: Station): Path | null;
     draw(): void;
     hide(): void;
 }

@@ -5,7 +5,10 @@ import {GraphStation} from "../../GraphTypes.js";
 import {JsonMetroLine} from "./JsonTypes.js";
 import {StationImpl} from "./StationImpl.js";
 import {StraightLineSegment} from "./StraightLineSegment.js";
-import {Edge, LineSegment, MetroLine, Station} from "../Types.js";
+import {Edge, LineSegment, MetroLine, Path, Station} from "../Types.js";
+import CircArrayQueue from "../../lib/queue/CircArrayQueue.js";
+import {PathImpl} from "./PathImpl.js";
+import Queue from "../../lib/queue/Queue.js";
 
 /** Implements a metro line. */
 export class MetroLineImpl implements MetroLine {
@@ -114,5 +117,51 @@ export class MetroLineImpl implements MetroLine {
             result.get(edge.station2.id)!.set(edge.station1.id, edge);
         }
         return result;
+    }
+
+    /**
+     * Finds a path between two stations on this metro line. This path is found through breadth-first search, which
+     * is likely correct in almost all cases.
+     * @param station1 First station.
+     * @param station2 Second station.
+     * @return A path between station1 and station2, if one exists, or null otherwise.
+     */
+    public pathfind(station1: Station, station2: Station): Path | null {
+        if (!this._stations.has(station1.id)) throw new Error(`pathfind called with station ${station1} which is not on this line (${this})`);
+        if (!this._stations.has(station2.id)) throw new Error(`pathfind called with station ${station2} which is not on this line (${this})`);
+
+        const queue: Queue<Station> = new CircArrayQueue(8);
+        const parents: Map<Station, Station> = new Map();
+        const visited: Set<Station> = new Set([station1]);
+
+        let found = false;
+        queue.enqueue(station1);
+
+        outerLoop: while (queue.front()) {
+            const current = queue.front()!;
+            queue.dequeue();
+
+            const unvisitedNeighbors = Array.from(current.neighbors().keys()).filter(station => !visited.has(station));
+            for (const neighbor of unvisitedNeighbors) {
+                queue.enqueue(neighbor);
+                parents.set(neighbor, current);
+                visited.add(neighbor);
+                if (neighbor === station2) {
+                    found = true;
+                    break outerLoop;
+                }
+            }
+        }
+
+        if (!found) return null;
+
+        const edges: Edge[] = [];
+        for (let station = station2; station !== station1; station = parents.get(station)!) {
+            const parent = parents.get(station)!;
+            const edge = parent.neighbors().get(station)!;
+            edges.push(edge.station1 === station ? edge : edge.reverse);
+        }
+
+        return new PathImpl(edges);
     }
 }
