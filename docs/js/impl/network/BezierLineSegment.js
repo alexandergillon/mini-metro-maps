@@ -1,4 +1,5 @@
 import { Bezier } from "../../lib/bezierjs/bezier.js";
+import { ReverseLineSegment } from "./ReverseLineSegment.js";
 /** Implements a line segment which is a cubic Bezier curve. */
 export class BezierLineSegment {
     /**
@@ -15,6 +16,7 @@ export class BezierLineSegment {
     constructor(p0, p1, p2, p3, layer, lineWidth, color) {
         this.bezier = new Bezier(p0, p1, p2, p3);
         this.length = this.bezier.length();
+        this.reverse = new ReverseLineSegment(this);
         this.layer = layer;
         this.paperPaths = this.initializePaperPaths(p0, p1, p2, p3, lineWidth, color);
     }

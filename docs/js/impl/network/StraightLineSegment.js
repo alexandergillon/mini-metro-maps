@@ -1,4 +1,5 @@
 import { Point } from "../Types.js";
+import { ReverseLineSegment } from "./ReverseLineSegment.js";
 /** Implements a line segment which is a straight line. */
 export class StraightLineSegment {
     /**
@@ -17,6 +18,7 @@ export class StraightLineSegment {
         const dy = p1.y - p0.y;
         this.length = Math.sqrt(dx * dx + dy * dy);
         this.unitVector = new Point(dx / this.length, dy / this.length);
+        this.reverse = new ReverseLineSegment(this);
         this.layer = layer;
         this.paperPath = this.initializePaperPath(lineWidth, color);
     }

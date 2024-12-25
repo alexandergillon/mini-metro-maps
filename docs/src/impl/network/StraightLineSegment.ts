@@ -1,12 +1,14 @@
 /** Straight line segment implementation. */
 import {JsonStraightLineSegment} from "./JsonTypes.js";
 import {LineSegment, Point} from "../Types.js";
+import {ReverseLineSegment} from "./ReverseLineSegment.js";
 
 /** Implements a line segment which is a straight line. */
 export class StraightLineSegment implements LineSegment {
     /** Length in the underlying coordinate space. */
     public readonly length: number;
-
+    /** This line segment, in the opposite direction. */
+    public readonly reverse: LineSegment;
     /** Endpoint of the line. */
     private readonly p0: Point;
     /** Other endpoint of the line. */
@@ -36,6 +38,7 @@ export class StraightLineSegment implements LineSegment {
         this.length =  Math.sqrt(dx * dx + dy * dy);
         this.unitVector = new Point(dx / this.length, dy / this.length);
 
+        this.reverse = new ReverseLineSegment(this);
         this.layer = layer;
         this.paperPath = this.initializePaperPath(lineWidth, color);
     }

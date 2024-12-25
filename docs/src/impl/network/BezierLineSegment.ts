@@ -2,11 +2,14 @@
 import {JsonBezierLineSegment} from "./JsonTypes.js";
 import {LineSegment, Point} from "../Types.js";
 import {Bezier} from "../../lib/bezierjs/bezier.js";
+import {ReverseLineSegment} from "./ReverseLineSegment.js";
 
 /** Implements a line segment which is a cubic Bezier curve. */
 export class BezierLineSegment implements LineSegment {
     /** Length in the underlying coordinate space. */
     public readonly length: number;
+    /** This line segment, in the opposite direction. */
+    public readonly reverse: LineSegment;
     /** Bezier object for point sampling. */
     private readonly bezier: Bezier;
     /** Paper layer that this line segment is drawn on. */
@@ -28,6 +31,7 @@ export class BezierLineSegment implements LineSegment {
     private constructor(p0: Point, p1: Point, p2: Point, p3: Point, layer: paper.Layer, lineWidth: number, color: paper.Color) {
         this.bezier = new Bezier(p0, p1, p2, p3);
         this.length = this.bezier.length();
+        this.reverse = new ReverseLineSegment(this);
         this.layer = layer;
         this.paperPaths = this.initializePaperPaths(p0, p1, p2, p3, lineWidth, color);
     }

@@ -32,6 +32,7 @@ export interface Station extends GraphStation {
 /** Line segments, which make up the visual part of an edge. */
 export interface LineSegment {
     readonly length: number;
+    readonly reverse: LineSegment;
     draw(): void;
     hide(): void;
     samplePoint(distance: number): Point;
@@ -45,6 +46,7 @@ export interface Edge extends GraphEdge {
 
     // Extensions
     readonly length: number;
+    readonly reverse: Edge;
     draw(): void;
     hide(): void;
     samplePoint(distance: number): Point;

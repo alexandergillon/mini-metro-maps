@@ -11,6 +11,8 @@ export class EdgeImpl implements Edge {
     public readonly station1: Station;
     /** To station. */
     public readonly station2: Station;
+    /** This edge, in the opposite direction. */
+    public readonly reverse: Edge;
 
     // View properties
     /** Length in the underlying coordinate space. */
@@ -30,6 +32,7 @@ export class EdgeImpl implements Edge {
         this.station2 = station2;
         this.length = lineSegments.map(lineSegment => lineSegment.length).reduce((l1, l2) => l1 + l2);
         this.lineSegments = lineSegments;
+        this.reverse = new ReverseEdge(this);
     }
 
     /**
@@ -77,5 +80,43 @@ export class EdgeImpl implements Edge {
         }
 
         return this.lineSegments[segmentIndex].samplePoint(distance - prefixLength);
+    }
+}
+
+/** Class that provides a reversed 'view' of a line segment. */
+class ReverseEdge implements Edge {
+    /** The underlying edge to reverse. */
+    private readonly edge: Edge;
+
+    constructor(edge: Edge) {
+        this.edge = edge;
+    }
+
+    public get length() {
+        return this.edge.length;
+    }
+
+    public get reverse() {
+        return this.edge;
+    }
+
+    public get station1() {
+        return this.edge.station2;
+    }
+
+    public get station2() {
+        return this.edge.station1;
+    }
+
+    draw(): void {
+        this.edge.draw();
+    }
+
+    hide(): void {
+        this.edge.hide();
+    }
+
+    samplePoint(distance: number): Point {
+        return this.edge.samplePoint(this.length - distance);
     }
 }

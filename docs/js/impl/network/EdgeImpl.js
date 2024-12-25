@@ -15,6 +15,7 @@ export class EdgeImpl {
         this.station2 = station2;
         this.length = lineSegments.map(lineSegment => lineSegment.length).reduce((l1, l2) => l1 + l2);
         this.lineSegments = lineSegments;
+        this.reverse = new ReverseEdge(this);
     }
     /**
      * Builds an edge from a JsonEdge.
@@ -55,5 +56,32 @@ export class EdgeImpl {
             prefixLength += this.lineSegments[segmentIndex + 1].length;
         }
         return this.lineSegments[segmentIndex].samplePoint(distance - prefixLength);
+    }
+}
+/** Class that provides a reversed 'view' of a line segment. */
+class ReverseEdge {
+    constructor(edge) {
+        this.edge = edge;
+    }
+    get length() {
+        return this.edge.length;
+    }
+    get reverse() {
+        return this.edge;
+    }
+    get station1() {
+        return this.edge.station2;
+    }
+    get station2() {
+        return this.edge.station1;
+    }
+    draw() {
+        this.edge.draw();
+    }
+    hide() {
+        this.edge.hide();
+    }
+    samplePoint(distance) {
+        return this.edge.samplePoint(this.length - distance);
     }
 }
