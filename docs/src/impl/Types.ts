@@ -56,12 +56,6 @@ export interface Edge extends GraphEdge {
     samplePoint(distance: number): Point;
 }
 
-/** A path between two stations on a metro line, and a position on it. */
-export interface Path {
-    samplePoint(): Point;
-    move(distance: number): [boolean, Point];
-}
-
 /** A metro line in the network. */
 export interface MetroLine extends GraphMetroLine {
     // Re-declarations
@@ -91,4 +85,25 @@ export interface MetroNetwork extends GraphMetroNetwork {
     readonly lineWidth: number;
     draw(): void;
     hide(): void;
+}
+
+/** The visuals of a train. */
+export interface ViewTrain {
+    x: number;
+    y: number;
+    bearing: number;
+    draw(): void;
+    hide(): void;
+}
+
+/** A train movement animation. Uses current time to determine train position. */
+export interface TrainMovement {
+    samplePoint(): Point;
+}
+
+/** A path between two stations on a metro line, and a position on it. */
+export interface Path {
+    readonly length: number;
+    samplePoint(): Point;
+    move(distance: number): [boolean, Point];
 }

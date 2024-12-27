@@ -4,7 +4,7 @@ import { EdgeImpl } from "./EdgeImpl.js";
 import { StationImpl } from "./StationImpl.js";
 import { StraightLineSegment } from "./StraightLineSegment.js";
 import CircArrayQueue from "../../lib/queue/CircArrayQueue.js";
-import { PathImpl } from "./PathImpl.js";
+import { PathImpl } from "../trains/PathImpl.js";
 /** Implements a metro line. */
 export class MetroLineImpl {
     /**

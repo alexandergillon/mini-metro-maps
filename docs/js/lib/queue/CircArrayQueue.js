@@ -185,14 +185,14 @@ _a = CircArrayQueue, _CircArrayQueue_elems = new WeakMap(), _CircArrayQueue_star
     if (grow) {
         if (__classPrivateFieldGet(this, _CircArrayQueue_numElems, "f") === this.capacity) {
             __classPrivateFieldGet(this, _CircArrayQueue_elems, "f").length *=
-                __classPrivateFieldGet(_a, _a, "f", _CircArrayQueue_growthFactor);
+                __classPrivateFieldGet(CircArrayQueue, _a, "f", _CircArrayQueue_growthFactor);
         }
     }
     else {
         if (this.capacity >= 2 &&
             __classPrivateFieldGet(this, _CircArrayQueue_numElems, "f") * 4 < this.capacity) {
             // Create new array of half the size as existing one
-            const newElems = new Array(Math.floor(__classPrivateFieldGet(this, _CircArrayQueue_elems, "f").length / __classPrivateFieldGet(_a, _a, "f", _CircArrayQueue_growthFactor)));
+            const newElems = new Array(Math.floor(__classPrivateFieldGet(this, _CircArrayQueue_elems, "f").length / __classPrivateFieldGet(CircArrayQueue, _a, "f", _CircArrayQueue_growthFactor)));
             // Copy all elements into new array
             const n = __classPrivateFieldGet(this, _CircArrayQueue_numElems, "f");
             for (let i = 0; i < n; ++i) {

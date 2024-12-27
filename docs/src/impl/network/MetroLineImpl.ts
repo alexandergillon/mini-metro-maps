@@ -7,7 +7,7 @@ import {StationImpl} from "./StationImpl.js";
 import {StraightLineSegment} from "./StraightLineSegment.js";
 import {Edge, LineSegment, MetroLine, Path, Station} from "../Types.js";
 import CircArrayQueue from "../../lib/queue/CircArrayQueue.js";
-import {PathImpl} from "./PathImpl.js";
+import {PathImpl} from "../trains/PathImpl.js";
 import Queue from "../../lib/queue/Queue.js";
 
 /** Implements a metro line. */
