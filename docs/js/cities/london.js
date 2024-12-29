@@ -14,9 +14,16 @@ class LondonApi {
     }
     setLines(metroLines) {
         // See https://api.tfl.gov.uk/ for URL format.
-        this.apiUrl = `https://api.tfl.gov.uk/line/${metroLines.join(",")}/arrivals`;
+        if (metroLines) {
+            this.apiUrl = `https://api.tfl.gov.uk/line/${metroLines.join(",")}/arrivals`;
+        }
+        else {
+            this.apiUrl = '';
+        }
     }
     async getArrivals() {
+        if (!this.apiUrl)
+            return [];
         // todo: error handling, make more async
         console.log("getData"); // todo: remove
         const response = await fetch(this.apiUrl);
@@ -218,8 +225,8 @@ class LondonApi {
             const randomIndex = Math.floor(Math.random() * toGuessFrom.length);
             edge = nextArrivalNeighborsMap.get(toGuessFrom[randomIndex]);
         }
-        // Random distance because we can't actually tell
-        return new LocationInfo([edge, getRandomArbitrary(0.3, 0.7)], nextArrival);
+        // Random distance because we can't actually tell - TODO: reimplement / make smarter
+        return new LocationInfo([edge, 0], nextArrival);
     }
     /**
      * Converts a ParsedTflApiResponseItem into an ArrivalInfo.

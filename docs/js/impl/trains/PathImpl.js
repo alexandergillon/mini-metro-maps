@@ -1,3 +1,5 @@
+/** @file Path implementation. */
+import { EdgeLocation } from "../Types.js";
 /**
  * Class for a path between two stations. A path consists of multiple adjacent edges, and a position somewhere among
  * these edges. The position is determined by an edge index, a segment index, and a parameter value. For example,
@@ -67,6 +69,9 @@ export class PathImpl {
         this.edgeDistance = 0;
         this.length = edges.map(edge => edge.length).reduce((l1, l2) => l1 + l2);
         this.finished = false;
+    }
+    get location() {
+        return new EdgeLocation(this.edges[this.edgeIndex], this.edgeDistance);
     }
     /** Samples a point at the current position in the path. */
     samplePoint() {

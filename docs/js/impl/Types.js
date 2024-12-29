@@ -8,3 +8,18 @@ export class Point {
         return `(${this.x}, ${this.y})`;
     }
 }
+/** POJO to represent a train being at a station. */
+export class StationLocation {
+    constructor(location) {
+        this.isStation = true;
+        this.station = location;
+    }
+}
+/** POJO to represent a train being along an edge. */
+export class EdgeLocation {
+    constructor(edge, distanceAlongEdge) {
+        this.isStation = false;
+        this.edge = edge;
+        this.distanceAlongEdge = distanceAlongEdge;
+    }
+}

@@ -60,10 +60,16 @@ class LondonApi implements CityApi {
 
     public setLines(metroLines: string[]) { // TODO: validate
         // See https://api.tfl.gov.uk/ for URL format.
-        this.apiUrl = `https://api.tfl.gov.uk/line/${metroLines.join(",")}/arrivals`;
+        if (metroLines) {
+            this.apiUrl = `https://api.tfl.gov.uk/line/${metroLines.join(",")}/arrivals`;
+        } else {
+            this.apiUrl = '';
+        }
     }
 
     public async getArrivals(): Promise<Array<ArrivalInfo>> {
+        if (!this.apiUrl) return [];
+
         // todo: error handling, make more async
         console.log("getData"); // todo: remove
         const response = await fetch(this.apiUrl);
@@ -282,8 +288,8 @@ class LondonApi implements CityApi {
             edge = nextArrivalNeighborsMap.get(toGuessFrom[randomIndex])!;
         }
 
-        // Random distance because we can't actually tell
-        return new LocationInfo([edge, getRandomArbitrary(0.3, 0.7)], nextArrival);
+        // Random distance because we can't actually tell - TODO: reimplement / make smarter
+        return new LocationInfo([edge, 0], nextArrival);
     }
 
     /**

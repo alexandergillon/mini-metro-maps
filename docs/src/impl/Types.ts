@@ -87,6 +87,33 @@ export interface MetroNetwork extends GraphMetroNetwork {
     hide(): void;
 }
 
+/** POJO to represent a train being at a station. */
+export class StationLocation {
+    public readonly isStation: true;
+    public readonly station: Station;
+
+    constructor(location: Station) {
+        this.isStation = true;
+        this.station = location;
+    }
+}
+
+/** POJO to represent a train being along an edge. */
+export class EdgeLocation {
+    public readonly isStation: false;
+    public readonly edge: Edge;
+    public readonly distanceAlongEdge: number;
+
+    constructor(edge: Edge, distanceAlongEdge: number) {
+        this.isStation = false;
+        this.edge = edge;
+        this.distanceAlongEdge = distanceAlongEdge;
+    }
+}
+
+/** Type for where a station can be located. Can be discriminated by isStation. */
+export type TrainLocation = StationLocation | EdgeLocation;
+
 /** The visuals of a train. */
 export interface ViewTrain {
     x: number;
@@ -96,14 +123,28 @@ export interface ViewTrain {
     hide(): void;
 }
 
-/** A train movement animation. Uses current time to determine train position. */
-export interface TrainMovement {
-    samplePoint(): Point;
-}
-
 /** A path between two stations on a metro line, and a position on it. */
 export interface Path {
     readonly length: number;
+    readonly location: EdgeLocation;
     samplePoint(): Point;
     move(distance: number): [boolean, Point];
+}
+
+/** A train movement animation. */
+export interface TrainMovement {
+    readonly location: EdgeLocation;
+    update(): void;
+}
+
+/** A train. */
+export interface Train {
+    readonly id: string;
+    readonly metroLine: MetroLine;
+    readonly location: TrainLocation;
+    readonly nextArrival: [Station, number] | null;
+    setNextDeparture(station: Station, arrivalTime: number): void;
+    update(): boolean;
+    draw(): void;
+    hide(): void;
 }
