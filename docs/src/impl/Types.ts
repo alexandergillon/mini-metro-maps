@@ -64,6 +64,12 @@ export interface MetroLine extends GraphMetroLine {
     getEdges(station: GraphStation): Edge[];
 
     // Extensions
+    readonly color: paper.Color;
+    hasTrain(trainId: string): boolean;
+    getTrain(trainId: string): Train | null;
+    updateTrains(): void;
+    addTrain(train: Train): void;
+    removeTrain(trainId: string): void;
     pathfind(station1: Station, station2: Station): Path | null;
     draw(): void;
     hide(): void;
@@ -111,8 +117,20 @@ export class EdgeLocation {
     }
 }
 
-/** Type for where a station can be located. Can be discriminated by isStation. */
-export type TrainLocation = StationLocation | EdgeLocation;
+/** POJO to represent a train edge location, with a next arrival. */
+export class EdgeLocationWithArrival {
+    public readonly isStation: false;
+    public readonly edgeLocation: EdgeLocation;
+    public readonly arrivalStation: Station;
+    public readonly arrivalTime: number;
+
+    constructor(edgeLocation: EdgeLocation, station: Station, arrivalTime: number) {
+        this.isStation = false;
+        this.edgeLocation = edgeLocation;
+        this.arrivalStation = station;
+        this.arrivalTime = arrivalTime;
+    }
+}
 
 /** The visuals of a train. */
 export interface ViewTrain {
@@ -141,10 +159,9 @@ export interface TrainMovement {
 export interface Train {
     readonly id: string;
     readonly metroLine: MetroLine;
-    readonly location: TrainLocation;
-    readonly nextArrival: [Station, number] | null;
+    readonly location: StationLocation | EdgeLocationWithArrival;
     setNextDeparture(station: Station, arrivalTime: number): void;
-    update(): boolean;
+    update(): void;
     draw(): void;
     hide(): void;
 }

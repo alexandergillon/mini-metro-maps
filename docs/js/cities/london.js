@@ -26,7 +26,7 @@ class LondonApi {
             return [];
         // todo: error handling, make more async
         console.log("getData"); // todo: remove
-        const response = await fetch(this.apiUrl);
+        const response = await fetch(this.apiUrl, { cache: "no-store" });
         const json = await response.json();
         return this.stripData(json);
     }
@@ -38,7 +38,7 @@ class LondonApi {
         for (let i = 0; i < numRequests; i++) {
             const thisRequestIds = trainIds.slice(i * 20, (i + 1) * 20);
             const apiUrl = `https://api.tfl.gov.uk/vehicle/${thisRequestIds.join(",")}/arrivals`;
-            promises.push(fetch(apiUrl)
+            promises.push(fetch(apiUrl, { cache: "no-store" })
                 .then(response => response.json())
                 .then(json => this.getLocations(thisRequestIds, json, metroNetwork))
                 .then(newLocations => newLocations.forEach((locationInfo, trainId) => locations.set(trainId, locationInfo))));
@@ -225,8 +225,8 @@ class LondonApi {
             const randomIndex = Math.floor(Math.random() * toGuessFrom.length);
             edge = nextArrivalNeighborsMap.get(toGuessFrom[randomIndex]);
         }
-        // Random distance because we can't actually tell - TODO: reimplement / make smarter
-        return new LocationInfo([edge, 0], nextArrival);
+        // Random distance because we can't actually tell - TODO: make random, then reimplement / make smarter
+        return new LocationInfo([edge.station1.id, edge.station2.id, 0], nextArrival);
     }
     /**
      * Converts a ParsedTflApiResponseItem into an ArrivalInfo.

@@ -27,7 +27,7 @@ async function bootstrap() {
     const metroNetwork: MetroNetwork = MetroNetworkImpl.fromJson(await (await metroNetworkResponse).json());
     const metroLineNames = Array.from(metroNetwork.metroLines).map(metroLine => metroLine.name);
     const cityApi: CityApi = (await cityModule).initialize(metroLineNames);
-    const networkHandler = new NetworkHandler(cityApi);
+    const networkHandler = new NetworkHandler(metroNetwork, cityApi);
     const paperCanvas = new PaperCanvas(metroNetwork, canvas);
     metroNetwork.draw();
 }

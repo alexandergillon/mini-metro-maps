@@ -5,7 +5,7 @@ import {GraphStation} from "../../GraphTypes.js";
 import {JsonMetroLine} from "./JsonTypes.js";
 import {StationImpl} from "./StationImpl.js";
 import {StraightLineSegment} from "./StraightLineSegment.js";
-import {Edge, LineSegment, MetroLine, Path, Station} from "../Types.js";
+import {Edge, LineSegment, MetroLine, Path, Station, Train} from "../Types.js";
 import CircArrayQueue from "../../lib/queue/CircArrayQueue.js";
 import {PathImpl} from "../trains/PathImpl.js";
 import Queue from "../../lib/queue/Queue.js";
@@ -23,8 +23,14 @@ export class MetroLineImpl implements MetroLine {
     private readonly edges: Edge[];
 
     // View properties
+    /** Metro line color. */
+    public readonly color;
     /** Endpoint line segments (the little bars that can terminate lines). */
     private readonly endpointLineSegments: LineSegment[];
+
+    // Train properties
+    /** Mapping from train ID -> Train. */
+    private readonly trains: Map<string, Train> = new Map();
 
     /**
      * Constructor: builds a metro line from a JsonMetroLine. This class has no fromJson due to the need to pass
@@ -35,7 +41,7 @@ export class MetroLineImpl implements MetroLine {
     public constructor(json: JsonMetroLine, lineWidth: number) {
         const lineLayer = new paper.Layer();
         const stationLayer = new paper.Layer();
-        const color = new paper.Color(json.color);
+        this.color = new paper.Color(json.color);
 
         this.name = json.name;
 
@@ -47,14 +53,14 @@ export class MetroLineImpl implements MetroLine {
             if (!station1) throw new Error(`Unknown station ${edge.station1Id} in edge (${edge.station1Id}, ${edge.station2Id}) on line ${json.name}`);
             const station2 = this._stations.get(edge.station2Id);
             if (!station2) throw new Error(`Unknown station ${edge.station2Id} in edge (${edge.station1Id}, ${edge.station2Id}) on line ${json.name}`);
-            return EdgeImpl.fromJson(edge, station1, station2, lineLayer, lineWidth, color);
+            return EdgeImpl.fromJson(edge, station1, station2, lineLayer, lineWidth, this.color);
         });
         this.edges = edges;
         this._edges = MetroLineImpl.buildEdgeMapping(edges);
 
         this.endpointLineSegments = json.endpointLineSegments.map(lineSegment =>
-            lineSegment.straightLine ? StraightLineSegment.fromJson(lineSegment, lineLayer, lineWidth, color)
-                : BezierLineSegment.fromJson(lineSegment, lineLayer, lineWidth, color));
+            lineSegment.straightLine ? StraightLineSegment.fromJson(lineSegment, lineLayer, lineWidth, this.color)
+                : BezierLineSegment.fromJson(lineSegment, lineLayer, lineWidth, this.color));
     }
 
     // Graph methods
@@ -117,6 +123,49 @@ export class MetroLineImpl implements MetroLine {
             result.get(edge.station2.id)!.set(edge.station1.id, edge);
         }
         return result;
+    }
+
+    /**
+     * Gets a train with a specified ID. Returns null if no train with that ID exists on this line.
+     * @param trainId Train ID.
+     */
+    public getTrain(trainId: string): Train | null {
+        const train = this.trains.get(trainId);
+        return train ? train : null;
+    }
+
+    /**
+     * Adds a new train to this metro line, and draws it. Throws an error if a train with the same ID already exists.
+     * @param train Train to add.
+     */
+    public addTrain(train: Train): void {
+        if (this.trains.has(train.id)) throw new Error(`Can't add train ${train.id} to line ${this.name}: already exists`);
+        this.trains.set(train.id, train);
+        train.draw();
+    }
+
+    /** Updates position of all trains on this metro line. */
+    public updateTrains(): void {
+        for (const train of this.trains.values()) train.update();
+    }
+
+    /**
+     * Returns whether this line has a train with a specified ID.
+     * @param trainId Train ID.
+     */
+    public hasTrain(trainId: string): boolean {
+        return this.trains.has(trainId);
+    }
+
+    /**
+     * Removes a train from this metro line. Throws an error if no train with that ID exists on this line.
+     * @param trainId Train ID.
+     */
+    public removeTrain(trainId: string): void {
+        const train = this.trains.get(trainId);
+        if (!train) throw new Error(`Can't remove train ${trainId} from line ${this.name}: doesn't exist`);
+        this.trains.delete(trainId);
+        train.hide();
     }
 
     /**

@@ -9,7 +9,7 @@
  *      when the map initially loads, or when a train goes into service). In that case, the CityApi will be queried
  *      as to the location of these trains with CityApi.whereAre() to determine starting position.
  */
-import {GraphEdge, GraphMetroNetwork, GraphStation} from "../GraphTypes";
+import {GraphMetroNetwork} from "../GraphTypes";
 
 /** POJO to store information about the next arrival for a train. */
 export class ArrivalInfo {
@@ -35,12 +35,20 @@ export class ArrivalInfo {
         this.stationId = stationId;
         this.arrivalTime = arrivalTime;
     }
+
+    public toString() {
+        const date = new Date(this.arrivalTime);
+        return `${this.trainId} on line ${this.line} will arrive at ${this.stationId} at ${date.toTimeString()}`;
+    }
 }
 
 /** POJO to store a train's location and next arrival. */
 export class LocationInfo {
-    /** Location of train. Either a station, or an edge and a proportion along the edge (between 0 and 1). */
-    readonly location: GraphStation | [GraphEdge, number];
+    /**
+     * Location of train. Either a station ID, or an edge (two station IDs) and a proportion along the edge (between 0
+     * and 1). Note: currently, only edges which end at the next arrival are supported. I.e. location[2] === nextArrival.stationId.
+     */
+    readonly location: string | [string, string, number];
     /** Next arrival of train. */
     readonly nextArrival: ArrivalInfo;
 
@@ -49,9 +57,19 @@ export class LocationInfo {
      * @param location Location of train.
      * @param nextArrival Next arrival of train.
      */
-    public constructor(location: GraphStation | [GraphEdge, number], nextArrival: ArrivalInfo) {
+    public constructor(location: string | [string, string, number], nextArrival: ArrivalInfo) {
         this.location = location;
         this.nextArrival = nextArrival;
+    }
+
+    public toString() {
+        const nextArrivalString = `(next arrival ${this.nextArrival.stationId} at ${new Date(this.nextArrival.arrivalTime).toTimeString()})`;
+        if (Array.isArray(this.location)) {
+            const [station1Id, station2Id, proportion] = this.location;
+            return `'${this.nextArrival.trainId} is ${proportion.toFixed(2)} between ${station1Id} and ${station2Id} ${nextArrivalString}'`;
+        } else {
+            return `'${this.nextArrival.trainId} is at ${this.location} ${nextArrivalString}'`;
+        }
     }
 }
 

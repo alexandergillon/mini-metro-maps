@@ -23,3 +23,12 @@ export class EdgeLocation {
         this.distanceAlongEdge = distanceAlongEdge;
     }
 }
+/** POJO to represent a train edge location, with a next arrival. */
+export class EdgeLocationWithArrival {
+    constructor(edgeLocation, station, arrivalTime) {
+        this.isStation = false;
+        this.edgeLocation = edgeLocation;
+        this.arrivalStation = station;
+        this.arrivalTime = arrivalTime;
+    }
+}

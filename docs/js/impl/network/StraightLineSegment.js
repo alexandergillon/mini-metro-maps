@@ -46,6 +46,8 @@ export class StraightLineSegment {
      * @return The sample point.
      */
     samplePoint(distance) {
+        if (distance > this.length)
+            return this.p1;
         const x = this.p0.x + distance * this.unitVector.x;
         const y = this.p0.y + distance * this.unitVector.y;
         return new Point(x, y);

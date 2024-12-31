@@ -24,7 +24,8 @@ export class InOutMovement {
      */
     samplePoint() {
         // Easing function t^a / (t^a + (1-t)^a). More information on easing function: https://math.stackexchange.com/a/121755/1172131.
-        const t = (Date.now() - this.startTime) / (this.endTime - this.startTime);
+        // Clamp t to 1 if Date.now() is after this.endTime, as we don't want to keep moving after the movement ends.
+        const t = Math.min((Date.now() - this.startTime) / (this.endTime - this.startTime), 1);
         const tAlpha = Math.pow(t, InOutMovement.EASING_ALPHA);
         const distanceProportion = tAlpha / (tAlpha + Math.pow(1 - t, InOutMovement.EASING_ALPHA));
         const newDistance = this.toMoveDistance * distanceProportion;
@@ -32,11 +33,13 @@ export class InOutMovement {
         this.movedDistance = newDistance;
         return this.path.samplePoint();
     }
+    /** Updates the train's position based on the current time. */
     update() {
         const newLocation = this.samplePoint();
         this.train.x = newLocation.x;
         this.train.y = newLocation.y;
     }
+    /** Current location of the train. */
     get location() {
         return this.path.location;
     }

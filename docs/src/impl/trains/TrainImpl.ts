@@ -1,9 +1,9 @@
 /** @file Code for a train */
-import {Edge, MetroLine, Path, Station, Train, TrainLocation, TrainMovement, ViewTrain} from "../Types";
+import {Edge, EdgeLocationWithArrival, MetroLine, Path, Station, StationLocation, Train, TrainMovement, ViewTrain} from "../Types.js";
 import {InOutMovement} from "./InOutMovement.js";
 import {ViewTrainImpl} from "./ViewTrainImpl.js";
-import {Config} from "../Config";
-import {PathImpl} from "./PathImpl";
+import {Config} from "../Config.js";
+import {PathImpl} from "./PathImpl.js";
 
 /** Implements a train. */
 export class TrainImpl implements Train {
@@ -45,7 +45,7 @@ export class TrainImpl implements Train {
      * @param lineWidth Line width.
      * @param color Color.
      */
-    public newTrainAtStation(id: string, metroLine: MetroLine, station: Station, nextDeparture: [Station, number] | null,
+    public static newTrainAtStation(id: string, metroLine: MetroLine, station: Station, nextDeparture: [Station, number] | null,
                              layer: paper.Layer, lineWidth: number, color: paper.Color): Train {
         // TODO: bearing
         const viewTrain = new ViewTrainImpl(station.location.x, station.location.y, 0, layer, lineWidth, color);
@@ -65,12 +65,12 @@ export class TrainImpl implements Train {
      * @param lineWidth Line width.
      * @param color Color.
      */
-    public newTrainOnPath(id: string, metroLine: MetroLine, nextStation: Station, arrivalTime: number, initialPath: Path,
+    public static newTrainOnPath(id: string, metroLine: MetroLine, nextStation: Station, arrivalTime: number, initialPath: Path,
                           initialDistance: number, layer: paper.Layer, lineWidth: number, color: paper.Color): Train {
         const initialCoord = initialPath.samplePoint();
         // TODO: bearing
         const viewTrain = new ViewTrainImpl(initialCoord.x, initialCoord.y, 0, layer, lineWidth, color);
-        const movement = new InOutMovement(this.viewTrain, Date.now(), arrivalTime, initialPath, initialDistance);
+        const movement = new InOutMovement(viewTrain, Date.now(), arrivalTime, initialPath, initialDistance);
         const location = new InternalMovementLocation(nextStation, arrivalTime, movement);
 
         return new TrainImpl(id, metroLine, location, null, viewTrain);
@@ -87,27 +87,18 @@ export class TrainImpl implements Train {
      * @param lineWidth Line width.
      * @param color Color.
      */
-    public newTrainOnEdge(id: string, metroLine: MetroLine, edge: Edge, arrivalTime: number, initialDistance: number,
+    public static newTrainOnEdge(id: string, metroLine: MetroLine, edge: Edge, arrivalTime: number, initialDistance: number,
                           layer: paper.Layer, lineWidth: number, color: paper.Color): Train {
-        return this.newTrainOnPath(id, metroLine, edge.station2, arrivalTime, new PathImpl([edge]),
+        return TrainImpl.newTrainOnPath(id, metroLine, edge.station2, arrivalTime, new PathImpl([edge]),
             initialDistance, layer, lineWidth, color);
     }
 
     /** Current location of the train. */
-    public get location(): TrainLocation {
+    public get location(): StationLocation | EdgeLocationWithArrival {
         if (this._location.isStation) {
             return this._location;
         } else {
-            return this._location.movement.location;
-        }
-    }
-
-    /** Next arrival of the train. Null if the train is at a station. */
-    public get nextArrival(): [Station, number] | null {
-        if (this._location.isStation) {
-            return null;
-        } else {
-            return [this._location.toStation, this._location.arrivalTime];
+            return new EdgeLocationWithArrival(this._location.movement.location, this._location.toStation, this._location.arrivalTime);
         }
     }
 
@@ -117,11 +108,11 @@ export class TrainImpl implements Train {
     }
 
     /** Updates the position (etc.) of the train. */
-    public update(): boolean {
+    public update(): void {
         const time = Date.now();
         if (this._location.isStation) {
             if (time > this._location.departureTime) {
-                return this.tryDepart();
+                this.tryDepart();
             }
         } else {
             this._location.movement.update();
@@ -131,8 +122,6 @@ export class TrainImpl implements Train {
                 this.viewTrain.y = this._location.station.location.y;
             }
         }
-
-        return false;
     }
 
     /**
@@ -148,7 +137,7 @@ export class TrainImpl implements Train {
      * The departure may not happen yet if its not time to depart, or if the next station is not known.
      * @private
      */
-    private tryDepart(): boolean {
+    private tryDepart(): void {
         const time = Date.now();
         if (!this._location.isStation) throw new Error("tryDepart() called when not at station");
         const currentStation = this._location.station;
@@ -159,8 +148,8 @@ export class TrainImpl implements Train {
 
             if (!path) {
                 console.error(`Train ${this.id} could not pathfind from ${currentStation} to ${nextStation} (removing)`);
-                this.hide();
-                return true;
+                this.metroLine.removeTrain(this.id);
+                return;
             }
 
             const movement = new InOutMovement(this.viewTrain, Date.now(), arrivalTime, path);
@@ -168,12 +157,9 @@ export class TrainImpl implements Train {
         } else {
             if (time > this._location.departureTime + Config.TRAIN_TIMEOUT_TIME * 1000) {
                 console.warn(`Train ${this.id}, while stopped at ${currentStation}, timed out while waiting for next destination (removing)`);
-                this.hide();
-                return true;
+                this.metroLine.removeTrain(this.id);
             }
         }
-
-        return false;
     }
 
     /** Draws this train on the screen. */
@@ -200,7 +186,7 @@ class InternalStationLocation {
     }
 }
 
-/** Internal 'equivalent' of EdgeLocation (in a loose sense). */
+/** Internal 'equivalent' of EdgeLocationWithArrival. */
 class InternalMovementLocation {
     public readonly isStation: false;
     public readonly toStation: Station;
@@ -215,7 +201,6 @@ class InternalMovementLocation {
     }
 }
 
-/** Internal 'equivalent' of TrainLocation. */
 type InternalTrainLocation = InternalStationLocation | InternalMovementLocation;
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random

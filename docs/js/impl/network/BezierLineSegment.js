@@ -49,7 +49,7 @@ export class BezierLineSegment {
      */
     samplePoint(distance) {
         // This is very clearly wrong, but a placeholder. TODO: fix
-        return this.bezier.compute(distance / this.length);
+        return this.bezier.compute(Math.min(distance / this.length, 1)); // clamp to end
     }
     /**
      * Initializes the Paper objects that represent this line segment on-screen.

@@ -70,6 +70,7 @@ export class PathImpl {
         this.length = edges.map(edge => edge.length).reduce((l1, l2) => l1 + l2);
         this.finished = false;
     }
+    /** Current location along the path. */
     get location() {
         return new EdgeLocation(this.edges[this.edgeIndex], this.edgeDistance);
     }

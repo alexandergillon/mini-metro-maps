@@ -71,12 +71,12 @@ export class EdgeImpl implements Edge {
             return this.station2.location;
         }
 
-        // TODO: if this becomes a bottleneck, consider precomputing segment mapping
+        // TODO: if this becomes a bottleneck, consider precomputing prefix lengths
         let segmentIndex = 0;
         let prefixLength = 0;
-        while (prefixLength + this.lineSegments[segmentIndex+1].length < distance) {
+        while (segmentIndex < this.lineSegments.length-1 && prefixLength + this.lineSegments[segmentIndex].length < distance) {
+            prefixLength += this.lineSegments[segmentIndex].length;
             segmentIndex++;
-            prefixLength += this.lineSegments[segmentIndex+1].length;
         }
 
         return this.lineSegments[segmentIndex].samplePoint(distance - prefixLength);

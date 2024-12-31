@@ -51,9 +51,9 @@ export class EdgeImpl {
         // TODO: if this becomes a bottleneck, consider precomputing segment mapping
         let segmentIndex = 0;
         let prefixLength = 0;
-        while (prefixLength + this.lineSegments[segmentIndex + 1].length < distance) {
-            segmentIndex++;
+        while (segmentIndex + 1 < this.lineSegments.length && prefixLength + this.lineSegments[segmentIndex + 1].length < distance) {
             prefixLength += this.lineSegments[segmentIndex + 1].length;
+            segmentIndex++;
         }
         return this.lineSegments[segmentIndex].samplePoint(distance - prefixLength);
     }

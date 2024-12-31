@@ -68,7 +68,7 @@ export class BezierLineSegment implements LineSegment {
      */
     public samplePoint(distance: number): Point {
         // This is very clearly wrong, but a placeholder. TODO: fix
-        return this.bezier.compute(distance / this.length);
+        return this.bezier.compute(Math.min(distance / this.length, 1)); // clamp to end
     }
 
     /**

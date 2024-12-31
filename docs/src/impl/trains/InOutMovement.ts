@@ -52,7 +52,8 @@ export class InOutMovement implements TrainMovement {
      */
     private samplePoint(): Point {
         // Easing function t^a / (t^a + (1-t)^a). More information on easing function: https://math.stackexchange.com/a/121755/1172131.
-        const t = (Date.now() - this.startTime) / (this.endTime - this.startTime);
+        // Clamp t to 1 if Date.now() is after this.endTime, as we don't want to keep moving after the movement ends.
+        const t = Math.min((Date.now() - this.startTime) / (this.endTime - this.startTime), 1);
         const tAlpha = Math.pow(t, InOutMovement.EASING_ALPHA);
         const distanceProportion =  tAlpha / (tAlpha + Math.pow(1-t, InOutMovement.EASING_ALPHA));
         const newDistance = this.toMoveDistance * distanceProportion;

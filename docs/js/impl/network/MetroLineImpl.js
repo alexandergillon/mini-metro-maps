@@ -14,9 +14,12 @@ export class MetroLineImpl {
      * @param lineWidth Line width.
      */
     constructor(json, lineWidth) {
+        // Train properties
+        /** Mapping from train ID -> Train. */
+        this.trains = new Map();
         const lineLayer = new paper.Layer();
         const stationLayer = new paper.Layer();
-        const color = new paper.Color(json.color);
+        this.color = new paper.Color(json.color);
         this.name = json.name;
         const stations = json.stations.map(station => StationImpl.fromJson(station, this, stationLayer, lineWidth));
         this._stations = new Map(stations.map(station => [station.id, station]));
@@ -27,12 +30,12 @@ export class MetroLineImpl {
             const station2 = this._stations.get(edge.station2Id);
             if (!station2)
                 throw new Error(`Unknown station ${edge.station2Id} in edge (${edge.station1Id}, ${edge.station2Id}) on line ${json.name}`);
-            return EdgeImpl.fromJson(edge, station1, station2, lineLayer, lineWidth, color);
+            return EdgeImpl.fromJson(edge, station1, station2, lineLayer, lineWidth, this.color);
         });
         this.edges = edges;
         this._edges = MetroLineImpl.buildEdgeMapping(edges);
-        this.endpointLineSegments = json.endpointLineSegments.map(lineSegment => lineSegment.straightLine ? StraightLineSegment.fromJson(lineSegment, lineLayer, lineWidth, color)
-            : BezierLineSegment.fromJson(lineSegment, lineLayer, lineWidth, color));
+        this.endpointLineSegments = json.endpointLineSegments.map(lineSegment => lineSegment.straightLine ? StraightLineSegment.fromJson(lineSegment, lineLayer, lineWidth, this.color)
+            : BezierLineSegment.fromJson(lineSegment, lineLayer, lineWidth, this.color));
     }
     // Graph methods
     /** Stations on the line. */
@@ -96,6 +99,47 @@ export class MetroLineImpl {
             result.get(edge.station2.id).set(edge.station1.id, edge);
         }
         return result;
+    }
+    /**
+     * Gets a train with a specified ID. Returns null if no train with that ID exists on this line.
+     * @param trainId Train ID.
+     */
+    getTrain(trainId) {
+        const train = this.trains.get(trainId);
+        return train ? train : null;
+    }
+    /**
+     * Adds a new train to this metro line. Throws an error if a train with the same ID already exists.
+     * @param train Train to add.
+     */
+    addTrain(train) {
+        if (this.trains.has(train.id))
+            throw new Error(`Can't add train ${train.id} to line ${this.name}: already exists`);
+        this.trains.set(train.id, train);
+        train.draw();
+    }
+    /** Updates position of all trains on this metro line. */
+    updateTrains() {
+        for (const train of this.trains.values())
+            train.update();
+    }
+    /**
+     * Returns whether this line has a train with a specified ID.
+     * @param trainId Train ID.
+     */
+    hasTrain(trainId) {
+        return this.trains.has(trainId);
+    }
+    /**
+     * Removes a train from this metro line. Throws an error if no train with that ID exists on this line.
+     * @param trainId Train ID.
+     */
+    removeTrain(trainId) {
+        const train = this.trains.get(trainId);
+        if (!train)
+            throw new Error(`Can't remove train ${trainId} from line ${this.name}: doesn't exist`);
+        this.trains.delete(trainId);
+        train.hide();
     }
     /**
      * Finds a path between two stations on this metro line. This path is found through breadth-first search, which
