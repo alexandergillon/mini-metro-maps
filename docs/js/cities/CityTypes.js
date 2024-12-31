@@ -33,10 +33,10 @@ export class LocationInfo {
         const nextArrivalString = `(next arrival ${this.nextArrival.stationId} at ${new Date(this.nextArrival.arrivalTime).toTimeString()})`;
         if (Array.isArray(this.location)) {
             const [station1Id, station2Id, proportion] = this.location;
-            return `${this.nextArrival.trainId} is ${proportion.toFixed(2)} between ${station1Id} and ${station2Id} ${nextArrivalString}`;
+            return `'${this.nextArrival.trainId} is ${proportion.toFixed(2)} between ${station1Id} and ${station2Id} ${nextArrivalString}'`;
         }
         else {
-            return `${this.nextArrival.trainId} is at ${this.location} ${nextArrivalString}`;
+            return `'${this.nextArrival.trainId} is at ${this.location} ${nextArrivalString}'`;
         }
     }
 }

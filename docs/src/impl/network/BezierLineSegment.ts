@@ -3,6 +3,7 @@ import {JsonBezierLineSegment} from "./JsonTypes.js";
 import {LineSegment, Point} from "../Types.js";
 import {Bezier} from "../../lib/bezierjs/bezier.js";
 import {ReverseLineSegment} from "./ReverseLineSegment.js";
+import {Config} from "../Config.js";
 
 /** Implements a line segment which is a cubic Bezier curve. */
 export class BezierLineSegment implements LineSegment {
@@ -108,7 +109,19 @@ export class BezierLineSegment implements LineSegment {
         circ2.fillColor = color;
         circ2.remove();
 
-        return [paperPath, circ1, circ2];
+        const devModePaths: paper.Path[] = [];
+        if (Config.DEV_MODE_ENABLED) {
+            // If dev mode is enabled, small dots show where the borders of line segments are.
+            const endpointCirc1 = new paper.Path.Circle(p0, lineWidth * 0.05);
+            endpointCirc1.fillColor = new paper.Color("black");
+            endpointCirc1.remove();
+            const endpointCirc2 = new paper.Path.Circle(p3, lineWidth * 0.05);
+            endpointCirc2.fillColor = new paper.Color("black");
+            endpointCirc2.remove();
+            devModePaths.push(endpointCirc1, endpointCirc2);
+        }
+
+        return [paperPath, circ1, circ2].concat(devModePaths);
     }
 
     public toString() {

@@ -48,7 +48,7 @@ export class TrainImpl implements Train {
     public static newTrainAtStation(id: string, metroLine: MetroLine, station: Station, nextDeparture: [Station, number] | null,
                              layer: paper.Layer, lineWidth: number, color: paper.Color): Train {
         // TODO: bearing
-        const viewTrain = new ViewTrainImpl(station.location.x, station.location.y, 0, layer, lineWidth, color);
+        const viewTrain = new ViewTrainImpl(station.location.x, station.location.y, 0, id, layer, lineWidth, color);
         const location = new InternalStationLocation(station, TrainImpl.dwellTime());
         return new TrainImpl(id, metroLine, location, nextDeparture, viewTrain);
     }
@@ -69,7 +69,7 @@ export class TrainImpl implements Train {
                           initialDistance: number, layer: paper.Layer, lineWidth: number, color: paper.Color): Train {
         const initialCoord = initialPath.samplePoint();
         // TODO: bearing
-        const viewTrain = new ViewTrainImpl(initialCoord.x, initialCoord.y, 0, layer, lineWidth, color);
+        const viewTrain = new ViewTrainImpl(initialCoord.x, initialCoord.y, 0, id, layer, lineWidth, color);
         const movement = new InOutMovement(viewTrain, Date.now(), arrivalTime, initialPath, initialDistance);
         const location = new InternalMovementLocation(nextStation, arrivalTime, movement);
 

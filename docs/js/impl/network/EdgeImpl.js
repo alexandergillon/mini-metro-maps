@@ -48,11 +48,11 @@ export class EdgeImpl {
         if (distance >= this.length) {
             return this.station2.location;
         }
-        // TODO: if this becomes a bottleneck, consider precomputing segment mapping
+        // TODO: if this becomes a bottleneck, consider precomputing prefix lengths
         let segmentIndex = 0;
         let prefixLength = 0;
-        while (segmentIndex + 1 < this.lineSegments.length && prefixLength + this.lineSegments[segmentIndex + 1].length < distance) {
-            prefixLength += this.lineSegments[segmentIndex + 1].length;
+        while (segmentIndex < this.lineSegments.length - 1 && prefixLength + this.lineSegments[segmentIndex].length < distance) {
+            prefixLength += this.lineSegments[segmentIndex].length;
             segmentIndex++;
         }
         return this.lineSegments[segmentIndex].samplePoint(distance - prefixLength);

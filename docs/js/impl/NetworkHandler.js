@@ -13,7 +13,7 @@ export class NetworkHandler {
         this.metroNetwork = metroNetwork;
         this.cityApi = cityApi;
         setInterval(this.fetchTrainData.bind(this), Config.FETCH_TRAIN_DATA_INTERVAL * 1000);
-        paper.view.onFrame = this.updateTrains.bind(this); // TODO
+        paper.view.onFrame = this.updateTrains.bind(this);
         this.fetchTrainData();
     }
     /** Callback function to update train data, after the timer has gone off. */
@@ -37,6 +37,13 @@ export class NetworkHandler {
         if (newTrainArrivals)
             await this.handleNewTrainArrivals(newTrainArrivals);
     }
+    /**
+     * Validates that a train arrival is well-formed. Namely, that it refers to a metro line and station that exist,
+     * and that it is in the future.
+     * @param arrival Arrival to validate.
+     * @return Whether the arrival is valid.
+     * @private
+     */
     validateArrival(arrival) {
         const metroLine = this.metroNetwork.getMetroLine(arrival.line);
         if (!metroLine) {
@@ -56,6 +63,13 @@ export class NetworkHandler {
         }
         return true;
     }
+    /**
+     * Handles an arrival for a train that already exists. This may involve re-routing the train, or setting its next
+     * departure.
+     * @param train An existing train.
+     * @param arrival An arrival for that train.
+     * @private
+     */
     handleExistingArrival(train, arrival) {
         const location = train.location;
         const station = train.metroLine.getStation(arrival.stationId);
@@ -76,14 +90,12 @@ export class NetworkHandler {
             // For now, we are dropping re-routing of trains while they are moving. TODO: fix
         }
     }
+    /**
+     * Handles arrivals for trains that we do not know about. I.e. trains that we need to create.
+     * @param arrivals Arrivals to handle. The trains of these arrivals must not already exist.
+     * @private
+     */
     async handleNewTrainArrivals(arrivals) {
-        // TODO remove
-        const seen = new Map();
-        arrivals.forEach(a => seen.set(a.trainId, (seen.get(a.trainId) || 0) + 1));
-        for (const [id, count] of seen.entries()) {
-            if (count > 1)
-                console.log(`${id} COUNT > 1!`);
-        }
         const locations = await this.cityApi.whereAre(arrivals.map(arrival => arrival.trainId), this.metroNetwork);
         for (let arrival of arrivals) {
             const locationInfo = locations.get(arrival.trainId);
@@ -98,6 +110,11 @@ export class NetworkHandler {
             }
         }
     }
+    /**
+     * Handles an arrival for a train that we do not know about. Creates the train and sets it on its way.
+     * @param locationInfo Location and arrival information of the new train.
+     * @private
+     */
     handleNewTrainArrival(locationInfo) {
         const arrival = locationInfo.nextArrival;
         const location = locationInfo.location;
@@ -106,6 +123,7 @@ export class NetworkHandler {
         const metroLine = this.metroNetwork.getMetroLine(arrival.line);
         const arrivalStation = metroLine.getStation(arrival.stationId);
         if (Array.isArray(location)) {
+            // Train is on an edge
             const [station1Id, station2Id, proportion] = location;
             const station1 = metroLine.getStation(station1Id);
             const station2 = metroLine.getStation(station2Id);
@@ -130,6 +148,7 @@ export class NetworkHandler {
             metroLine.addTrain(train);
         }
         else {
+            // Train is at a station
             const currentStation = metroLine.getStation(location); // location = stationId
             if (!currentStation) {
                 console.error(`Can't find station ${arrival.stationId} on metro line ${arrival.line} for location ${locationInfo}`);
@@ -139,6 +158,7 @@ export class NetworkHandler {
             metroLine.addTrain(train);
         }
     }
+    /** Callback for paper.js onFrame() - updates all trains in the network. */
     updateTrains() {
         this.metroNetwork.metroLines.forEach(metroLine => metroLine.updateTrains());
     }

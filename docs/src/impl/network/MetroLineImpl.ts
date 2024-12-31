@@ -37,10 +37,10 @@ export class MetroLineImpl implements MetroLine {
      * 'this' to StationImpl.fromJson().
      * @param json Input metro line data.
      * @param lineWidth Line width.
+     * @param lineLayer Layer to draw this line on.
+     * @param stationLayer Layer to draw stations on (above all metro line layers).
      */
-    public constructor(json: JsonMetroLine, lineWidth: number) {
-        const lineLayer = new paper.Layer();
-        const stationLayer = new paper.Layer();
+    public constructor(json: JsonMetroLine, lineWidth: number, lineLayer: paper.Layer, stationLayer: paper.Layer) {
         this.color = new paper.Color(json.color);
 
         this.name = json.name;

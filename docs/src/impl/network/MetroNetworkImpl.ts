@@ -3,6 +3,9 @@ import {JsonMetroNetwork} from "./JsonTypes.js";
 import {MetroLineImpl} from "./MetroLineImpl.js";
 import {MetroLine, MetroNetwork} from "../Types.js";
 
+/** The global paper object from paper.js. */
+declare const paper: paper.PaperScope;
+
 /** Implements a metro network. */
 export class MetroNetworkImpl implements MetroNetwork {
     // Graph properties
@@ -51,8 +54,12 @@ export class MetroNetworkImpl implements MetroNetwork {
      * @param json Input metro network data.
      */
     public static fromJson(json: JsonMetroNetwork): MetroNetwork {
+        const stationLayer = new paper.Layer();
         const metroLines = json.metroLines.sort((line1, line2) => line1.zIndex - line2.zIndex) // sorts in increasing order
-            .map(line => new MetroLineImpl(line, json.lineWidth));
+            .map(line => new MetroLineImpl(line, json.lineWidth, new paper.Layer(), stationLayer));
+        // Put station layer on top of all line layers
+        paper.project.layers.splice(paper.project.layers.indexOf(stationLayer), 1);
+        paper.project.layers.push(stationLayer);
         const minX = json.minX === undefined ? 0 : json.minX;
         const minY = json.minY === undefined ? 0 : json.minY;
         const maxX = json.maxX;

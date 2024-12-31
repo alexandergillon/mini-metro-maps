@@ -2,6 +2,9 @@
 
 /** Wrapped in a class, to avoid globals. */
 export class Config {
+    /** Whether developer mode is enabled. Enables debugging UI. */
+    public static readonly DEV_MODE_ENABLED =  new URLSearchParams(window.location.search).get("devmode");
+
     /** Time between updates of train data, in seconds. */
     public static readonly FETCH_TRAIN_DATA_INTERVAL = 15;
 

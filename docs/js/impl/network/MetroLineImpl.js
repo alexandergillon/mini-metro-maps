@@ -12,13 +12,13 @@ export class MetroLineImpl {
      * 'this' to StationImpl.fromJson().
      * @param json Input metro line data.
      * @param lineWidth Line width.
+     * @param lineLayer Layer to draw this line on.
+     * @param stationLayer Layer to draw stations on (above all metro line layers).
      */
-    constructor(json, lineWidth) {
+    constructor(json, lineWidth, lineLayer, stationLayer) {
         // Train properties
         /** Mapping from train ID -> Train. */
         this.trains = new Map();
-        const lineLayer = new paper.Layer();
-        const stationLayer = new paper.Layer();
         this.color = new paper.Color(json.color);
         this.name = json.name;
         const stations = json.stations.map(station => StationImpl.fromJson(station, this, stationLayer, lineWidth));
@@ -109,7 +109,7 @@ export class MetroLineImpl {
         return train ? train : null;
     }
     /**
-     * Adds a new train to this metro line. Throws an error if a train with the same ID already exists.
+     * Adds a new train to this metro line, and draws it. Throws an error if a train with the same ID already exists.
      * @param train Train to add.
      */
     addTrain(train) {

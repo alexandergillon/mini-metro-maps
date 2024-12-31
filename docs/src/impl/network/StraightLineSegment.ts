@@ -2,6 +2,7 @@
 import {JsonStraightLineSegment} from "./JsonTypes.js";
 import {LineSegment, Point} from "../Types.js";
 import {ReverseLineSegment} from "./ReverseLineSegment.js";
+import {Config} from "../Config.js";
 
 /** Implements a line segment which is a straight line. */
 export class StraightLineSegment implements LineSegment {
@@ -17,8 +18,8 @@ export class StraightLineSegment implements LineSegment {
     private readonly unitVector: Point;
     /** Paper layer that this line segment is drawn on. */
     private readonly layer: paper.Layer;
-    /** Paper Path which constitutes this line segment on-screen. */
-    private readonly paperPath: paper.Path;
+    /** Paper paths which constitutes this line segment on-screen. */
+    private readonly paperPaths: paper.Path[];
 
     /**
      * Constructor.
@@ -40,7 +41,7 @@ export class StraightLineSegment implements LineSegment {
 
         this.reverse = new ReverseLineSegment(this);
         this.layer = layer;
-        this.paperPath = this.initializePaperPath(lineWidth, color);
+        this.paperPaths = this.initializePaperPaths(lineWidth, color);
     }
 
     /**
@@ -56,12 +57,12 @@ export class StraightLineSegment implements LineSegment {
 
     /** Draws this segment on-screen. */
     public draw() {
-        this.layer.addChild(this.paperPath);
+        this.paperPaths.forEach(path => this.layer.addChild(path));
     }
 
     /** Hides this segment from the screen. */
     public hide() {
-        this.paperPath.remove();
+        this.paperPaths.forEach(path => path.remove());
     }
 
     /**
@@ -77,12 +78,12 @@ export class StraightLineSegment implements LineSegment {
     }
 
     /**
-     * Initializes the Paper Path which makes up this line segment on-screen.
+     * Initializes the Paper paths which makes up this line segment on-screen.
      * @param lineWidth Line width.
      * @param color Color.
      * @private
      */
-    private initializePaperPath(lineWidth: number, color: paper.Color): paper.Path {
+    private initializePaperPaths(lineWidth: number, color: paper.Color): paper.Path[] {
         // dx and dy extend all straight line segments by 1 pixel in either direction.
         // Otherwise, it will appear like there are tiny gaps between segments.
         const dx = Math.sign(this.p1.x - this.p0.x);
@@ -98,7 +99,19 @@ export class StraightLineSegment implements LineSegment {
         paperPath.strokeColor = color;
         paperPath.remove();
 
-        return paperPath;
+        const devModePaths: paper.Path[] = [];
+        if (Config.DEV_MODE_ENABLED) {
+            // If dev mode is enabled, small dots show where the borders of line segments are.
+            const endpointCirc1 = new paper.Path.Circle(p0, lineWidth * 0.05);
+            endpointCirc1.fillColor = new paper.Color("black");
+            endpointCirc1.remove();
+            const endpointCirc2 = new paper.Path.Circle(p1, lineWidth * 0.05);
+            endpointCirc2.fillColor = new paper.Color("black");
+            endpointCirc2.remove();
+            devModePaths.push(endpointCirc1, endpointCirc2);
+        }
+
+        return [paperPath].concat(devModePaths);
     }
 
     public toString() {

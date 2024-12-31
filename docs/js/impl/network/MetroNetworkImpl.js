@@ -26,8 +26,12 @@ export class MetroNetworkImpl {
      * @param json Input metro network data.
      */
     static fromJson(json) {
+        const stationLayer = new paper.Layer();
         const metroLines = json.metroLines.sort((line1, line2) => line1.zIndex - line2.zIndex) // sorts in increasing order
-            .map(line => new MetroLineImpl(line, json.lineWidth));
+            .map(line => new MetroLineImpl(line, json.lineWidth, new paper.Layer(), stationLayer));
+        // Put station layer on top of all line layers
+        paper.project.layers.splice(paper.project.layers.indexOf(stationLayer), 1);
+        paper.project.layers.push(stationLayer);
         const minX = json.minX === undefined ? 0 : json.minX;
         const minY = json.minY === undefined ? 0 : json.minY;
         const maxX = json.maxX;

@@ -2,6 +2,8 @@
 /** Wrapped in a class, to avoid globals. */
 export class Config {
 }
+/** Whether developer mode is enabled. Enables debugging UI. */
+Config.DEV_MODE_ENABLED = new URLSearchParams(window.location.search).get("devmode");
 /** Time between updates of train data, in seconds. */
 Config.FETCH_TRAIN_DATA_INTERVAL = 15;
 /** The minimum time that a train will dwell at a station, in seconds. */

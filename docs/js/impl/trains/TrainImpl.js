@@ -34,7 +34,7 @@ export class TrainImpl {
      */
     static newTrainAtStation(id, metroLine, station, nextDeparture, layer, lineWidth, color) {
         // TODO: bearing
-        const viewTrain = new ViewTrainImpl(station.location.x, station.location.y, 0, layer, lineWidth, color);
+        const viewTrain = new ViewTrainImpl(station.location.x, station.location.y, 0, id, layer, lineWidth, color);
         const location = new InternalStationLocation(station, TrainImpl.dwellTime());
         return new TrainImpl(id, metroLine, location, nextDeparture, viewTrain);
     }
@@ -53,7 +53,7 @@ export class TrainImpl {
     static newTrainOnPath(id, metroLine, nextStation, arrivalTime, initialPath, initialDistance, layer, lineWidth, color) {
         const initialCoord = initialPath.samplePoint();
         // TODO: bearing
-        const viewTrain = new ViewTrainImpl(initialCoord.x, initialCoord.y, 0, layer, lineWidth, color);
+        const viewTrain = new ViewTrainImpl(initialCoord.x, initialCoord.y, 0, id, layer, lineWidth, color);
         const movement = new InOutMovement(viewTrain, Date.now(), arrivalTime, initialPath, initialDistance);
         const location = new InternalMovementLocation(nextStation, arrivalTime, movement);
         return new TrainImpl(id, metroLine, location, null, viewTrain);
