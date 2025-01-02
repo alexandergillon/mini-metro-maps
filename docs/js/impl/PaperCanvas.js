@@ -1,6 +1,14 @@
 /**
  * @file Functionality relating to the paper.js canvas.
  *
+ * Note that the view is made up of three layers, from back to front:
+ *   1. The map canvas
+ *   2. The UI layer
+ *   3. The interaction canvas
+ *
+ * The interaction canvas is the canvas which has all the event listeners attached. This is done so that the UI can
+ * sit on top of the map without preventing the user from panning / zooming.
+ *
  * Note: all x and y here are in the underlying coordinate space - they do NOT refer to the x and y positions of pixels
  * on the user's screen.
  */
@@ -9,9 +17,8 @@ export class PaperCanvas {
     /**
      * Constructor. Registers event listeners with the browser/paper.js to handle user interaction.
      * @param metroNetwork The metro network, for width and height information.
-     * @param canvas The canvas to register event listeners on.
      */
-    constructor(metroNetwork, canvas) {
+    constructor(metroNetwork) {
         /** Min X that the user can pan to. */
         this.minPanningX = 0;
         /** Min Y that the user can pan to. */
@@ -20,12 +27,22 @@ export class PaperCanvas {
         this.maxPanningX = 0;
         /** Max Y that the user can pan to. */
         this.maxPanningY = 0;
+        /** Zoom amount is determined by ZOOM_FACTOR ** zoomLevel .*/
+        this.zoomLevel = 0;
         this.metroNetwork = metroNetwork;
+        // set up the interaction canvas
+        const mapScope = paper; // save to reactivate later as interactionScope gets activated on creation
+        const interactionCanvas = document.getElementById("interactionCanvas");
+        this.interactionScope = new paper.PaperScope();
+        this.interactionScope.setup(interactionCanvas);
         // register event listeners
         const tool = new paper.Tool();
         tool.onMouseDrag = this.pan.bind(this);
-        canvas.addEventListener("wheel", this.zoom.bind(this));
+        interactionCanvas.addEventListener("wheel", this.zoom.bind(this));
         window.addEventListener("resize", this.resizeCanvas.bind(this));
+        // reactivate map canvas for drawing
+        mapScope.activate();
+        this.updateZoom();
         this.resizeCanvas();
         this.updatePannableArea();
         // center the map to start
@@ -63,18 +80,22 @@ export class PaperCanvas {
     /** Moves the 'camera' back in bounds, if it is out of bounds. */
     restoreBounds() {
         const bounds = paper.view.bounds;
+        let x = 0;
         if (bounds.x < this.minPanningX) {
-            paper.view.translate({ x: bounds.x - this.minPanningX, y: 0 });
+            x = bounds.x - this.minPanningX;
         }
         else if (bounds.x + bounds.width > this.maxPanningX) {
-            paper.view.translate({ x: bounds.x + bounds.width - this.maxPanningX, y: 0 });
+            x = bounds.x + bounds.width - this.maxPanningX;
         }
+        let y = 0;
         if (bounds.y < this.minPanningY) {
-            paper.view.translate({ x: 0, y: bounds.y - this.minPanningY });
+            y = bounds.y - this.minPanningY;
         }
         else if (bounds.y + bounds.height > this.maxPanningY) {
-            paper.view.translate({ x: 0, y: bounds.y + bounds.height - this.maxPanningY });
+            y = bounds.y + bounds.height - this.maxPanningY;
         }
+        paper.view.translate({ x: x, y: y });
+        this.interactionScope.view.translate({ x: x, y: y });
     }
     /**
      * Pans the canvas in response to a mouse drag event.
@@ -83,6 +104,7 @@ export class PaperCanvas {
     pan(event) {
         const delta = event.point.subtract(event.downPoint);
         paper.view.translate(delta);
+        this.interactionScope.view.translate(delta);
         this.restoreBounds();
     }
     /**
@@ -100,29 +122,36 @@ export class PaperCanvas {
         const currentHeight = paper.view.bounds.height;
         // Scroll up - zoom in. Block zoom if too little is visible.
         if (event.deltaY < 0 && !(currentWidth <= minWidth && currentHeight <= minHeight)) {
-            paper.view.scale(PaperCanvas.ZOOM_IN_FACTOR);
+            this.zoomLevel++;
         }
         // Scroll down - zoom out. Block zoom if everything is already visible.
         else if (event.deltaY > 0 && !(currentWidth >= metroNetworkWidth && currentHeight >= metroNetworkHeight)) {
-            paper.view.scale(PaperCanvas.ZOOM_OUT_FACTOR);
+            this.zoomLevel--;
         }
+        this.updateZoom();
         this.updatePannableArea();
         this.restoreBounds();
+    }
+    /** Updates zoom based on the current zoom level. */
+    updateZoom() {
+        const zoom = PaperCanvas.ZOOM_FACTOR ** this.zoomLevel;
+        const zoomPoint = new paper.Point(zoom, zoom);
+        paper.view.scaling = zoomPoint;
+        this.interactionScope.view.scaling = zoomPoint; // keeps the interaction canvas' scale synced, so panning still works
     }
     /** Resizes the canvas when the window is resized. */
     resizeCanvas() {
         paper.view.viewSize = new paper.Size(window.innerWidth, window.innerHeight);
+        this.interactionScope.view.viewSize = paper.view.viewSize;
     }
     toString() {
         return `PaperCanvas`;
     }
 }
+/** Zoom factor - each zoom in multiplies the scale by this. */
+PaperCanvas.ZOOM_FACTOR = 1.25;
 /** Padding around the map is defined as a multiple of line width, to handle padding automatically when the scale of the map changes. */
 PaperCanvas.PADDING_SCALE_FACTOR = 20;
-/** Factor to zoom in the map by on mouse scroll. */
-PaperCanvas.ZOOM_IN_FACTOR = 1.25;
-/** Factor to zoom out the map by on mouse scroll. */
-PaperCanvas.ZOOM_OUT_FACTOR = 0.8;
 /** Maximum zoom in proportion. E.g. 0.1 ~= can't zoom in to more than 1/10 of the width/height on screen
  * (not exact due to discrete zoom levels, also may allow zooming in one more level than this boundary). */
 PaperCanvas.MAX_ZOOM_FACTOR = 0.1;

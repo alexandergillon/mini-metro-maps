@@ -1,9 +1,65 @@
+:root {
+    --background-color: #FFFFFF;
+}
+
 body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    background-color: var(--background-color);
 }
 
-canvas[fullscreen] {
+/* Trying to use width/height in CSS causes stretching / distortion of the canvases, which isn't good.
+   Width and height are set in code (PaperCanvas.ts), and updated when the window is resized. */
+canvas {
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
+#userInterfaceLayer {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#devModeLabel {
+    position: fixed;
+    left: 0;
+    top: 0;
+    margin: 1rem;
+    font-family: monospace;
+    font-size: 1rem;
+}
+
+#devModeIcons {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: 2rem 0.75rem; /* height of second row must be at least as tall as devModeIconText text */
+    row-gap: 0.25rem;
+    justify-items: center;
+    align-items: center;
+
+    position: fixed;
+    right: 0;
+    top: 0;
+
+    padding: 0.25rem;
+    border-radius: 5px;
+    margin: 1rem;
+
+    background-color: var(--background-color);
+}
+
+.devModeIcon {
     display: block;
+    width: 2rem;
+    height: 2rem;
+}
+
+.devModeIconText {
+    font-family: monospace;
+    font-size: 0.75rem;
 }

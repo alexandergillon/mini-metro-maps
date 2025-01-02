@@ -3,6 +3,7 @@ import {MetroNetwork} from "./impl/Types.js";
 import {PaperCanvas} from "./impl/PaperCanvas.js";
 import {NetworkHandler} from "./impl/NetworkHandler.js";
 import {MetroNetworkImpl} from "./impl/network/MetroNetworkImpl.js";
+import {UserInterface} from "./impl/ui/UserInterface.js";
 
 /** The global paper object from paper.js. */
 declare const paper: paper.PaperScope;
@@ -28,7 +29,8 @@ async function bootstrap() {
     const metroLineNames = Array.from(metroNetwork.metroLines).map(metroLine => metroLine.name);
     const cityApi: CityApi = (await cityModule).initialize(metroLineNames);
     const networkHandler = new NetworkHandler(metroNetwork, cityApi);
-    const paperCanvas = new PaperCanvas(metroNetwork, canvas);
+    const paperCanvas = new PaperCanvas(metroNetwork);
+    const userInterface = new UserInterface();
     metroNetwork.draw();
 }
 

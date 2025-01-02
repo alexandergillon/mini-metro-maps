@@ -1,6 +1,7 @@
 import { PaperCanvas } from "./impl/PaperCanvas.js";
 import { NetworkHandler } from "./impl/NetworkHandler.js";
 import { MetroNetworkImpl } from "./impl/network/MetroNetworkImpl.js";
+import { UserInterface } from "./impl/ui/UserInterface.js";
 /**
  * Bootstraps the map.
  */
@@ -20,7 +21,8 @@ async function bootstrap() {
     const metroLineNames = Array.from(metroNetwork.metroLines).map(metroLine => metroLine.name);
     const cityApi = (await cityModule).initialize(metroLineNames);
     const networkHandler = new NetworkHandler(metroNetwork, cityApi);
-    const paperCanvas = new PaperCanvas(metroNetwork, canvas);
+    const paperCanvas = new PaperCanvas(metroNetwork);
+    const userInterface = new UserInterface();
     metroNetwork.draw();
 }
 bootstrap();
