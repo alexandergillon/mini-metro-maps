@@ -18,7 +18,7 @@ export class NetworkHandler {
     }
     /** Callback function to update train data, after the timer has gone off. */
     async fetchTrainData() {
-        const arrivals = await this.cityApi.getArrivals();
+        const arrivals = await this.cityApi.getArrivals(this.metroNetwork);
         // Arrivals of trains that we do not know about
         const newTrainArrivals = [];
         for (const arrival of arrivals) {

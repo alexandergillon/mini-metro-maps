@@ -38,7 +38,7 @@ export class ArrivalInfo {
 
     public toString() {
         const date = new Date(this.arrivalTime);
-        return `${this.trainId} on line ${this.line} will arrive at ${this.stationId} at ${date.toTimeString()}`;
+        return `'${this.trainId} on line ${this.line} will arrive at ${this.stationId} at ${date.toTimeString()}'`;
     }
 }
 
@@ -84,9 +84,10 @@ export interface CityApi {
     /**
      * Gets the next arrival for all trains on previously specified lines.
      * Each train has only 1 ArrivalInfo in the return value.
+     * @param metroNetwork The metro network, for use in determining arrivals.
      * @returns The next arrival of each train on the previously configured lines.
      */
-    getArrivals(): Promise<Array<ArrivalInfo>>;
+    getArrivals(metroNetwork: GraphMetroNetwork): Promise<Array<ArrivalInfo>>;
 
     /**
      * Gets the current location of a number of trains, and their next arrival. Next arrival is returned to avoid
