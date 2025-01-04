@@ -15,7 +15,7 @@ export class ArrivalInfo {
     }
     toString() {
         const date = new Date(this.arrivalTime);
-        return `${this.trainId} on line ${this.line} will arrive at ${this.stationId} at ${date.toTimeString()}`;
+        return `'${this.trainId} on line ${this.line} will arrive at ${this.stationId} at ${date.toTimeString()}'`;
     }
 }
 /** POJO to store a train's location and next arrival. */

@@ -25,6 +25,9 @@ class LondonApi implements CityApi {
      */
     private apiUrl: string = '';
 
+    /** Arrivals within the next CUTTOFF_TIME seconds will be dropped. */
+    private static readonly CUTOFF_TIME = 5;
+
     /**
      * If a Circle line train is arriving at Edgware road, is travelling EASTBOUND, and has one of these stations as its
      * next arrival after Edgware road, then it almost certainly is arriving at the copy of the station which also
@@ -50,6 +53,9 @@ class LondonApi implements CityApi {
         "940GZZLUSJP", "940GZZLUVIC", "940GZZLUSSQ", "940GZZLUSKS", "940GZZLUGTR", "940GZZLUHSK", "940GZZLUNHG",
         "940GZZLUBWT", "940GZZLUPAC", "940GZZLUERC"]);
 
+    /** The subsurface underground lines. */
+    private static readonly SUBSURFACE_LINES = ["circle", "district", "hammersmith-city", "metropolitan"];
+
     /**
      * Constructor.
      * @param metroLines Initial metro lines to query for arrival data.
@@ -67,14 +73,13 @@ class LondonApi implements CityApi {
         }
     }
 
-    public async getArrivals(): Promise<Array<ArrivalInfo>> {
+    public async getArrivals(metroNetwork: GraphMetroNetwork): Promise<Array<ArrivalInfo>> {
         if (!this.apiUrl) return [];
 
         // todo: error handling, make more async
-        console.log("getData"); // todo: remove
         const response = await fetch(this.apiUrl, {cache: "no-store"});
         const json = await response.json();
-        return this.stripData(json);
+        return this.stripData(json, metroNetwork);
     }
 
     public whereAre(trainIds: string[], metroNetwork: GraphMetroNetwork): Promise<Map<string, LocationInfo | null>> {
@@ -100,25 +105,35 @@ class LondonApi implements CityApi {
     /**
      * Strips arrival data down to what we care about. Only keeps the closest arrival for each train, and only information
      * about the arrival that we care about (train ID, line, next station, time until station).
-     * @param arrivals The arrival data returned from the TFL API call. See https://api.tfl.gov.uk/ for response format.
+     * @param apiArrivals The arrival data returned from the TFL API call. See https://api.tfl.gov.uk/ for response format.
+     * @param metroNetwork The metro network.
      * @returns The next arrival of each train in the response data.
      */
-    private stripData(arrivals: TflApiResponse): ArrivalInfo[] {
+    private stripData(apiArrivals: TflApiResponse, metroNetwork: GraphMetroNetwork): ArrivalInfo[] {
         // This isn't beautiful, but it avoids a bunch of needless object creation
-        const parsedArrivals: ParsedTflApiResponseItem[] = arrivals.map(arrival => {
+        const parsedArrivals: ParsedTflApiResponseItem[] = apiArrivals.map(arrival => {
             (arrival as ParsedTflApiResponseItem).arrivalTime = Date.parse(arrival.expectedArrival);
             return (arrival as ParsedTflApiResponseItem);
         });
 
+        const cutoff = LondonApi.cutoffTime();
         const nearestArrival: Map<string, ArrivalInfo> = new Map();
-        for (const arrival of parsedArrivals) {
+        for (const arrival of parsedArrivals.filter(arrival => arrival.arrivalTime > cutoff)) {
             const vehicleId = arrival.vehicleId;
             if (!nearestArrival.has(vehicleId) || arrival.arrivalTime < nearestArrival.get(vehicleId)!.arrivalTime) {
                 nearestArrival.set(vehicleId, this.toArrivalInfo(arrival, parsedArrivals));
             }
         }
+        const arrivals = Array.from(nearestArrival.values());
 
-        return Array.from(nearestArrival.values());
+        // Fix subsurface arrivals, if applicable
+        for (const arrival of arrivals) {
+            if (LondonApi.SUBSURFACE_LINES.includes(arrival.line)) {
+                this.checkSubsurfaceArrival(arrival, parsedArrivals, metroNetwork);
+            }
+        }
+
+        return arrivals;
     }
 
     /**
@@ -216,7 +231,8 @@ class LondonApi implements CityApi {
         const nearestArrivals: Map<string, [ArrivalInfo?, ArrivalInfo?]> = new Map();
 
         // Get nearest 2 arrivals for each specified train
-        for (const arrival of parsedArrivals) {
+        const cutoff = LondonApi.cutoffTime();
+        for (const arrival of parsedArrivals.filter(arrival => arrival.arrivalTime > cutoff)) {
             const vehicleId = arrival.vehicleId;
             const arrivalTime = arrival.arrivalTime;
 
@@ -240,7 +256,7 @@ class LondonApi implements CityApi {
             } else {
                 const [nextArrival, nextNextArrival] = nearestArrivalsForTrain;
                 // If nearestArrivalsForTrain is not undefined, then at least the next arrival is set
-                locations.set(trainId, this.getLocation(nextArrival!, nextNextArrival, metroNetwork));
+                locations.set(trainId, this.getLocation(nextArrival!, nextNextArrival, parsedArrivals, metroNetwork));
             }
         }
 
@@ -251,10 +267,18 @@ class LondonApi implements CityApi {
      * Attemps to determine the location of a train given its next 1-2 arrivals.
      * @param nextArrival The next arrival of the train.
      * @param nextNextArrival The next next arrival of the train (can be null).
+     * @param arrivals All arrivals for the current API request.
      * @param metroNetwork The metro network.
      * @private
      */
-    private getLocation(nextArrival: ArrivalInfo, nextNextArrival: ArrivalInfo | undefined, metroNetwork: GraphMetroNetwork): LocationInfo | null {
+    private getLocation(nextArrival: ArrivalInfo, nextNextArrival: ArrivalInfo | undefined, arrivals: ParsedTflApiResponseItem[], metroNetwork: GraphMetroNetwork): LocationInfo | null {
+        if (LondonApi.SUBSURFACE_LINES.includes(nextArrival.line)) this.checkSubsurfaceArrival(nextArrival, arrivals, metroNetwork);
+        // checkSubsurfaceArrival() updated the line of the next arrival - update the next next arrival too if we have one
+        if (nextNextArrival && nextNextArrival.line != nextArrival.line) {
+            // @ts-ignore one of the few times we want to update this in-place
+            nextNextArrival.line! = nextArrival.line;
+        }
+
         const line = nextArrival.line;
         const metroLine = metroNetwork.getMetroLine(line);
         if (!metroLine) {
@@ -293,6 +317,64 @@ class LondonApi implements CityApi {
     }
 
     /**
+     * Due to interlining between the Circle, District, Hammersmith & City, and Metropolitan lines (the subsurface tube
+     * lines), there are sometimes trains on the network which "don't make sense". These are trains which claim to be
+     * one of the above lines, but stop at stations which are only regularly served by a different one of those lines
+     * (for example, a H&C train which goes to Upminster). This happens at the beginning/end of days, as some H&C line
+     * trains are stored at depots only accessible via the District line, and also during extenuating circumstances
+     * (e.g. maintenance or incidents).
+     *
+     * These arrivals break our map, so we make a best-effort attempt to 'correct' them (in some sense). Meaning showing
+     * them as the line that they are visually travelling on (rather than the line that actually are). E.g. the H&C train
+     * mentioned above would show as a District line train on our map after these 'corrections'.
+     *
+     * For any train on a subsurface line, which has an arrival that does not match its line, we try and change it
+     * to one of the other ones in a way that makes sense. Specifically, of the lines which stop at its next station,
+     * we see which line makes the 'most sense' considering all the future arrivals of that train.
+     *
+     * @param arrival The subsurface arrival to check. Must be on one of the subsurface lines. Will be modified in-place
+     *                if needed.
+     * @param arrivals All arrivals for the current API request.
+     * @param metroNetwork The metro network.
+     * @private
+     */
+    private checkSubsurfaceArrival(arrival: ArrivalInfo, arrivals: ParsedTflApiResponseItem[], metroNetwork: GraphMetroNetwork) {
+        if (!LondonApi.SUBSURFACE_LINES.includes(arrival.line)) throw new Error(`checkSubsurfaceArrival called on non-subsurface arrival ${arrival}`);
+
+        const metroLine = metroNetwork.getMetroLine(arrival.line);
+        if (!metroLine) return; // will cause problems somewhere else, to be handled there
+        const station = metroLine.getStation(arrival.stationId);
+        if (station) return; // arrival is fine, return
+
+        // The line we change the arrival to must be one that the current arrival actually has
+        const allowableLines = LondonApi.SUBSURFACE_LINES.filter(line => metroNetwork.getMetroLine(line)!.getStation(arrival.stationId) != null);
+        if (allowableLines.length == 0) return; // will cause problems somewhere else, to be handled there
+
+        // Only one such line - no choice to make
+        if (allowableLines.length == 1) {
+            // @ts-ignore one of the few times we want to update this in-place
+            arrival.line! = allowableLines[0];
+            return;
+        }
+
+        // Otherwise, see which line agrees most with all future arrivals of the train. For each station among the future
+        // arrivals, see which of the lines that it agrees with. The line with the largest number of agreements wins (random choice on tie).
+        const arrivalsForTrain = arrivals.filter(a => a.vehicleId === arrival.trainId);
+        const lineCounts: Map<string, number> = new Map(allowableLines.map(line => [line, 0]));
+        for (const arrivalForTrain of arrivalsForTrain) {
+            if (allowableLines.includes(arrivalForTrain.lineId)) {
+                lineCounts.set(arrivalForTrain.lineId, lineCounts.get(arrivalForTrain.lineId)! + 1);
+            }
+        }
+        const maxCount = Array.from(lineCounts.values()).reduce((c1, c2) => Math.max(c1, c2));
+        const maxCountLines = Array.from(lineCounts.keys()).filter(line => lineCounts.get(line) === maxCount);
+        const randomIndex = Math.floor(Math.random() * maxCountLines.length);
+
+        // @ts-ignore one of the few times we want to update this in-place
+        arrival.line! = maxCountLines[randomIndex];
+    }
+
+    /**
      * Converts a ParsedTflApiResponseItem into an ArrivalInfo.
      * @param arrival The ParsedTflApiResponseItem to be converted.
      * @param arrivals All arrivals. Sometimes needed, for disambiguating Edgware Road arrivals.
@@ -301,6 +383,11 @@ class LondonApi implements CityApi {
         const naptan = this.getNaptan(arrival, arrivals);
         const nextStationId = `${arrival.lineId}_${naptan}`;
         return new ArrivalInfo(arrival.vehicleId, arrival.lineId, nextStationId, arrival.arrivalTime);
+    }
+
+    /** Gets the current cutoff time. */
+    private static cutoffTime() {
+        return Date.now() + LondonApi.CUTOFF_TIME * 1000;
     }
 }
 
