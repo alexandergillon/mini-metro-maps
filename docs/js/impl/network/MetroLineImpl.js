@@ -178,9 +178,11 @@ export class MetroLineImpl {
         for (let station = station2; station !== station1; station = parents.get(station)) {
             const parent = parents.get(station);
             const edge = parent.neighbors().get(station);
-            edges.push(edge.station1 === station ? edge : edge.reverse);
+            edges.push(edge.station2 === station ? edge : edge.reverse);
         }
-        return new PathImpl(edges);
+        // Above gets the edges in reverse (from end to beginning): reverse order of edges before returning.
+        // Note: each individual edge is still in the correct direction.
+        return new PathImpl(edges.reverse());
     }
     toString() {
         return `Metro line ${this.name}`;

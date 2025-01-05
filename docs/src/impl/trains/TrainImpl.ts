@@ -48,6 +48,9 @@ export class TrainImpl implements Train {
     public static newTrainAtStation(id: string, metroLine: MetroLine, station: Station, nextDeparture: [Station, number] | null,
                              layer: paper.Layer, lineWidth: number, color: paper.Color): Train {
         // TODO: bearing
+        if (nextDeparture && nextDeparture[0].id === station.id) {
+            throw new Error(`Tried to create new train at station ${station} with next departure as the same station`);
+        }
         const viewTrain = new ViewTrainImpl(station.location.x, station.location.y, 0, id, layer, lineWidth, color);
         const location = new InternalStationLocation(station, TrainImpl.dwellTime());
         return new TrainImpl(id, metroLine, location, nextDeparture, viewTrain);
@@ -104,6 +107,17 @@ export class TrainImpl implements Train {
 
     /** Sets the next departure of this train. */
     public setNextDeparture(station: Station, arrivalTime: number) {
+        if (this.location.isStation) {
+            if (this.location.station.id === station.id) {
+                console.error(`Tried to set ${station} as next departure for train ${this.id}, but it is already at that station`);
+                return;
+            }
+        } else {
+            if (this.location.arrivalStation.id === station.id) {
+                console.error(`Tried to set ${station} as next departure for train ${this.id}, but that is its next arrival`);
+                return;
+            }
+        }
         this.nextDeparture = [station, arrivalTime];
     }
 
@@ -154,6 +168,7 @@ export class TrainImpl implements Train {
 
             const movement = new InOutMovement(this.viewTrain, Date.now(), arrivalTime, path);
             this._location = new InternalMovementLocation(nextStation, arrivalTime, movement);
+            this.nextDeparture = null;
         } else {
             if (time > this._location.departureTime + Config.TRAIN_TIMEOUT_TIME * 1000) {
                 console.warn(`Train ${this.id}, while stopped at ${currentStation}, timed out while waiting for next destination (removing)`);
@@ -184,6 +199,10 @@ class InternalStationLocation {
         this.station = location;
         this.departureTime = departureTime;
     }
+
+    public toString() {
+        return `at ${this.station}`;
+    }
 }
 
 /** Internal 'equivalent' of EdgeLocationWithArrival. */
@@ -198,6 +217,10 @@ class InternalMovementLocation {
         this.toStation = station;
         this.arrivalTime = arrivalTime;
         this.movement = movement;
+    }
+
+    public toString() {
+        return `travelling towards ${this.toStation}`;
     }
 }
 

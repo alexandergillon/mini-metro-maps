@@ -154,6 +154,9 @@ export class NetworkHandler {
                 console.error(`Can't find station ${arrival.stationId} on metro line ${arrival.line} for location ${locationInfo}`);
                 return;
             }
+            if (currentStation.id === arrival.stationId) {
+                console.error(`Train location does not make sense (train is at the same station as its next destination?): ${locationInfo}`);
+            }
             const train = TrainImpl.newTrainAtStation(arrival.trainId, metroLine, currentStation, [arrivalStation, arrival.arrivalTime], this.trainLayer, this.metroNetwork.lineWidth, metroLine.color);
             metroLine.addTrain(train);
         }

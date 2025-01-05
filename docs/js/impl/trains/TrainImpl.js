@@ -34,6 +34,9 @@ export class TrainImpl {
      */
     static newTrainAtStation(id, metroLine, station, nextDeparture, layer, lineWidth, color) {
         // TODO: bearing
+        if (nextDeparture && nextDeparture[0].id === station.id) {
+            throw new Error(`Tried to create new train at station ${station} with next departure as the same station`);
+        }
         const viewTrain = new ViewTrainImpl(station.location.x, station.location.y, 0, id, layer, lineWidth, color);
         const location = new InternalStationLocation(station, TrainImpl.dwellTime());
         return new TrainImpl(id, metroLine, location, nextDeparture, viewTrain);
@@ -83,6 +86,18 @@ export class TrainImpl {
     }
     /** Sets the next departure of this train. */
     setNextDeparture(station, arrivalTime) {
+        if (this.location.isStation) {
+            if (this.location.station.id === station.id) {
+                console.error(`Tried to set ${station} as next departure for train ${this.id}, but it is already at that station`);
+                return;
+            }
+        }
+        else {
+            if (this.location.arrivalStation.id === station.id) {
+                console.error(`Tried to set ${station} as next departure for train ${this.id}, but that is its next arrival`);
+                return;
+            }
+        }
         this.nextDeparture = [station, arrivalTime];
     }
     /** Updates the position (etc.) of the train. */
@@ -129,6 +144,7 @@ export class TrainImpl {
             }
             const movement = new InOutMovement(this.viewTrain, Date.now(), arrivalTime, path);
             this._location = new InternalMovementLocation(nextStation, arrivalTime, movement);
+            this.nextDeparture = null;
         }
         else {
             if (time > this._location.departureTime + Config.TRAIN_TIMEOUT_TIME * 1000) {
@@ -153,6 +169,9 @@ class InternalStationLocation {
         this.station = location;
         this.departureTime = departureTime;
     }
+    toString() {
+        return `at ${this.station}`;
+    }
 }
 /** Internal 'equivalent' of EdgeLocationWithArrival. */
 class InternalMovementLocation {
@@ -161,6 +180,9 @@ class InternalMovementLocation {
         this.toStation = station;
         this.arrivalTime = arrivalTime;
         this.movement = movement;
+    }
+    toString() {
+        return `travelling towards ${this.toStation}`;
     }
 }
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
