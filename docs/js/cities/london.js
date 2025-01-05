@@ -24,10 +24,13 @@ class LondonApi {
     async getArrivals(metroNetwork) {
         if (!this.apiUrl)
             return [];
-        // todo: error handling, make more async
-        const response = await fetch(this.apiUrl, { cache: "no-store" });
-        const json = await response.json();
-        return this.stripData(json, metroNetwork);
+        return fetch(this.apiUrl, { cache: "no-store" })
+            .then(response => response.json())
+            .then(json => this.stripData(json, metroNetwork))
+            .catch(reason => {
+            console.error(`Error fetching arrivals: ${reason}`);
+            return [];
+        });
     }
     whereAre(trainIds, metroNetwork) {
         // Max approx. 25 ids per call: https://api.tfl.gov.uk/swagger/ui/index.html?url=/swagger/docs/v1#!/Vehicle/Vehicle_Get
@@ -36,11 +39,15 @@ class LondonApi {
         const locations = new Map();
         for (let i = 0; i < numRequests; i++) {
             const thisRequestIds = trainIds.slice(i * 20, (i + 1) * 20);
-            const apiUrl = `https://api.tfl.gov.uk/vehicle/${thisRequestIds.join(",")}/arrivals`;
+            // Train IDs come in with line attached, but the TFL API just wants the number.
+            const apiRequestIds = thisRequestIds.map(id => id.substring(id.indexOf("|") + 1));
+            const apiUrl = `https://api.tfl.gov.uk/vehicle/${apiRequestIds.join(",")}/arrivals`;
             promises.push(fetch(apiUrl, { cache: "no-store" })
                 .then(response => response.json())
-                .then(json => this.getLocations(thisRequestIds, json, metroNetwork))
-                .then(newLocations => newLocations.forEach((locationInfo, trainId) => locations.set(trainId, locationInfo))));
+                .then(json => this.processArrivals(json))
+                .then(arrivals => this.getLocations(thisRequestIds, arrivals, metroNetwork))
+                .then(newLocations => newLocations.forEach((locationInfo, trainId) => locations.set(trainId, locationInfo)))
+                .catch(reason => console.error(`Error fetching locations for ${thisRequestIds.join(", ")}: ${reason}`)));
         }
         return Promise.all(promises).then(_ => locations);
     }
@@ -52,11 +59,7 @@ class LondonApi {
      * @returns The next arrival of each train in the response data.
      */
     stripData(apiArrivals, metroNetwork) {
-        // This isn't beautiful, but it avoids a bunch of needless object creation
-        const parsedArrivals = apiArrivals.map(arrival => {
-            arrival.arrivalTime = Date.parse(arrival.expectedArrival);
-            return arrival;
-        });
+        const parsedArrivals = this.processArrivals(apiArrivals);
         const cutoff = LondonApi.cutoffTime();
         const nearestArrival = new Map();
         for (const arrival of parsedArrivals.filter(arrival => arrival.arrivalTime > cutoff)) {
@@ -71,6 +74,24 @@ class LondonApi {
             if (LondonApi.SUBSURFACE_LINES.includes(arrival.line)) {
                 this.checkSubsurfaceArrival(arrival, parsedArrivals, metroNetwork);
             }
+        }
+        return arrivals;
+    }
+    /**
+     * Performs a number of modifications to a TflApiResponse for easier further processing. This involves:
+     *   - Parsing the arrival times into JS timestamps
+     *   - Making the train IDs incorporate line names to disambiguate trains with the same ID across different lines.
+     *
+     * These modifications are done in-place to avoid needless object creation. The response is returned as a
+     * ParsedTflApiResponseItem[] for type convenience.
+     * @param arrivals The arrivals to process.
+     * @return The processed arrivals - the same object as the input arrivals, but with an enhanced type.
+     * @private
+     */
+    processArrivals(arrivals) {
+        for (const arrival of arrivals) {
+            arrival.arrivalTime = Date.parse(arrival.expectedArrival);
+            arrival.vehicleId = `${arrival.lineId}|${arrival.vehicleId}`;
         }
         return arrivals;
     }
@@ -154,21 +175,16 @@ class LondonApi {
     /**
      * Gets locations for specified trains in a TFL API response.
      * @param trainIds The trains to get locations of.
-     * @param arrivals The API response that contains arrivals for those trains.
+     * @param arrivals The parsed API response that contains arrivals for those trains.
      * @param metroNetwork The metro network.
      * @private
      */
     getLocations(trainIds, arrivals, metroNetwork) {
-        // This isn't beautiful, but it avoids a bunch of needless object creation
-        const parsedArrivals = arrivals.map(arrival => {
-            arrival.arrivalTime = Date.parse(arrival.expectedArrival);
-            return arrival;
-        });
         const locations = new Map();
         const nearestArrivals = new Map();
         // Get nearest 2 arrivals for each specified train
         const cutoff = LondonApi.cutoffTime();
-        for (const arrival of parsedArrivals.filter(arrival => arrival.arrivalTime > cutoff)) {
+        for (const arrival of arrivals.filter(arrival => arrival.arrivalTime > cutoff)) {
             const vehicleId = arrival.vehicleId;
             const arrivalTime = arrival.arrivalTime;
             if (!nearestArrivals.has(vehicleId)) {
@@ -176,10 +192,10 @@ class LondonApi {
             }
             const thisNearestArrivals = nearestArrivals.get(vehicleId);
             if (!thisNearestArrivals[0] || arrivalTime < thisNearestArrivals[0].arrivalTime) {
-                nearestArrivals.set(vehicleId, [this.toArrivalInfo(arrival, parsedArrivals), thisNearestArrivals[0]]);
+                nearestArrivals.set(vehicleId, [this.toArrivalInfo(arrival, arrivals), thisNearestArrivals[0]]);
             }
             else if (!thisNearestArrivals[1] || arrivalTime < thisNearestArrivals[1].arrivalTime) {
-                nearestArrivals.set(vehicleId, [thisNearestArrivals[0], this.toArrivalInfo(arrival, parsedArrivals)]);
+                nearestArrivals.set(vehicleId, [thisNearestArrivals[0], this.toArrivalInfo(arrival, arrivals)]);
             }
         }
         // Get locations based on nearest arrivals
@@ -191,7 +207,7 @@ class LondonApi {
             else {
                 const [nextArrival, nextNextArrival] = nearestArrivalsForTrain;
                 // If nearestArrivalsForTrain is not undefined, then at least the next arrival is set
-                locations.set(trainId, this.getLocation(nextArrival, nextNextArrival, parsedArrivals, metroNetwork));
+                locations.set(trainId, this.getLocation(nextArrival, nextNextArrival, arrivals, metroNetwork));
             }
         }
         return locations;
